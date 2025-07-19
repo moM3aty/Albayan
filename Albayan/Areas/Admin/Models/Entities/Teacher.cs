@@ -1,0 +1,35 @@
+﻿using Albayan.Areas.Admin.Models.Entities;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Albayan.Areas.Admin.Models.Entities
+{
+    public class Teacher
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "اسم المعلم مطلوب")]
+        [StringLength(100)]
+        [Display(Name = "الاسم الكامل")]
+        public string FullName { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "المسمى الوظيفي")]
+        public string JobTitle { get; set; }
+
+        [Display(Name = "ملخص الخبرة")]
+        public string ExperienceSummary { get; set; }
+
+        [Display(Name = "سنوات الخبرة")]
+        public int ExperienceYears { get; set; }
+
+        [Display(Name = "صورة الملف الشخصي")]
+        public string ProfileImageUrl { get; set; }
+
+        public virtual ICollection<Subject> Subjects { get; set; } 
+        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<LiveLesson> LiveLessons { get; set; }
+        public virtual ICollection<TeacherRating> Ratings { get; set; }
+
+    }
+}

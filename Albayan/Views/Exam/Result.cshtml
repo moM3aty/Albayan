@@ -1,0 +1,47 @@
+﻿@model Albayan.ViewModels.ExamResultViewModel
+
+@{
+    ViewData["Title"] = "نتيجة الاختبار";
+    Layout = "_Layout";
+}
+
+<section class="section-padding">
+    <div class="container">
+        @if (Model.Passed)
+        {
+            <div class="result-card card shadow-lg mx-auto mt-5 text-center border-success" style="max-width: 600px;">
+                <div class="card-body">
+                    <h2 class="text-success mb-3" style="font-size: 2.5rem;">🎉 تهانينا!</h2>
+                    <h3 class="mb-3">لقد اجتزت الاختبار بنجاح</h3>
+                    <p class="lead text-white">دورة: @Model.CourseTitle</p>
+                    <div class="my-4 border-top border-bottom py-3">
+                        <p class="mb-2 fs-5 text-white">النسبة: <strong class="text-success">@Model.Score%</strong></p>
+                        <p class="mb-2 fs-5 text-white">التقدير: <strong class="text-success">@(Model.Score >= 90 ? "ممتاز" : Model.Score >= 80 ? "جيد جداً" : Model.Score >= 70 ? "جيد" : "مقبول")</strong></p>
+                    </div>
+                    <p class="small text-white">التاريخ: @DateTime.Now.ToString("yyyy/MM/dd")</p>
+
+                    @if (Model.CertificateId.HasValue)
+                    {
+                        <a asp-controller="Certificate" asp-action="View" asp-route-guid="@Model.CertificateGuid" target="_blank" class="btn btn-warning mt-4">
+                            <i class="fas fa-certificate ms-2"></i> عرض الشهادة
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="result-card card shadow-lg mx-auto mt-5 text-center border-danger" style="max-width: 600px;">
+                <div class="card-body">
+                    <h2 class="text-danger mb-3" style="font-size: 2.5rem;">❌ لم تجتز الاختبار</h2>
+                    <p class="lead text-white">نعتذر، لم تتمكن من اجتياز اختبار دورة: @Model.CourseTitle</p>
+                    <div class="my-4 border-top border-bottom py-3">
+                        <p class="mb-2 fs-5 text-white">النسبة: <strong class="text-danger">@Model.Score%</strong></p>
+                        <p class="mb-2 fs-5 text-white">التقدير: <strong class="text-danger">راسب</strong></p>
+                    </div>
+                    <p class="small text-white">يرجى إعادة المحاولة لاحقاً</p>
+                </div>
+            </div>
+        }
+    </div>
+</section>

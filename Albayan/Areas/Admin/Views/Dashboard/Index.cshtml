@@ -1,0 +1,80 @@
+﻿@model Albayan.Areas.Admin.Models.ViewModels.DashboardViewModel
+@using System.Text.Json;
+
+@{
+    ViewData["Title"] = "الرئيسية";
+}
+
+<div id="dashboard">
+    <h2 class="text-3xl font-bold mb-6">لوحة التحكم الرئيسية</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-user-graduate text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي الطلاب</p>
+                    <p class="text-2xl font-bold">@Model.TotalStudents</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-bg p-6 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-chalkboard-teacher text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي المعلمين</p>
+                    <p class="text-2xl font-bold">@Model.TotalTeachers</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-bg p-6 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-video text-3xl accent-color"></i>
+                <div class="mr-4">
+                    <p class="text-gray-400">إجمالي الدورات</p>
+                    <p class="text-2xl font-bold">@Model.TotalCourses</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">الطلاب الجدد (آخر 6 أشهر)</h3>
+            <canvas id="newStudentsChart"></canvas>
+        </div>
+        <div class="card-bg p-6 rounded-lg flex items-center justify-center">
+            <p class="text-gray-500">سيتم إضافة رسم بياني آخر هنا لاحقاً.</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctxStudents = document.getElementById('newStudentsChart')?.getContext('2d');
+            if (ctxStudents) {
+                new Chart(ctxStudents, {
+                    type: 'line',
+                    data: {
+                        labels: @Html.Raw(JsonSerializer.Serialize(Model.NewStudentsChartLabels)),
+                        datasets: [{
+                            label: 'طلاب جدد',
+                            data: @Html.Raw(JsonSerializer.Serialize(Model.NewStudentsChartData)),
+                            fill: true,
+                            backgroundColor: 'rgba(58, 134, 255, 0.2)',
+                            borderColor: '#3a86ff',
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#e0e1dd' } },
+                            x: { grid: { display: false }, ticks: { color: '#e0e1dd' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+    </script>
+}

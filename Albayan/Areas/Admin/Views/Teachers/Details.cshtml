@@ -1,0 +1,43 @@
+﻿@model Albayan.Areas.Admin.Models.Entities.Teacher
+
+@{
+    ViewData["Title"] = "الملف الشخصي للمعلم";
+}
+
+<div class="max-w-5xl mx-auto">
+    <div class="card-bg p-6 rounded-lg mb-6 flex items-center">
+        <img src="@(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "https://placehold.co/100x100/1b263b/e0e1dd?text=NA" : Model.ProfileImageUrl)"
+             onerror="this.src='https://placehold.co/100x100/1b263b/e0e1dd?text=Err'"
+             class="w-24 h-24 rounded-full object-cover ml-5 border-2 border-blue-400">
+        <div>
+            <h2 class="text-3xl font-bold text-white">@Model.FullName</h2>
+            <p class="text-gray-400">@Model.JobTitle</p>
+            <p class="text-gray-400 mt-1">سنوات الخبرة: @Model.ExperienceYears</p>
+        </div>
+    </div>
+
+    <div class="card-bg p-6 rounded-lg">
+        <h3 class="text-xl font-semibold mb-4">ملخص الخبرة</h3>
+        <p class="text-gray-300 mb-6">@Model.ExperienceSummary</p>
+
+        <h3 class="text-xl font-semibold mb-4 border-t border-gray-700 pt-4">المواد التي يدرسها</h3>
+        @if (Model.Subjects != null && Model.Subjects.Any())
+        {
+            <div class="flex flex-wrap gap-2">
+                @foreach (var subject in Model.Subjects)
+                {
+                    <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm">@subject.Name</span>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">لم يتم إسناد أي مواد لهذا المعلم بعد.</p>
+        }
+    </div>
+
+    <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="primary-btn px-6 py-2 rounded-lg">تعديل بيانات المعلم</a>
+        <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+    </div>
+</div>

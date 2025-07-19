@@ -1,0 +1,203 @@
+﻿@model Albayan.ViewModels.CoursePlayerViewModel
+
+@{
+    ViewData["Title"] = Model.CourseTitle;
+    Layout = "_Layout"; // Or your main front-end layout
+}
+
+@functions {
+    // Helper function to extract YouTube Video ID from URL using a robust Regex
+    public string GetYouTubeVideoId(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return null;
+
+        var regex = new System.Text.RegularExpressions.Regex(@"(?:https?:\/\/)?(?:www\.)?(?:(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=))|(?:youtu\.be\/))([a-zA-Z0-9_-]{11})");
+        var match = regex.Match(url);
+
+        return match.Success ? match.Groups[1].Value : null;
+    }
+}
+
+@section Styles {
+    <style>
+        .player-container-pro {
+            display: flex;
+            height: calc(100vh - 56px); /* Adjust 56px based on your navbar height */
+            background-color: #111827; /* Dark background */
+        }
+
+        .video-main-pro {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .video-embed-pro {
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden; /* To ensure the iframe corners are rounded */
+        }
+
+        .video-footer {
+            padding: 1rem 2rem;
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .lessons-sidebar-pro {
+            width: 380px;
+            flex-shrink: 0;
+            background-color: #1f2937; /* Lighter dark */
+            border-right: 1px solid #374151;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #374151;
+        }
+
+        .lesson-list-pro {
+            overflow-y: auto;
+        }
+
+        .lesson-item-pro {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #374151;
+            color: #d1d5db; /* gray-300 */
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+            .lesson-item-pro:hover {
+                background-color: #374151;
+                color: #fff;
+            }
+
+            .lesson-item-pro.active {
+                background-color: #3b82f6;
+                color: #fff;
+                border-right: 4px solid #facc15;
+            }
+
+            .lesson-item-pro .lesson-icon {
+                width: 24px;
+                text-align: center;
+            }
+
+            .lesson-item-pro.completed .lesson-icon {
+                color: #22c55e; /* green-500 */
+            }
+    </style>
+}
+
+<div class="container-fluid p-0">
+    <div class="player-container-pro">
+        <!-- Lessons Sidebar -->
+        <aside class="lessons-sidebar-pro">
+            <div class="sidebar-header">
+                <a asp-controller="Courses" asp-action="Index" class="text-decoration-none text-white-50 mb-3 d-block">
+                    <i class="fas fa-arrow-right ms-2"></i> العودة للدورات
+                </a>
+                <h4 class="fw-bold text-white">@Model.CourseTitle</h4>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="p-4">
+                <div class="d-flex justify-content-between mb-1 small text-white-50">
+                    <span>تقدمك في الدورة</span>
+                    <span>@Model.StudentProgress%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: @Model.StudentProgress%;" aria-valuenow="@Model.StudentProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <div class="lesson-list-pro flex-grow-1">
+                @for (int i = 0; i < Model.AllLessons.Count; i++)
+                {
+                    var lesson = Model.AllLessons[i];
+                    var isCurrent = lesson.Id == Model.CurrentLesson.Id;
+                    var isCompleted = i < Model.AllLessons.FindIndex(l => l.Id == Model.CurrentLesson.Id);
+
+                    <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@lesson.Id"
+                       class="lesson-item-pro @(isCurrent ? "active" : "") @(isCompleted ? "completed" : "")">
+                        <div class="lesson-icon ms-3 fs-5">
+                            @if (isCompleted)
+                            {
+                                <i class="fas fa-check-circle"></i>
+                            }
+                            else if (isCurrent)
+                            {
+                                <i class="fas fa-play-circle"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-lock"></i>
+                            }
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-0 fw-bold">الدرس @(i + 1)</p>
+                            <p class="mb-0 small text-white-50">@lesson.Title</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        </aside>
+
+        <!-- Main Content (Video Player) -->
+        <main class="video-main-pro">
+            <div class="video-wrapper">
+                <div class="video-embed-pro">
+                    <iframe src="https://www.youtube.com/embed/@GetYouTubeVideoId(Model.CurrentLesson.YoutubeUrl)?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&color=white"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            width="100%"
+                            height="100%"></iframe>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="video-footer d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0 text-white">@Model.CurrentLesson.Title</h2>
+                <div class="d-flex gap-2">
+                    @if (Model.PreviousLessonId.HasValue)
+                    {
+                        <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">
+                            <i class="fas fa-arrow-right ms-2"></i> الدرس السابق
+                        </a>
+                    }
+
+                    @if (Model.NextLessonId.HasValue)
+                    {
+                        <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">
+                            الدرس التالي <i class="fas fa-arrow-left me-2"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Exam" asp-action="Take" asp-route-id="@Model.CourseId" class="btn btn-success">
+                            اذهب إلى الاختبار النهائي <i class="fas fa-award me-2"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

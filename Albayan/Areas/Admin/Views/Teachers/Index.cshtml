@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Albayan.Areas.Admin.Models.ViewModels.TeacherIndexViewModel>
+
+@{
+    ViewData["Title"] = "فريق المعلمين";
+}
+
+<div id="teachers">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة فريق المعلمين</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-user-plus ml-2"></i> إضافة معلم جديد
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var teacher in Model)
+        {
+            <div class="card-bg rounded-lg p-5 text-center flex flex-col">
+                <img src="@(string.IsNullOrEmpty(teacher.ProfileImageUrl) ? "https://placehold.co/100x100/1b263b/e0e1dd?text=NA" : teacher.ProfileImageUrl)"
+                     onerror="this.src='https://placehold.co/100x100/1b263b/e0e1dd?text=Err'"
+                     class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-blue-400 object-cover">
+
+                <h3 class="text-xl font-bold">@teacher.FullName</h3>
+                <p class="text-gray-400 mb-2 text-sm">@teacher.JobTitle</p>
+
+                <div class="text-right space-y-2 text-sm mb-4 flex-grow">
+                    <p><i class="fas fa-briefcase ml-2 w-4 text-center accent-color"></i> <strong>الخبرة:</strong> @teacher.ExperienceYears سنة</p>
+                </div>
+
+                <div class="flex justify-center space-x-2 space-x-reverse mt-auto">
+                    <a asp-action="Details" asp-route-id="@teacher.Id" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg bg-black/20" title="عرض الملف الشخصي"><i class="fas fa-user"></i></a>
+                    <a asp-action="Edit" asp-route-id="@teacher.Id" class="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg bg-black/20" title="تعديل"><i class="fas fa-edit"></i></a>
+                    <a asp-action="Delete" asp-route-id="@teacher.Id" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-black/20" title="حذف"><i class="fas fa-trash"></i></a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

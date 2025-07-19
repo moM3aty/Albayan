@@ -1,0 +1,56 @@
+﻿@model Albayan.Areas.Admin.Models.ViewModels.QuestionFormViewModel
+
+@{
+    ViewData["Title"] = "إضافة سؤال جديد";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">إضافة سؤال جديد لاختبار: @Model.CourseTitle</h2>
+    <form asp-action="Create">
+        <input type="hidden" asp-for="Question.ExamId" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="Question.QuestionText" class="block mb-2 text-sm font-medium">نص السؤال</label>
+                <textarea asp-for="Question.QuestionText" class="input-style w-full p-2.5" rows="3"></textarea>
+                <span asp-validation-for="Question.QuestionText" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Question.OptionA" class="block mb-2 text-sm font-medium">الخيار أ</label>
+                    <input asp-for="Question.OptionA" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Question.OptionA" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Question.OptionB" class="block mb-2 text-sm font-medium">الخيار ب</label>
+                    <input asp-for="Question.OptionB" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Question.OptionB" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Question.OptionC" class="block mb-2 text-sm font-medium">الخيار ج</label>
+                    <input asp-for="Question.OptionC" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Question.OptionC" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Question.OptionD" class="block mb-2 text-sm font-medium">الخيار د</label>
+                    <input asp-for="Question.OptionD" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Question.OptionD" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Question.CorrectAnswer" class="block mb-2 text-sm font-medium">الإجابة الصحيحة</label>
+                <select asp-for="Question.CorrectAnswer" class="input-style w-full p-2.5" asp-items="@Model.CorrectAnswerOptions">
+                </select>
+                <span asp-validation-for="Question.CorrectAnswer" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="إضافة السؤال" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-controller="Exams" asp-action="Index" asp-route-courseId="@Model.ExamId" class="secondary-btn px-6 py-2 rounded-lg">العودة للاختبار</a>
+            </div>
+        </div>
+    </form>
+</div>

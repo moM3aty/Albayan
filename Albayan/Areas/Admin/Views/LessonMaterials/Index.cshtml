@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Albayan.Areas.Admin.Models.Entities.LessonMaterial>
+@{
+    ViewData["Title"] = "إدارة الدروس";
+}
+<div id="lesson-materials">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">إدارة الدروس (سلسلة البيان)</h2>
+        <a asp-action="Create" class="primary-btn px-5 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus ml-2"></i> إضافة درس جديد
+        </a>
+    </div>
+    <div class="card-bg rounded-lg overflow-hidden">
+        <table class="w-full text-right">
+            <thead class="bg-[#2a3a50]">
+                <tr>
+                    <th class="p-4 font-semibold">الغلاف</th>
+                    <th class="p-4 font-semibold">عنوان الدرس</th>
+                    <th class="p-4 font-semibold">المادة</th>
+                    <th class="p-4 font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
+                        <td class="p-2"><img src="@(string.IsNullOrEmpty(item.CoverImageUrl) ? "https://placehold.co/100x60/1b263b/e0e1dd?text=No+Image" : item.CoverImageUrl)" class="w-24 h-14 object-cover rounded-md" /></td>
+                        <td class="p-4">@item.Title</td>
+                        <td class="p-4">@item.Subject.Name</td>
+                        <td class="p-4 space-x-2 space-x-reverse">
+                            <a href="@item.PdfFilePath" target="_blank" class="text-blue-400 hover:text-blue-300" title="معاينة"><i class="fas fa-eye"></i></a>
+                            <a href="@item.PdfFilePath" download class="text-green-400 hover:text-green-300" title="تحميل"><i class="fas fa-download"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

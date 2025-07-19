@@ -1,0 +1,180 @@
+wwwroot\css\all.min.css
+wwwroot\css\bootstrap.min.css
+wwwroot\css\main.css
+wwwroot\css\site.css
+wwwroot\favicon.ico
+wwwroot\font\alfont_com_AlFont_com_Hayah-1.otf
+wwwroot\images\about-1.jpg
+wwwroot\images\about-2.jpg
+wwwroot\images\about-3.jpg
+wwwroot\images\about.png
+wwwroot\images\aboutus.png
+wwwroot\images\arabic.jpg
+wwwroot\images\english.jpg
+wwwroot\images\header1.png
+wwwroot\images\islamic.jpg
+wwwroot\images\login.png
+wwwroot\images\logo.png
+wwwroot\images\maths.jpeg
+wwwroot\images\profile.png
+wwwroot\images\science.jpg
+wwwroot\images\section-bg.avif
+wwwroot\images\signup.webp
+wwwroot\images\social-studies.jpg
+wwwroot\images\teacher1.jpg
+wwwroot\js\bootstrap.bundle.min.js
+wwwroot\js\login.js
+wwwroot\js\main.js
+wwwroot\js\signup.js
+wwwroot\js\site.js
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+wwwroot\lib\bootstrap\LICENSE
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+wwwroot\lib\jquery-validation\dist\additional-methods.js
+wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+wwwroot\lib\jquery-validation\LICENSE.md
+wwwroot\lib\jquery\dist\jquery.js
+wwwroot\lib\jquery\dist\jquery.min.js
+wwwroot\lib\jquery\dist\jquery.min.map
+wwwroot\lib\jquery\dist\jquery.slim.js
+wwwroot\lib\jquery\dist\jquery.slim.min.js
+wwwroot\lib\jquery\dist\jquery.slim.min.map
+wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\blog\d050668b-c704-4000-ae36-5d0a40f01cac_done.png
+wwwroot\uploads\blog\ed9de0c5-769f-4176-b9a4-0c2c2313dc25_teacher1.jpg
+wwwroot\uploads\courses\9a018fa5-5af9-45bf-a859-b5230fa7afc5_done.png
+wwwroot\uploads\courses\e67dec43-2554-43a5-8118-b7c180a4b799_516871983_17979337166848023_1458859220823665386_n.jpg
+wwwroot\uploads\livelessons\ad9a4de1-b517-48ba-a266-9d7e7fd3f181_done.png
+wwwroot\uploads\livelessons\eeb9a8bc-4531-4eb7-8794-7f50f83d9410_done.png
+wwwroot\uploads\subjects\87bff2ad-080c-4c91-aa9c-ff4ae6cf03e2_488896026_17969421149848023_4710239618675035533_n.jpg
+wwwroot\uploads\subjects\c5878810-2527-4c4d-b05c-f1fe15ff0c86_518853184_17979734183848023_8396945494660104144_n.jpg
+wwwroot\uploads\subjects\eb740a0c-703f-437a-8614-8b72658a996b_done.png
+wwwroot\uploads\teachers\0d957380-1efc-461f-90ed-68dcc5826aac_done.png
+wwwroot\uploads\teachers\5e6f4520-0d35-4cf2-82fe-1552832f106a_teacher1.jpg
+wwwroot\uploads\teachers\7e153d25-41a4-4025-b244-d3190fb5a61a_teacher1.jpg
+wwwroot\uploads\teachers\c8dcf29d-24de-4fa7-bcce-e73ae9660c8b_teacher1.jpg
+wwwroot\webfonts\fa-brands-400.ttf
+wwwroot\webfonts\fa-brands-400.woff2
+wwwroot\webfonts\fa-regular-400.ttf
+wwwroot\webfonts\fa-regular-400.woff2
+wwwroot\webfonts\fa-solid-900.ttf
+wwwroot\webfonts\fa-solid-900.woff2
+wwwroot\webfonts\fa-v4compatibility.ttf
+wwwroot\webfonts\fa-v4compatibility.woff2
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\all.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\bootstrap.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\main.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\site.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\favicon.ico
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\font\alfont_com_AlFont_com_Hayah-1.otf
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\bootstrap.bundle.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\login.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\main.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\signup.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\site.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\LICENSE.md
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.js
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.map
+J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\LICENSE.txt

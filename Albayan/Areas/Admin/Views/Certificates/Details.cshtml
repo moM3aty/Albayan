@@ -1,0 +1,161 @@
+﻿@model Albayan.Areas.Admin.Models.Entities.Certificate
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
+    <meta charset="utf-8" />
+    <title>شهادة إتمام دورة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        @@font-face {
+            font-family: 'Hayah';
+            src: url('~/font/alfont_com_AlFont_com_Hayah-1.otf') format('opentype');
+        }
+
+        @@page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Hayah', sans-serif;
+            color: #1a1a1a;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .certificate {
+            background: #fffdfa;
+            color: #1a1a1a;
+            border: 14px double #d4af37;
+            border-radius: 30px;
+            padding: 20px 50px;
+            width: 1120px;
+            height: 793px;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.25);
+            box-sizing: border-box;
+            position: relative;
+            background-size: cover, cover;
+            background-repeat: no-repeat, no-repeat;
+            background-position: center, center;
+        }
+
+        .certificate h1 {
+            font-size: 42px;
+            margin: 0px;
+            color: #b38f00;
+        }
+
+        .certificate h2 {
+            font-size: 30px;
+            margin: 25px 0 15px;
+                color: #08376c;
+        }
+
+        .certificate p {
+            font-size: 22px;
+            margin: 10px 0;
+            line-height: 1.9;
+        }
+
+        .highlight {
+            color: #b38f00;
+            font-weight: bold;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding: 0 80px;
+        }
+
+        .signatures div {
+            text-align: center;
+            width: 45%;
+        }
+
+        .print-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #d4af37;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 10px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        @@media print {
+            .print-button {
+                display: none;
+            }
+            body {
+                background: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">طباعة الشهادة</button>
+
+    <div class="certificate" id="certificate">
+        <img src="~/images/logo.png" alt="شعار المنصة" style="width: 110px; margin-bottom: 15px;" />
+        <h1>منصة البيان التعليمية</h1>
+        <p>تمنح هذه الشهادة إلى</p>
+        <h2 class="highlight">@Model.Student.FullName</h2>
+        <p>وذلك لاجتيازه دورة</p>
+        <h2>"@Model.Course.Title"</h2>
+        <p>
+            بتقدير <span class="highlight" id="grade-percentage">@Model.GradePercentage<span>%</span></span>
+            وبواقع <span class="highlight">@Model.Course.TotalHours</span> ساعة تدريبية
+        </p>
+        <p>تاريخ الإصدار: <span class="highlight">@Model.IssueDate.ToString("yyyy/MM/dd")</span></p>
+
+        <div class="signatures">
+            <div>
+                <p><strong>@Model.Course.Teacher.FullName</strong></p>
+                <hr style="width: 170px; border-top: 2px solid #d4af37;" />
+                <p>مدرب الدورة</p>
+            </div>
+            <div>
+                <p><strong>د. طلعت ناجح</strong></p>
+                <hr style="width: 170px; border-top: 2px solid #d4af37;" />
+                <p>المشرف العام</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const arabicNumbers = str => str.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+        document.querySelectorAll('#certificate *').forEach(el => {
+            if (el.children.length === 0 && el.textContent.trim() !== '') {
+                el.textContent = arabicNumbers(el.textContent);
+            }
+        });
+        const percentageSpan = document.getElementById('grade-percentage');
+        if (percentageSpan) {
+            percentageSpan.textContent = arabicNumbers(percentageSpan.textContent);
+        }
+    </script>
+</body>
+</html>
