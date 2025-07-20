@@ -1,10 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Albayan.Areas.Admin.Data;
-using Albayan.Models;
-using Microsoft.AspNetCore.Identity;
-using Albayan.Services;
-using System;
+﻿using Albayan.Areas.Admin.Data;
 using Albayan.Data;
+using Albayan.Hubs;
+using Albayan.Models;
+using Albayan.Services;
+using Albayan.Trackers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +16,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<PlatformDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<PlatformDbContext>();
-builder.Services.ConfigureApplicationCookie(options => { options.LoginPath = "/Account/LoginAdmin"; });
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<PlatformDbContext>()
+    .AddDefaultTokenProviders();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddLocalization();
 
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -33,7 +41,16 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 
 var app = builder.Build();
-
+var supportedCultures = new[]
+{
+    new CultureInfo("ar-EG")
+};
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("ar-EG"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -63,6 +80,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
+app.MapHub<PresenceHub>("/presenceHub");
 
 app.MapControllerRoute(
     name: "AdminArea",

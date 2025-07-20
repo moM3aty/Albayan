@@ -2,202 +2,359 @@
 
 @{
     ViewData["Title"] = Model.CourseTitle;
-    Layout = "_Layout"; // Or your main front-end layout
-}
+    Layout = "_Layout";
 
-@functions {
-    // Helper function to extract YouTube Video ID from URL using a robust Regex
-    public string GetYouTubeVideoId(string url)
+    string GetEmbedUrl(string url)
     {
-        if (string.IsNullOrEmpty(url)) return null;
+        if (string.IsNullOrEmpty(url)) return "";
+        if (url.Contains("embed")) return url; // Already in correct format
 
-        var regex = new System.Text.RegularExpressions.Regex(@"(?:https?:\/\/)?(?:www\.)?(?:(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=))|(?:youtu\.be\/))([a-zA-Z0-9_-]{11})");
-        var match = regex.Match(url);
+        string videoId = string.Empty;
+        try
+        {
+            var uri = new Uri(url);
+            if (url.Contains("youtube.com"))
+            {
+                var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                videoId = query["v"];
+            }
+            else if (url.Contains("youtu.be"))
+            {
+                videoId = uri.Segments.Last();
+            }
+        }
+        catch { /* Invalid URL format, fallback to original */ return url; }
 
-        return match.Success ? match.Groups[1].Value : null;
+
+        if (!string.IsNullOrEmpty(videoId))
+        {
+            return $"https://www.youtube.com/embed/{videoId}";
+        }
+
+        return url;
     }
 }
 
-@section Styles {
-    <style>
-        .player-container-pro {
-            display: flex;
-            height: calc(100vh - 56px); /* Adjust 56px based on your navbar height */
-            background-color: #111827; /* Dark background */
+<style>
+    :root {
+        --bg-dark: #0d121b !important;
+        --bg-medium: #111827 !important;
+        --bg-light: #1f2937 !important;
+        --border-color: #374151 !important;
+        --accent-color: #1eaad4 !important;
+        --warning-color: #ffc107 !important;
+        --text-primary: #e5e7eb !important;
+        --text-secondary: #9ca3af !important;
+    }
+
+    main {
+        padding: 0 !important;
+        background-color: var(--bg-dark);
+    }
+
+    .course-player-container {
+        display: flex;
+      
+    }
+
+    /* --- Sidebar --- */
+    .sidebar-pro {
+        background-color: var(--bg-medium) !important;
+        width: 380px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .back-link {
+        color: var(--text-secondary) !important;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+        .back-link:hover {
+            color: var(--text-primary) !important;
         }
 
-        .video-main-pro {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+    .course-title-pro {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary) !important;
+    }
+
+    .progress-container-pro {
+        padding: 1rem 1.5rem;
+    }
+
+    .progress-pro {
+        height: 8px;
+        background-color: var(--bg-light) !important;
+        border-radius: 8px;
+    }
+
+    .progress-bar-pro {
+        background-color: var(--accent-color) !important;
+    }
+
+    .lessons-list-pro {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 0.5rem 1rem;
+    }
+
+    .lesson-item-pro {
+        cursor: pointer;
+        padding: 0.8rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s;
+        color: var(--text-secondary) !important;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border: 1px solid transparent;
+    }
+
+        .lesson-item-pro:hover {
+            background-color: var(--bg-light) !important;
         }
 
-        .video-wrapper {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
+        .lesson-item-pro.active {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+            font-weight: 600;
+            border-color: var(--accent-color) !important;
         }
 
-        .video-embed-pro {
+        .lesson-item-pro .lesson-icon {
+            color: var(--text-secondary) !important;
+        }
+
+        .lesson-item-pro.active .lesson-icon {
+            color: var(--text-primary) !important;
+        }
+
+    .sidebar-footer-pro {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    /* --- Main Content --- */
+    .main-content-pro {
+        flex-grow: 1;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; 
+    }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1200px;
-            aspect-ratio: 16 / 9;
-            background-color: #000;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            overflow: hidden; /* To ensure the iframe corners are rounded */
+            height: 100%;
+            border: none;
+            border-radius: 12px;
         }
 
-        .video-footer {
-            padding: 1rem 2rem;
-            background-color: rgba(0,0,0,0.2);
+    .controls-pro {
+        margin-top: 1.5rem;
+    }
+
+        .controls-pro .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
         }
 
-        .lessons-sidebar-pro {
-            width: 380px;
-            flex-shrink: 0;
-            background-color: #1f2937; /* Lighter dark */
-            border-right: 1px solid #374151;
-            display: flex;
+    /* --- Details Tabs --- */
+    .details-tabs {
+        background-color: var(--bg-medium) !important;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+        .details-tabs .nav-tabs {
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+
+        .details-tabs .nav-link {
+            color: var(--text-secondary) !important;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+        }
+
+            .details-tabs .nav-link.active {
+                color: var(--accent-color) !important;
+                background-color: transparent !important;
+                border-bottom: 3px solid var(--accent-color) !important;
+            }
+
+        .details-tabs .tab-content {
+            padding-top: 1.5rem;
+        }
+
+    .attachment-item a {
+        color: var(--accent-color) !important;
+        text-decoration: none;
+    }
+
+        .attachment-item a:hover {
+            text-decoration: underline;
+        }
+
+    .homework-card-pro {
+        background-color: var(--bg-light) !important;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 991.98px) {
+        .course-player-container {
             flex-direction: column;
+            height: auto;
         }
 
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #374151;
+        .sidebar-pro {
+            width: 100%;
+            height: auto;
+            max-height: 50vh;
         }
 
-        .lesson-list-pro {
-            overflow-y: auto;
+        .main-content-pro, .sidebar-pro {
+            overflow-y: visible;
         }
+    }
+</style>
 
-        .lesson-item-pro {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #374151;
-            color: #d1d5db; /* gray-300 */
-            text-decoration: none;
-            transition: background-color 0.2s;
-        }
-
-            .lesson-item-pro:hover {
-                background-color: #374151;
-                color: #fff;
-            }
-
-            .lesson-item-pro.active {
-                background-color: #3b82f6;
-                color: #fff;
-                border-right: 4px solid #facc15;
-            }
-
-            .lesson-item-pro .lesson-icon {
-                width: 24px;
-                text-align: center;
-            }
-
-            .lesson-item-pro.completed .lesson-icon {
-                color: #22c55e; /* green-500 */
-            }
-    </style>
-}
-
-<div class="container-fluid p-0">
-    <div class="player-container-pro">
-        <!-- Lessons Sidebar -->
-        <aside class="lessons-sidebar-pro">
-            <div class="sidebar-header">
-                <a asp-controller="Courses" asp-action="Index" class="text-decoration-none text-white-50 mb-3 d-block">
-                    <i class="fas fa-arrow-right ms-2"></i> العودة للدورات
-                </a>
-                <h4 class="fw-bold text-white">@Model.CourseTitle</h4>
-            </div>
-
-            <!-- Progress Bar -->
-            <div class="p-4">
-                <div class="d-flex justify-content-between mb-1 small text-white-50">
-                    <span>تقدمك في الدورة</span>
-                    <span>@Model.StudentProgress%</span>
+<div class="course-player-container">
+    <!-- Sidebar -->
+    <div class="sidebar-pro">
+        <div class="sidebar-header">
+            <a asp-controller="Profile" asp-action="Index" class="back-link d-flex align-items-center gap-2 fs-6 mb-4"><i class="fas fa-arrow-right"></i> العودة للملف الشخصي</a>
+            <h4 class="course-title-pro">@Model.CourseTitle</h4>
+        </div>
+        <div class="progress-container-pro">
+            <div class="d-flex justify-content-between text-white small mb-1"><span>التقدم في الدورة</span><span id="progress-percent">@Model.StudentProgress%</span></div>
+            <div class="progress progress-pro"><div class="progress-bar progress-bar-pro" role="progressbar" style="width: @Model.StudentProgress%;" id="progress-bar"></div></div>
+        </div>
+        <div class="lessons-list-pro">
+            @foreach (var lesson in Model.AllLessons)
+            {
+                <div class="lesson-item-pro @(lesson.Id == Model.CurrentLesson.Id ? "active" : "")" data-lesson-id="@lesson.Id">
+                    <i class="fas fa-play-circle lesson-icon"></i>
+                    <span>@lesson.Title</span>
                 </div>
-                <div class="progress" style="height: 8px;">
-                    <div class="progress-bar bg-primary" role="progressbar" style="width: @Model.StudentProgress%;" aria-valuenow="@Model.StudentProgress" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
+            }
+        </div>
+        <div class="sidebar-footer-pro" id="exam-button-container" style="display: @(Model.IsCourseCompleted ? "block" : "none");">
+            <p class="text-center text-white-50 small">لقد أكملت جميع دروس الدورة!</p>
+            <a asp-controller="Exam" asp-action="Take" asp-route-id="@Model.CourseId" class="btn btn-success w-100 fw-bold"><i class="fas fa-file-alt me-2"></i> ابدأ الاختبار النهائي</a>
+        </div>
+    </div>
 
-            <div class="lesson-list-pro flex-grow-1">
-                @for (int i = 0; i < Model.AllLessons.Count; i++)
-                {
-                    var lesson = Model.AllLessons[i];
-                    var isCurrent = lesson.Id == Model.CurrentLesson.Id;
-                    var isCompleted = i < Model.AllLessons.FindIndex(l => l.Id == Model.CurrentLesson.Id);
+    <!-- Main Content -->
+    <div class="main-content-pro">
+        <div class="video-wrapper">
+            <iframe id="lesson-frame" src="@Model.CurrentLesson.VideoUrl" title="Course Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="controls d-flex justify-content-between">
+            @if (Model.PreviousLessonId.HasValue)
+            {
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">الدرس السابق</a>
+            }
+            else
+            {
+                <button class="btn btn-outline-light" disabled>الدرس السابق</button>
+            }
 
-                    <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@lesson.Id"
-                       class="lesson-item-pro @(isCurrent ? "active" : "") @(isCompleted ? "completed" : "")">
-                        <div class="lesson-icon ms-3 fs-5">
-                            @if (isCompleted)
-                            {
-                                <i class="fas fa-check-circle"></i>
-                            }
-                            else if (isCurrent)
-                            {
-                                <i class="fas fa-play-circle"></i>
-                            }
-                            else
-                            {
-                                <i class="fas fa-lock"></i>
-                            }
-                        </div>
-                        <div class="flex-grow-1">
-                            <p class="mb-0 fw-bold">الدرس @(i + 1)</p>
-                            <p class="mb-0 small text-white-50">@lesson.Title</p>
-                        </div>
-                    </a>
-                }
-            </div>
-        </aside>
+            @if (Model.NextLessonId.HasValue)
+            {
+                <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">الدرس التالي</a>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>الدرس التالي</button>
+            }
+        </div>
 
-        <!-- Main Content (Video Player) -->
-        <main class="video-main-pro">
-            <div class="video-wrapper">
-                <div class="video-embed-pro">
-                    <iframe src="https://www.youtube.com/embed/@GetYouTubeVideoId(Model.CurrentLesson.YoutubeUrl)?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&color=white"
-                            title="YouTube video player"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                            width="100%"
-                            height="100%"></iframe>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="video-footer d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0 text-white">@Model.CurrentLesson.Title</h2>
-                <div class="d-flex gap-2">
-                    @if (Model.PreviousLessonId.HasValue)
+        <div class="details-tabs mt-4">
+            <ul class="nav nav-tabs" id="detailsTab" role="tablist">
+                <li class="nav-item" role="presentation"><button class="nav-link active" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button">المرفقات</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="homework-tab" data-bs-toggle="tab" data-bs-target="#homework" type="button">الواجب الدراسي</button></li>
+            </ul>
+            <div class="tab-content" id="detailsTabContent">
+                <div class="tab-pane fade show active" id="attachments" role="tabpanel">
+                    @if (Model.LessonDetails.Attachments.Any())
                     {
-                        <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">
-                            <i class="fas fa-arrow-right ms-2"></i> الدرس السابق
-                        </a>
-                    }
-
-                    @if (Model.NextLessonId.HasValue)
-                    {
-                        <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.NextLessonId" class="btn btn-primary">
-                            الدرس التالي <i class="fas fa-arrow-left me-2"></i>
-                        </a>
+                        <ul class="list-unstyled">
+                            @foreach (var attachment in Model.LessonDetails.Attachments)
+                            {
+                                <li class="attachment-item py-2"><a href="@attachment.FilePath" download><i class="fas fa-download me-2"></i> @attachment.FileName</a></li>
+                            }
+                        </ul>
                     }
                     else
                     {
-                        <a asp-controller="Exam" asp-action="Take" asp-route-id="@Model.CourseId" class="btn btn-success">
-                            اذهب إلى الاختبار النهائي <i class="fas fa-award me-2"></i>
-                        </a>
+
+                        <p class="text-white text-center py-4">لا توجد مرفقات لهذا الدرس.</p>
+                    }
+                </div>
+                <div class="tab-pane fade" id="homework" role="tabpanel">
+                    @if (!string.IsNullOrEmpty(Model.CurrentLesson.HomeworkTitle))
+                    {
+                        <div class="homework-card-pro">
+                            <h5 class="mb-2 text-white">@Model.CurrentLesson.HomeworkTitle</h5>
+                            <p class="text-white small">@Model.CurrentLesson.HomeworkDescription</p>
+                            <hr class="my-3" style="border-color: var(--border-color) !important;">
+                            @if (Model.LessonDetails.StudentSubmission != null)
+                            {
+                                <div class="alert alert-success"><h6 class="alert-heading">تم تسليم واجبك!</h6><p class="small mb-0">تاريخ التسليم: @Model.LessonDetails.StudentSubmission.SubmissionDate.ToLocalTime().ToString("g")</p><hr><p class="mb-0">الدرجة: @(Model.LessonDetails.StudentSubmission.Grade?.ToString() ?? "لم يتم التقييم بعد")</p><p class="mb-0">ملاحظات المعلم: @(Model.LessonDetails.StudentSubmission.Feedback ?? "لا يوجد")</p></div>
+                            }
+                            else
+                            {
+                                <form asp-action="SubmitHomework" method="post" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="courseId" value="@Model.CourseId" /><input type="hidden" name="lessonId" value="@Model.CurrentLesson.Id" />
+                                    <div class="mb-3"><label for="homeworkFile" class="form-label small text-white">ارفع ملف الواجب</label><input style="height:0" class="form-control form-control-sm" type="file" name="SubmittedFile" id="homeworkFile" required></div>
+                                    <button type="submit" class="btn see-btn w-100" style="background-color: #1eaad4 !important;  font-weight: bold;">تسليم الواجب</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+
+                        <p class="text-white text-center py-4">لا يوجد واجب لهذا الدرس.</p>
                     }
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const lessonsListItems = document.querySelectorAll('.lesson-item-pro');
+            lessonsListItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const lessonId = this.dataset.lessonId;
+                    window.location.href = `/CoursePlayer/Index/@Model.CourseId?lessonId=${lessonId}`;
+                });
+            });
+        });
+    </script>
+}

@@ -9,6 +9,8 @@
         public string PdfFilePath { get; set; }
         public int Downloads { get; set; }
         public int PageCount { get; set; } 
-        public double Rating { get; set; } 
+        public double Rating { get; set; }
+        public string GradeName { get; set; }
+        public string SubjectName { get; set; }
     }
 }

@@ -30,58 +30,59 @@ namespace Albayan.Areas.Admin.Controllers
 
             var viewModel = new QuestionFormViewModel
             {
-                Question = new Question { ExamId = exam.CourseId },
+                Question = new Question { ExamId = exam.CourseId, NumberOfOptions = 4 }, 
                 ExamId = exam.CourseId,
-                CourseTitle = exam.Course.Title
+                CourseTitle = exam.Course.Title,
             };
+
+            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
+            viewModel.GenerateCorrectAnswerOptions();
 
             return View(viewModel);
         }
-
+    
         // POST: Admin/Questions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuestionFormViewModel viewModel)
         {
+            if (viewModel.Question.NumberOfOptions < 4) ModelState.Remove("Question.OptionD");
+            if (viewModel.Question.NumberOfOptions < 3) ModelState.Remove("Question.OptionC");
+
             ModelState.Remove("CourseTitle");
             ModelState.Remove("Question.Exam");
+
             if (ModelState.IsValid)
             {
                 _context.Add(viewModel.Question);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Exams", new { courseId = viewModel.Question.ExamId });
             }
-            var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.ExamId);
-            if (exam != null)
-            {
-                viewModel.CourseTitle = exam.Course.Title;
-            }
-            viewModel.CorrectAnswerOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "A", Text = "الخيار أ" },
-                new SelectListItem { Value = "B", Text = "الخيار ب" },
-                new SelectListItem { Value = "C", Text = "الخيار ج" },
-                new SelectListItem { Value = "D", Text = "الخيار د" }
-            };
 
+            var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.Question.ExamId);
+            viewModel.CourseTitle = exam?.Course.Title;
+            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
+            viewModel.GenerateCorrectAnswerOptions();
             return View(viewModel);
         }
 
-        // GET: Admin/Questions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
             var question = await _context.Questions.FindAsync(id);
             if (question == null) return NotFound();
-
             var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == question.ExamId);
+            if (exam == null) return NotFound();
+
             var viewModel = new QuestionFormViewModel
             {
                 Question = question,
                 ExamId = exam.CourseId,
-                CourseTitle = exam.Course.Title
+                CourseTitle = exam.Course.Title,
+                NumberOfOptions = question.NumberOfOptions
             };
+
+            viewModel.GenerateCorrectAnswerOptions();
 
             return View(viewModel);
         }
@@ -92,8 +93,13 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, QuestionFormViewModel viewModel)
         {
             if (id != viewModel.Question.Id) return NotFound();
+
+            if (viewModel.Question.NumberOfOptions < 4) ModelState.Remove("Question.OptionD");
+            if (viewModel.Question.NumberOfOptions < 3) ModelState.Remove("Question.OptionC");
+
             ModelState.Remove("CourseTitle");
             ModelState.Remove("Question.Exam");
+
             if (ModelState.IsValid)
             {
                 try
@@ -108,19 +114,11 @@ namespace Albayan.Areas.Admin.Controllers
                 }
                 return RedirectToAction("Index", "Exams", new { courseId = viewModel.Question.ExamId });
             }
-            var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.Question.ExamId);
-            if (exam != null)
-            {
-                viewModel.CourseTitle = exam.Course.Title;
-            }
 
-            viewModel.CorrectAnswerOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "A", Text = "الخيار أ" },
-                new SelectListItem { Value = "B", Text = "الخيار ب" },
-                new SelectListItem { Value = "C", Text = "الخيار ج" },
-                new SelectListItem { Value = "D", Text ="الخيار د" }
-            };
+            var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.Question.ExamId);
+            viewModel.CourseTitle = exam?.Course.Title;
+            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
+            viewModel.GenerateCorrectAnswerOptions();
             return View(viewModel);
         }
 

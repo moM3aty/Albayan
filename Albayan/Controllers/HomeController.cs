@@ -51,10 +51,24 @@ namespace Albayan.Controllers
                 })
                 .ToListAsync();
 
+            var educationalMaterials = await _context.EducationalMaterials
+                .Include(m => m.Grade)
+                .Include(m => m.Subject)
+                .Select(m => new PublicEducationalMaterialViewModel
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Description = m.Description.Length > 100 ? m.Description.Substring(0, 100) + "..." : m.Description,
+                    CoverImageUrl = m.CoverImageUrl,
+                    PageCount = m.PageCount,
+                    GradeName = m.Grade.Name,
+                    SubjectName = m.Subject.Name
+                }).ToListAsync();
             var viewModel = new HomeViewModel
             {
                 Teachers = teachers,
-                Stages = stages
+                Stages = stages,
+                EducationalMaterials = educationalMaterials
             };
 
             return View(viewModel);

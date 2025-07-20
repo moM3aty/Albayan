@@ -14,6 +14,8 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public string Email { get; set; }
         public string GradeName { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsOnline { get; set; }
     }
 
     // ViewModel for the Create/Edit form
@@ -45,6 +47,7 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public double TotalLearningHours { get; set; }
         public double AverageGrade { get; set; }
         public bool IsActive { get; set; }
+        public bool IsOnline { get; set; }
         public int TotalRatings { get; set; }
         public double AverageRating { get; set; }
         public DateTime? LastAccessDate { get; set; }

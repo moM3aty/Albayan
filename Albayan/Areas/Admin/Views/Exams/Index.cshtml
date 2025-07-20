@@ -8,10 +8,10 @@
     <div class="flex justify-between items-center mb-6">
         <div>
             <h2 class="text-3xl font-bold">إدارة اختبار دورة: @Model.CourseTitle</h2>
-            <a asp-controller="Courses" asp-action="Index" class="text-sm text-gray-400 hover:text-white">
+        </div>
+        <a asp-controller="Courses" asp-action="Index" class="secondary-btn text-white px-4 py-2 rounded-lg  text-sm ">
                 <i class="fas fa-arrow-right ml-1"></i> العودة لقائمة الدورات
             </a>
-        </div>
         <div class="flex space-x-2 space-x-reverse">
             <a asp-action="Edit" asp-route-id="@Model.Exam.CourseId" class="secondary-btn px-4 py-2 rounded-lg flex items-center">
                 <i class="fas fa-edit ml-2"></i> تعديل بيانات الاختبار

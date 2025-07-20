@@ -58,18 +58,7 @@
                         <a class="nav-link" href="/#statements">سلسلة البيان</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Blog" asp-action="Index">المدونة</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-center d-flex justify-content-center align-items-center gap-2" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            الدورات
-                        </a>
-                        <ul class="dropdown-menu text-end" aria-labelledby="coursesDropdown">
-                            <li><a class="dropdown-item" asp-controller="Courses" asp-action="Index">الدورات المسجلة</a></li>
-                            <li>
-                                <a class="dropdown-item" asp-controller="Home" asp-action="liveCourses">الدروس المباشرة</a>
-                            </li>
-                        </ul>
+                        <a class="nav-link" asp-controller="Blog" asp-action="index">المدونة</a>
                     </li>
                 </ul>
 
@@ -78,7 +67,7 @@
                 {
                    
                         <div class="d-flex justify-content-center align-items-center me-3 mt-3">
-                            <a class="nav-link fs-1" asp-controller="Account" asp-action="Profile" ><i class="fas fa-user-circle"></i></a>
+                            <a class="nav-link fs-1" asp-controller="Profile" asp-action="index" ><i class="fas fa-user-circle"></i></a>
                         </div>
                     <form class="m-2" asp-controller="Account" asp-action="Logout" method="post">
                             <button type="submit" class="btn btn-login">تسجيل الخروج</button>
@@ -110,7 +99,7 @@
                         <p>تعلم وتطور مع أفضل المعلمين في جميع المواد الدراسية من الصف الأول حتى  الجامعة</p>
                         <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
 
-                                <a class="gradient-btn text-decoration-none" href="~/Home/recordedLessons">
+                                <a class="gradient-btn text-decoration-none" href="~/Account/Login">
                                 <i class="fas fa-play play-icon"></i>
                                 <span>ابدأ التعلم الآن</span>
                             </a>
@@ -154,9 +143,8 @@
                             <li><a href="#stages">المراحل الدراسية</a></li>
                             <li><a href="#teachers">المعلمون</a></li>
                             <li><a href="#statements">سلسلة البيان</a></li>
-                            <li><a href="blog.html">المدونة</a></li>
-                            <li><a href="recordedLessons.html">الدروس المسجلة </a></li>
-                            <li><a href="liveCourses.html">الدروس المباشره </a></li>
+                            <li><a asp-controller="Blog" asp-action="index">المدونة</a></li>
+                            
                         </ul>
                     </div>
                 </div>
@@ -185,5 +173,32 @@
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        @if (User.Identity.IsAuthenticated)
+        {
+                <text>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const connection = new signalR.HubConnectionBuilder()
+                        .withUrl("/presenceHub")
+                        .withAutomaticReconnect()
+                        .build();
+
+                    function start() {
+                        connection.start().catch(err => {
+                            console.error('SignalR Connection Error: ', err);
+                            setTimeout(start, 5000); 
+                        });
+                    }
+
+                    connection.onclose(async () => {
+                        await start();
+                    });
+
+                    start();
+                });
+                </text>
+        }
+    </script>
 </body>
 </html>

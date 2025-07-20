@@ -2,13 +2,13 @@
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
 using Albayan.Models;
+using Albayan.Trackers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,19 +21,25 @@ namespace Albayan.Areas.Admin.Controllers
         private readonly PlatformDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly PresenceTracker _presenceTracker;
 
+        // Constructor with all dependencies
         public StudentsController(PlatformDbContext context,
-                                   UserManager<ApplicationUser> userManager,
-                                   RoleManager<IdentityRole> roleManager)
+                                  UserManager<ApplicationUser> userManager,
+                                  RoleManager<IdentityRole> roleManager,
+                                  PresenceTracker presenceTracker)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _presenceTracker = presenceTracker;
         }
 
         // GET: Admin/Students
         public async Task<IActionResult> Index()
         {
+            var onlineUsers = await _presenceTracker.GetOnlineUsers();
+
             var students = await _context.Students
                 .Include(s => s.Grade)
                 .Select(s => new StudentIndexViewModel
@@ -42,195 +48,16 @@ namespace Albayan.Areas.Admin.Controllers
                     FullName = s.FullName,
                     Email = s.Email,
                     GradeName = s.Grade.Name,
-                    RegistrationDate = s.RegistrationDate
+                    RegistrationDate = s.RegistrationDate,
+                    IsActive = s.IsActive,
+                    IsOnline = onlineUsers.Contains(s.ApplicationUserId)
                 })
                 .ToListAsync();
+
             return View(students);
         }
 
-        public IActionResult Create()
-        {
-            var viewModel = new StudentFormViewModel
-            {
-                Student = new Student { RegistrationDate = DateTime.Now },
-                Grades = new SelectList(_context.Grades, "Id", "Name")
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(StudentFormViewModel viewModel)
-        {
-            ModelState.Remove("Grades");
-            ModelState.Remove("Student.Grade");
-            ModelState.Remove("Student.Certificates");
-            ModelState.Remove("Student.StudentCourses");
-            ModelState.Remove("Student.ApplicationUserId");
-            ModelState.Remove("Student.ApplicationUser");
-            ModelState.Remove("Student.GivenRatings");
-
-            if (!ModelState.IsValid)
-            {
-                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
-                return View(viewModel);
-            }
-
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            var user = new ApplicationUser
-            {
-                UserName = viewModel.Student.Email,
-                Email = viewModel.Student.Email,
-                FullName = viewModel.Student.FullName,
-                PhoneNumber = viewModel.Student.PhoneNumber
-            };
-
-            var result = await _userManager.CreateAsync(user, "Default@123");
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
-
-                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
-                return View(viewModel);
-            }
-
-            try
-            {
-                viewModel.Student.ApplicationUserId = user.Id;
-                viewModel.Student.RegistrationDate = DateTime.Now;
-
-                _context.Students.Add(viewModel.Student);
-                await _context.SaveChangesAsync();
-
-                if (!await _roleManager.RoleExistsAsync("Student"))
-                    await _roleManager.CreateAsync(new IdentityRole("Student"));
-
-                await _userManager.AddToRoleAsync(user, "Student");
-
-                await transaction.CommitAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                await _userManager.DeleteAsync(user);
-
-                ModelState.AddModelError("", "حدث خطأ أثناء إضافة الطالب.");
-                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
-                return View(viewModel);
-            }
-        }
-    
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var student = await _context.Students.FindAsync(id);
-            if (student == null) return NotFound();
-
-            var viewModel = new StudentFormViewModel
-            {
-                Student = student,
-                Grades = new SelectList(_context.Grades, "Id", "Name", student.GradeId)
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, StudentFormViewModel viewModel)
-        {
-            if (id != viewModel.Student.Id)
-                return NotFound();
-
-            ModelState.Remove("Grades");
-            ModelState.Remove("Student.Grade");
-            ModelState.Remove("Student.Certificates");
-            ModelState.Remove("Student.StudentCourses");
-            ModelState.Remove("Student.ApplicationUserId");
-            ModelState.Remove("Student.ApplicationUser");
-            ModelState.Remove("Student.GivenRatings");
-
-            if (!string.IsNullOrEmpty(viewModel.NewPassword))
-            {
-                var user = await _userManager.FindByEmailAsync(viewModel.Student.Email);
-                if (user != null)
-                {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var result = await _userManager.ResetPasswordAsync(user, token, viewModel.NewPassword);
-                    if (!result.Succeeded)
-                    {
-                        foreach (var error in result.Errors)
-                            ModelState.AddModelError("", error.Description);
-
-                        viewModel.Grades = await _context.Grades
-     .OrderBy(g => g.Name)
-     .Select(g => new SelectListItem
-     {
-         Value = g.Id.ToString(),
-         Text = g.Name
-     }).ToListAsync();
-
-                        return View(viewModel);
-                    }
-                }
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(viewModel.Student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Students.Any(e => e.Id == viewModel.Student.Id))
-                        return NotFound();
-                    else
-                        throw;
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            viewModel.Grades = await _context.Grades
-                     .OrderBy(g => g.Name)
-                     .Select(g => new SelectListItem
-                     {
-                         Value = g.Id.ToString(),
-                         Text = g.Name
-                     }).ToListAsync();
-
-            return View(viewModel);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var student = await _context.Students
-                .Include(s => s.Grade)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (student == null) return NotFound();
-            return View(student);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var student = await _context.Students.FindAsync(id);
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
+        // GET: Admin/Students/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -242,33 +69,10 @@ namespace Albayan.Areas.Admin.Controllers
 
             if (student == null) return NotFound();
 
-            // تحقق من المستخدم المرتبط في الهوية
             var user = await _userManager.FindByIdAsync(student.ApplicationUserId);
-
-            // تحديث الحالة وتاريخ آخر دخول إن وجد
-            bool isModified = false;
-
-            if (user != null)
+            if (user != null && user.LastLoginDate.HasValue)
             {
-                student.IsActive = true;
-                isModified = true;
-
-                if (user.LastLoginDate != null)
-                {
-                    student.LastAccessDate = user.LastLoginDate.Value;
-                }
-            }
-            else
-            {
-                student.IsActive = false;
-                isModified = true;
-            }
-
-            // حفظ التغييرات في حالة التحديث
-            if (isModified)
-            {
-                _context.Update(student);
-                await _context.SaveChangesAsync();
+                student.LastAccessDate = user.LastLoginDate.Value;
             }
 
             var studentCourses = await _context.StudentCourses
@@ -331,8 +135,229 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
+        // GET: Admin/Students/Create
+        public IActionResult Create()
+        {
+            var viewModel = new StudentFormViewModel
+            {
+                Student = new Student(),
+                Grades = new SelectList(_context.Grades, "Id", "Name")
+            };
+            return View(viewModel);
+        }
 
+        // POST: Admin/Students/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(StudentFormViewModel viewModel)
+        {
 
+            ModelState.Remove("Grades");
+            ModelState.Remove("Student.Grade");
+            ModelState.Remove("Student.ApplicationUser");
+            ModelState.Remove("Student.Certificates");
+            ModelState.Remove("Student.StudentCourses");
+            ModelState.Remove("Student.GivenRatings");
+            ModelState.Remove("Student.ApplicationUserId");
+            ModelState.Remove("Student.HomeworkSubmissions");
 
+            if (!ModelState.IsValid)
+            {
+                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
+                return View(viewModel);
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var user = new ApplicationUser
+            {
+                UserName = viewModel.Student.Email,
+                Email = viewModel.Student.Email,
+                FullName = viewModel.Student.FullName,
+                PhoneNumber = viewModel.Student.PhoneNumber,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, viewModel.Password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                await transaction.RollbackAsync();
+                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
+                return View(viewModel);
+            }
+
+            try
+            {
+                viewModel.Student.ApplicationUserId = user.Id;
+                viewModel.Student.RegistrationDate = DateTime.Now;
+                viewModel.Student.IsActive = true;
+
+                _context.Students.Add(viewModel.Student);
+                await _context.SaveChangesAsync();
+
+                if (!await _roleManager.RoleExistsAsync("Student"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Student"));
+                }
+                await _userManager.AddToRoleAsync(user, "Student");
+
+                await transaction.CommitAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                await _userManager.DeleteAsync(user);
+
+                ModelState.AddModelError("", "An unexpected error occurred while adding the student.");
+                viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
+                return View(viewModel);
+            }
+        }
+
+        // GET: Admin/Students/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var student = await _context.Students.FindAsync(id);
+            if (student == null) return NotFound();
+
+            var viewModel = new StudentFormViewModel
+            {
+                Student = student,
+                Grades = new SelectList(_context.Grades, "Id", "Name", student.GradeId)
+            };
+            return View(viewModel);
+        }
+
+        // POST: Admin/Students/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, StudentFormViewModel viewModel)
+        {
+            if (id != viewModel.Student.Id)
+            {
+                return NotFound();
+            }
+
+            ModelState.Remove("Grades");
+            ModelState.Remove("Student.Grade");
+            ModelState.Remove("Student.ApplicationUser");
+            ModelState.Remove("Student.Certificates");
+            ModelState.Remove("Student.StudentCourses");
+            ModelState.Remove("Student.GivenRatings");
+            ModelState.Remove("Student.HomeworkSubmissions");
+
+            ModelState.Remove("Password");
+
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(viewModel.NewPassword))
+                {
+                    var user = await _userManager.FindByIdAsync(viewModel.Student.ApplicationUserId);
+                    if (user != null)
+                    {
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                        var result = await _userManager.ResetPasswordAsync(user, token, viewModel.NewPassword);
+                        if (!result.Succeeded)
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                ModelState.AddModelError("", "Password update failed: " + error.Description);
+                            }
+                            viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
+                            return View(viewModel);
+                        }
+                    }
+                }
+
+                try
+                {
+                    var studentToUpdate = await _context.Students.FindAsync(id);
+                    if (studentToUpdate == null) return NotFound();
+
+                    studentToUpdate.FullName = viewModel.Student.FullName;
+                    studentToUpdate.Email = viewModel.Student.Email;
+                    studentToUpdate.PhoneNumber = viewModel.Student.PhoneNumber;
+                    studentToUpdate.GradeId = viewModel.Student.GradeId;
+                    studentToUpdate.City = viewModel.Student.City;
+                    studentToUpdate.Country = viewModel.Student.Country;
+                    studentToUpdate.IsActive = viewModel.Student.IsActive;
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Students.Any(e => e.Id == viewModel.Student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
+            return View(viewModel);
+        }
+
+        // GET: Admin/Students/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var student = await _context.Students
+                .Include(s => s.Grade)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (student == null) return NotFound();
+            return View(student);
+        }
+
+        // POST: Admin/Students/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student != null)
+            {
+                var user = await _userManager.FindByIdAsync(student.ApplicationUserId);
+
+                _context.Students.Remove(student);
+                await _context.SaveChangesAsync();
+
+                if (user != null)
+                {
+                    await _userManager.DeleteAsync(user);
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: To toggle the student's active status
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student != null)
+            {
+                student.IsActive = !student.IsActive;
+
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -19,6 +19,8 @@
                     <th class="p-4 font-semibold">البريد الإلكتروني</th>
                     <th class="p-4 font-semibold">الصف الدراسي</th>
                     <th class="p-4 font-semibold">تاريخ التسجيل</th>
+                    <th class="p-4 font-semibold">حالة الاتصال</th>
+                    <th class="p-4 font-semibold">الحالة</th>
                     <th class="p-4 font-semibold">إجراءات</th>
                 </tr>
             </thead>
@@ -30,7 +32,41 @@
                         <td class="p-4">@item.Email</td>
                         <td class="p-4">@item.GradeName</td>
                         <td class="p-4">@item.RegistrationDate.ToString("yyyy/MM/dd")</td>
+                        <td class="p-4">
+                            @if (item.IsOnline)
+                            {
+                                <span class="flex items-center text-green-400">
+                                    <span class="h-2.5 w-2.5 bg-green-500 rounded-full mr-2"></span>
+                                    متصل الآن
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="flex items-center text-gray-500">
+                                    <span class="h-2.5 w-2.5 bg-gray-600 rounded-full mr-2"></span>
+                                    غير متصل
+                                </span>
+                            }
+                        </td>
+                        <td class="p-4">
+                            @if (item.IsActive)
+                            {
+                                <span class="px-2 py-1 font-semibold text-xs leading-tight text-green-100 bg-green-700 rounded-full">مفعل</span>
+                            }
+                            else
+                            {
+                                <span class="px-2 py-1 font-semibold text-xs leading-tight text-red-100 bg-red-700 rounded-full">معطل</span>
+                            }
+                        </td>
                         <td class="p-4 space-x-2 space-x-reverse">
+                            <form asp-action="ToggleStatus" asp-route-id="@item.Id" method="post" class="inline-block">
+                                @Html.AntiForgeryToken() 
+                                <button type="submit"
+                                        class="@(item.IsActive ? "text-red-400 hover:text-red-300" : "text-green-400 hover:text-green-300")"
+                                        title="@(item.IsActive ? "تعطيل الحساب" : "تفعيل الحساب")">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                            </form>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-400 hover:text-blue-300" title="عرض الملف الشخصي"><i class="fas fa-user"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>

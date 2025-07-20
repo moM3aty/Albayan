@@ -10,6 +10,7 @@ wwwroot\images\about-3.jpg
 wwwroot\images\about.png
 wwwroot\images\aboutus.png
 wwwroot\images\arabic.jpg
+wwwroot\images\certificate.png
 wwwroot\images\english.jpg
 wwwroot\images\header1.png
 wwwroot\images\islamic.jpg
@@ -87,17 +88,65 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\attachments\1d8bb51c-11b0-4373-9e4d-761ae2f8bc60_CV-M-AboElmaaty-Developer.pdf
+wwwroot\uploads\attachments\4de43b75-67a3-4583-aa96-54fa5828ffb6_Task.pdf
+wwwroot\uploads\attachments\61e21ce5-2748-40b2-a9a4-9e814022c722_Task.pdf
+wwwroot\uploads\attachments\74299335-32d1-4ae8-90a5-f55570b19589_CV-M-AboElmaaty-IT.docx
+wwwroot\uploads\attachments\9caace44-6afd-4d9d-900e-5350c03f09c4_Task.pdf
+wwwroot\uploads\attachments\d60ec54d-fe6f-4168-9262-6c058b96507e_Task.pdf
+wwwroot\uploads\attachments\ffe2e7e8-ebec-436d-ad79-34bbc9d8bb96_Task.pdf
+wwwroot\uploads\blog\11750c88-5aea-4d6d-9668-91cab7596dc0_aboutus.png
+wwwroot\uploads\blog\40b674d0-5238-4e2a-bb34-a5708c0a4d91_aboutus.png
+wwwroot\uploads\blog\428f8336-69c7-442a-964a-27c9bcb1e9fd_aboutus.png
 wwwroot\uploads\blog\d050668b-c704-4000-ae36-5d0a40f01cac_done.png
+wwwroot\uploads\blog\d85b2860-a8a1-4f5e-b2af-b22aeeccd3fd_aboutus.png
 wwwroot\uploads\blog\ed9de0c5-769f-4176-b9a4-0c2c2313dc25_teacher1.jpg
+wwwroot\uploads\courses\01b66a87-3cb1-48c8-bb7c-ddaf36a944a9_science.jpg
 wwwroot\uploads\courses\9a018fa5-5af9-45bf-a859-b5230fa7afc5_done.png
+wwwroot\uploads\courses\c54cfce0-b6d7-4f99-9e09-c0180111a148_arabic.jpg
+wwwroot\uploads\courses\cfdac6d0-3f19-4ae0-84ef-fcf7716d65eb_arabic.jpg
+wwwroot\uploads\courses\d6adad02-7a55-443c-85a2-c29d3ecbaff8_science.jpg
+wwwroot\uploads\courses\e0111eaf-619b-4575-8849-a05a572cb7da_teacher1.jpg
 wwwroot\uploads\courses\e67dec43-2554-43a5-8118-b7c180a4b799_516871983_17979337166848023_1458859220823665386_n.jpg
+wwwroot\uploads\livelessons\0f2827e2-6c2d-4544-b34b-405e60d45d51_islamic.jpg
+wwwroot\uploads\livelessons\406924c3-273f-48c2-a43c-47c10940c932_english.jpg
+wwwroot\uploads\livelessons\46b8823d-9483-4321-9466-5440546a5215_arabicNew.jpg
+wwwroot\uploads\livelessons\5441fa2d-572d-43a9-a746-b7d6d102b27a_maths.jpeg
+wwwroot\uploads\livelessons\6d3b03b5-4de1-4fce-ba0f-3f1cee7d00f6_new.jpeg
+wwwroot\uploads\livelessons\6d922564-0cbe-4cdb-8477-693486b7a9bb_maths.jpeg
+wwwroot\uploads\livelessons\751ce4f8-e852-4545-b109-3bb61ce2ba91_science.jpg
+wwwroot\uploads\livelessons\90900682-5ab9-4cb0-bd12-d785d7b6df5b_arabicNew.jpg
+wwwroot\uploads\livelessons\96f823b7-b4e9-4117-b9c8-1efe6c00d1ff_science.jpg
+wwwroot\uploads\livelessons\9b7bd68f-1b1d-48aa-84b4-c4dcb5676ca5_mathnew.jpeg
+wwwroot\uploads\livelessons\acbd810b-8c08-44ba-8c94-b5a11de634f4_science.jpg
 wwwroot\uploads\livelessons\ad9a4de1-b517-48ba-a266-9d7e7fd3f181_done.png
+wwwroot\uploads\livelessons\afc45583-afd5-4489-ac46-5b829a0c0f8f_islamic.jpg
+wwwroot\uploads\livelessons\c0c3ef23-6edd-4b77-a2b2-c3bcaaeb7b44_arabic.jpg
+wwwroot\uploads\livelessons\e5b878fb-34c5-4308-9fbe-0c1638399583_new.jpeg
+wwwroot\uploads\livelessons\edc6ce4c-3d01-4cae-b8c5-8d1ee7cf1194_science.jpg
 wwwroot\uploads\livelessons\eeb9a8bc-4531-4eb7-8794-7f50f83d9410_done.png
+wwwroot\uploads\materials_covers\09f0bcee-8058-401d-972b-aeb15b48b914_maths.jpeg
+wwwroot\uploads\materials_covers\89f9337a-9b85-4625-9036-044e3552dd39_social-studies.jpg
+wwwroot\uploads\materials_covers\9dda042a-aefd-49f7-8930-57940e709443_arabic.jpg
+wwwroot\uploads\materials_covers\ae0da77c-549f-46fa-a107-56dfca9928dc_aboutus.png
+wwwroot\uploads\materials_covers\b892be8b-5ef8-4972-b546-4cbec433575f_islamic.jpg
+wwwroot\uploads\materials_covers\c638e130-c780-46e7-a5b9-fba89e65b96f_english.jpg
+wwwroot\uploads\materials_covers\eab9941a-e9d9-4bdb-8bab-e810f7763189_islamic.jpg
+wwwroot\uploads\materials_covers\f67a92be-af84-4502-8dab-ff07f3cc4fd5_science.jpg
+wwwroot\uploads\materials_covers\fe868e90-e4e1-49c0-90b1-29af23e05b0e_arabic.jpg
 wwwroot\uploads\subjects\87bff2ad-080c-4c91-aa9c-ff4ae6cf03e2_488896026_17969421149848023_4710239618675035533_n.jpg
 wwwroot\uploads\subjects\c5878810-2527-4c4d-b05c-f1fe15ff0c86_518853184_17979734183848023_8396945494660104144_n.jpg
 wwwroot\uploads\subjects\eb740a0c-703f-437a-8614-8b72658a996b_done.png
+wwwroot\uploads\submissions\480ff91e-4095-4475-9a5f-d240f2d3143d_1d8bb51c-11b0-4373-9e4d-761ae2f8bc60_CV-M-AboElmaaty-Developer.pdf
+wwwroot\uploads\submissions\55f54a9e-aefd-46b5-8840-5be0b5709166_1d8bb51c-11b0-4373-9e4d-761ae2f8bc60_CV-M-AboElmaaty-Developer.pdf
+wwwroot\uploads\submissions\597afef9-97f1-44f5-b208-c077603b6425_Task.pdf
+wwwroot\uploads\teachers\03abd522-48d9-455d-8cbd-4f55ee60d892_teacher1.jpg
 wwwroot\uploads\teachers\0d957380-1efc-461f-90ed-68dcc5826aac_done.png
+wwwroot\uploads\teachers\21a82241-c92d-494f-88d0-bb1627aa577b_WhatsApp Image 2025-07-16 at 1.12.30 AM (1).jpeg
+wwwroot\uploads\teachers\3a4e867c-0e46-40fc-83f2-904537549a40_WhatsApp Image 2025-07-16 at 1.12.30 AM.jpeg
+wwwroot\uploads\teachers\4516d087-0ae9-48cc-af6b-7d9509e1af92_teacher1.jpg
 wwwroot\uploads\teachers\5e6f4520-0d35-4cf2-82fe-1552832f106a_teacher1.jpg
+wwwroot\uploads\teachers\6fd454f8-e673-4cd9-9f74-e7827e70aee2_teacher1.jpg
 wwwroot\uploads\teachers\7e153d25-41a4-4025-b244-d3190fb5a61a_teacher1.jpg
 wwwroot\uploads\teachers\c8dcf29d-24de-4fa7-bcce-e73ae9660c8b_teacher1.jpg
 wwwroot\webfonts\fa-brands-400.ttf
@@ -108,73 +157,73 @@ wwwroot\webfonts\fa-solid-900.ttf
 wwwroot\webfonts\fa-solid-900.woff2
 wwwroot\webfonts\fa-v4compatibility.ttf
 wwwroot\webfonts\fa-v4compatibility.woff2
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\all.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\bootstrap.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\main.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\css\site.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\favicon.ico
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\font\alfont_com_AlFont_com_Hayah-1.otf
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\bootstrap.bundle.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\login.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\main.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\signup.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\js\site.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery-validation\LICENSE.md
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.js
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.map
-J:\Developer\GMT Web\Albayan\Albayan\wwwroot\lib\jquery\LICENSE.txt
+E:\Developer\Github\Albayan\Albayan\wwwroot\css\all.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\css\bootstrap.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\css\main.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\css\site.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\favicon.ico
+E:\Developer\Github\Albayan\Albayan\wwwroot\font\alfont_com_AlFont_com_Hayah-1.otf
+E:\Developer\Github\Albayan\Albayan\wwwroot\js\bootstrap.bundle.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\js\login.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\js\main.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\js\signup.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\js\site.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery-validation\LICENSE.md
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.min.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.js
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\dist\jquery.slim.min.map
+E:\Developer\Github\Albayan\Albayan\wwwroot\lib\jquery\LICENSE.txt

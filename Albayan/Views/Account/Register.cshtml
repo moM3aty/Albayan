@@ -49,33 +49,29 @@
                                     </select>
                                     <span asp-validation-for="GradeId" class="error-msg text-danger"></span>
                                 </div>
-                                <div class="form-group">
+                                <div class="col-md-6">
                                     <label asp-for="City"></label>
-                                    <input asp-for="City" class="form-control" />
+                                    <input asp-for="City" class="w-100" placeholder="المدينة" />
                                 </div>
-
-                                <div class="form-group">
+                                <div class="col-md-6">
                                     <label asp-for="Country"></label>
-                                    <input asp-for="Country" class="form-control" />
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="password-field position-relative">
-                                    <label asp-for="Password"></label>
-                                    <input asp-for="Password" class="w-100" placeholder="ادخل الرقم السري" />
-                                    <i class="fas fa-eye toggle-password"></i>
-
-                                    <span asp-validation-for="Password" class="error-msg text-danger"></span>
-                                </div>
+                                    <input asp-for="Country" class="w-100" placeholder="الدولة" />
                                 </div>
                                 <div class="col-12">
                                     <div class="password-field position-relative">
-                                    <label asp-for="ConfirmPassword"></label>
-                                    <input asp-for="ConfirmPassword" class="w-100" placeholder="تأكيد الرقم السري" />
-                                    <i class="fas fa-eye toggle-password"></i>
-
-                                    <span asp-validation-for="ConfirmPassword" class="error-msg text-danger"></span>
+                                        <label asp-for="Password"></label>
+                                        <input asp-for="Password" class="w-100" placeholder="ادخل الرقم السري" />
+                                        <i class="fas fa-eye toggle-password"></i>
+                                        <span asp-validation-for="Password" class="error-msg text-danger"></span>
+                                    </div>
                                 </div>
+                                <div class="col-12">
+                                    <div class="password-field position-relative">
+                                        <label asp-for="ConfirmPassword"></label>
+                                        <input asp-for="ConfirmPassword" class="w-100" placeholder="تأكيد الرقم السري" />
+                                        <i class="fas fa-eye toggle-password"></i>
+                                        <span asp-validation-for="ConfirmPassword" class="error-msg text-danger"></span>
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-login w-100">انشئ حسابك</button>
@@ -89,7 +85,6 @@
                         </form>
                     </div>
                     <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-login w-100 my-5">العوده الى الرئيسية</a>
-
                 </div>
                 <div class="col-md-6">
                     <div class="img">
@@ -105,7 +100,7 @@
             const togglePasswordIcons = document.querySelectorAll('.toggle-password');
             togglePasswordIcons.forEach(icon => {
                 icon.addEventListener('click', function() {
-                    const passwordInput = this.previousElementSibling;
+                    const passwordInput = this.closest('.password-field').querySelector('input');
                     if (passwordInput.type === 'password') {
                         passwordInput.type = 'text';
                         this.classList.remove('fa-eye');
@@ -114,6 +109,32 @@
                         passwordInput.type = 'password';
                         this.classList.remove('fa-eye-slash');
                         this.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            function toArabicNumerals(str) {
+                if (str === null || str === undefined) return '';
+                return str.toString()
+                    .replace(/0/g, '٠')
+                    .replace(/1/g, '١')
+                    .replace(/2/g, '٢')
+                    .replace(/3/g, '٣')
+                    .replace(/4/g, '٤')
+                    .replace(/5/g, '٥')
+                    .replace(/6/g, '٦')
+                    .replace(/7/g, '٧')
+                    .replace(/8/g, '٨')
+                    .replace(/9/g, '٩');
+            }
+
+            const elementsToConvert = document.querySelectorAll('h1, h2, h3, h4, h5, p, span, a, li, button, label, option');
+            elementsToConvert.forEach(el => {
+                Array.from(el.childNodes).forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        if (/\d/.test(node.textContent)) {
+                            node.textContent = toArabicNumerals(node.textContent);
+                        }
                     }
                 });
             });

@@ -41,6 +41,14 @@
                 </div>
             </div>
 
+            <div>
+                <label asp-for="LiveLesson.GradeId" class="block mb-2 text-sm font-medium"></label>
+                <select asp-for="LiveLesson.GradeId" class="input-style w-full p-2.5" asp-items="@Model.Grades">
+                    <option value="">-- اختر الصف الدراسي --</option>
+                </select>
+                <span asp-validation-for="LiveLesson.GradeId" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label asp-for="LiveLesson.StartTime" class="block mb-2 text-sm font-medium">موعد البدء</label>

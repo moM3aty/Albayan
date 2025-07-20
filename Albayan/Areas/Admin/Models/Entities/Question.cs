@@ -16,14 +16,15 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Required(ErrorMessage = "الخيار (ب) مطلوب")]
         public string OptionB { get; set; }
 
-        [Required(ErrorMessage = "الخيار (ج) مطلوب")]
-        public string OptionC { get; set; }
-
-        [Required(ErrorMessage = "الخيار (د) مطلوب")]
-        public string OptionD { get; set; }
+        public string? OptionC { get; set; }
+        public string? OptionD { get; set; }
 
         [Required(ErrorMessage = "يجب تحديد الإجابة الصحيحة")]
         public string CorrectAnswer { get; set; }
+
+        [Display(Name = "عدد الاختيارات")]
+        [Range(2, 4)]
+        public int NumberOfOptions { get; set; } = 4; 
 
         public int ExamId { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿@model Albayan.Areas.Admin.Models.Entities.Certificate
+@using Albayan.Helpers
 
 @{
     Layout = null;
@@ -6,156 +7,208 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
     <meta charset="utf-8" />
-    <title>شهادة إتمام دورة</title>
+    <title>شهادة إتمام دورة - @Model.Course.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="~/images/logo.png" type="image/x-icon">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/all.min.css" rel="stylesheet" />
     <style>
         @@font-face {
             font-family: 'Hayah';
-            src: url('~/font/alfont_com_AlFont_com_Hayah-1.otf') format('opentype');
+            src: url('/font/alfont_com_AlFont_com_Hayah-1.otf') format('opentype');
         }
+
+        body {
+            background-color: #0d121b;
+            font-family: 'Hayah', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .print-button-container {
+            margin-bottom: 20px;
+        }
+
+        .print-btn {
+            background-color: #1eaad4;
+            border: none;
+            color: #fff;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+            .print-btn:hover {
+                background-color: #1895b8;
+                color:#fff;
+            }
+
+        .certificate-frame {
+            background-image: url('/images/certificate.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            max-width: 1100px; 
+            aspect-ratio: 1.414 / 1; 
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .certificate-content {
+            color: #212529;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            position: relative; 
+        }
+
+        .certificate-logo {
+            position: absolute;
+            top: 13%;
+            left: 14.8%;
+            transform: translateX(-50%);
+            width: 100px;
+        }
+
+        .certificate-text-block {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+        }
+
+        .certificate-text {
+            font-size: 1.9rem;
+            line-height: 1.9;
+            color: #343a40;
+        }
+
+            .certificate-text span {
+                color: #08386d;
+                font-weight: bold;
+            }
+
+        .issue-date {
+            margin-top: 1.1rem;
+            font-size: 1.6rem;
+        }
+
+        .signature-section {
+            position: absolute;
+            bottom: 15%;
+            width: 85%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .signature-block {
+            text-align: center;
+        }
+
+            .signature-block p {
+                margin-bottom: 5px;
+                font-size: 1.6rem;
+            }
+
+            .signature-block hr {
+                border-top: 1px solid #08386d;
+                width: 180px;
+                margin: 5px auto;
+            }
 
         @@page {
             size: A4 landscape;
             margin: 0;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Hayah', sans-serif;
-            color: #1a1a1a;
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .certificate {
-            background: #fffdfa;
-            color: #1a1a1a;
-            border: 14px double #d4af37;
-            border-radius: 30px;
-            padding: 20px 50px;
-            width: 1120px;
-            height: 793px;
-            text-align: center;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.25);
-            box-sizing: border-box;
-            position: relative;
-            background-size: cover, cover;
-            background-repeat: no-repeat, no-repeat;
-            background-position: center, center;
-        }
-
-        .certificate h1 {
-            font-size: 42px;
-            margin: 0px;
-            color: #b38f00;
-        }
-
-        .certificate h2 {
-            font-size: 30px;
-            margin: 25px 0 15px;
-                color: #08376c;
-        }
-
-        .certificate p {
-            font-size: 22px;
-            margin: 10px 0;
-            line-height: 1.9;
-        }
-
-        .highlight {
-            color: #b38f00;
-            font-weight: bold;
-        }
-
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 60px;
-            padding: 0 80px;
-        }
-
-        .signatures div {
-            text-align: center;
-            width: 45%;
-        }
-
-        .print-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: #d4af37;
-            color: white;
-            padding: 14px 22px;
-            border-radius: 10px;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-        }
-
         @@media print {
-            .print-button {
-                display: none;
-            }
             body {
-                background: none;
+                background-color: #fff !important;
+                padding: 0;
+                margin: 0;
+            }
+
+            .print-button-container {
+                display: none !important;
+            }
+
+            .certificate-page-container {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .certificate-frame {
+                width: 100% !important;
+                height: 100% !important;
+                max-width: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                aspect-ratio: unset;
+                /* Force printing of background image */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
     </style>
 </head>
 <body>
-    <button class="print-button" onclick="window.print()">طباعة الشهادة</button>
+    <div class="print-button-container">
+        <button class="btn print-btn" style="background-color:#08386d" onclick="window.print()">
+            <i class="fas fa-print me-2"></i> طباعة الشهادة
+        </button>
+    </div>
 
-    <div class="certificate" id="certificate">
-        <img src="~/images/logo.png" alt="شعار المنصة" style="width: 110px; margin-bottom: 15px;" />
-        <h1>منصة البيان التعليمية</h1>
-        <p>تمنح هذه الشهادة إلى</p>
-        <h2 class="highlight">@Model.Student.FullName</h2>
-        <p>وذلك لاجتيازه دورة</p>
-        <h2>"@Model.Course.Title"</h2>
-        <p>
-            بتقدير <span class="highlight" id="grade-percentage">@Model.GradePercentage<span>%</span></span>
-            وبواقع <span class="highlight">@Model.Course.TotalHours</span> ساعة تدريبية
-        </p>
-        <p>تاريخ الإصدار: <span class="highlight">@Model.IssueDate.ToString("yyyy/MM/dd")</span></p>
+    <div class="certificate-frame">
+        <div class="certificate-content" id="certificate">
+            <img src="~/images/logo.png" alt="شعار المنصة" class="certificate-logo">
 
-        <div class="signatures">
-            <div>
-                <p><strong>@Model.Course.Teacher.FullName</strong></p>
-                <hr style="width: 170px; border-top: 2px solid #d4af37;" />
-                <p>مدرب الدورة</p>
+            <div class="certificate-text-block">
+                <p class="certificate-text">
+                    تمنح هذه الشهادة إلى <span>@Model.Student.FullName</span>
+                </p>
+                <p class="certificate-text">
+                    وذلك لإنجازه دورة <span>@Model.Course.Title</span> بتقدير <span>@Model.GradePercentage%</span> وبواقع <span>@Model.Course.TotalHours</span> ساعة تدريبية.
+                </p>
+                <p class="issue-date">تاريخ الإصدار: @Model.IssueDate.ToString("yyyy/MM/dd")</p>
             </div>
-            <div>
-                <p><strong>د. طلعت ناجح</strong></p>
-                <hr style="width: 170px; border-top: 2px solid #d4af37;" />
-                <p>المشرف العام</p>
+
+            <div class="signature-section">
+                <div class="signature-block">
+                    <p style="color:#08386d;">د. طلعت ناجح</p>
+                    <hr>
+                    <p >المشرف العام</p>
+                </div>
+                <div class="signature-block">
+                    <p style="color:#08386d;" >@Model.Course.Teacher.FullName</p>
+                    <hr>
+                    <p >مدرب الدورة</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const arabicNumbers = str => str.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
-        document.querySelectorAll('#certificate *').forEach(el => {
-            if (el.children.length === 0 && el.textContent.trim() !== '') {
-                el.textContent = arabicNumbers(el.textContent);
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const arabicNumbers = str => str.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+            document.querySelectorAll('#certificate span, #certificate p').forEach(el => {
+                if (el.children.length === 0 && el.textContent.trim() !== '') {
+                    el.innerHTML = el.innerHTML.replace(/(\d+%?|\d+\/\d+\/\d+)/g, (match) => arabicNumbers(match));
+                }
+            });
         });
-        const percentageSpan = document.getElementById('grade-percentage');
-        if (percentageSpan) {
-            percentageSpan.textContent = arabicNumbers(percentageSpan.textContent);
-        }
     </script>
 </body>
 </html>

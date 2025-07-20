@@ -30,6 +30,7 @@ namespace Albayan.Areas.Admin.Controllers
             var courses = await _context.Courses
                 .Include(c => c.Teacher)
                 .Include(c => c.Subject)
+                .Include(c => c.Grade) 
                 .Include(c => c.Lessons)
                 .Select(c => new CourseIndexViewModel
                 {
@@ -37,12 +38,14 @@ namespace Albayan.Areas.Admin.Controllers
                     Title = c.Title,
                     TeacherName = c.Teacher.FullName,
                     SubjectName = c.Subject.Name,
+                    GradeName = c.Grade.Name, 
                     CoverImageUrl = c.CoverImageUrl,
                     LessonsCount = c.Lessons.Count()
                 })
                 .ToListAsync();
             return View(courses);
         }
+
 
         // GET: Admin/Courses/Create
         public IActionResult Create()
@@ -51,7 +54,8 @@ namespace Albayan.Areas.Admin.Controllers
             {
                 Course = new Course(),
                 Teachers = new SelectList(_context.Teachers, "Id", "FullName"),
-                Subjects = new SelectList(_context.Subjects, "Id", "Name")
+                Subjects = new SelectList(_context.Subjects, "Id", "Name"),
+                Grades = new SelectList(_context.Grades, "Id", "Name")
             };
             return View(viewModel);
         }
@@ -63,6 +67,8 @@ namespace Albayan.Areas.Admin.Controllers
         {
             ModelState.Remove("Subjects");
             ModelState.Remove("Teachers");
+            ModelState.Remove("Grades");
+            ModelState.Remove("Course.Grade");
             ModelState.Remove("Course.Exam");
             ModelState.Remove("Course.Lessons");
             ModelState.Remove("Course.Subject");
@@ -70,6 +76,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Course.Teacher");
             ModelState.Remove("Course.StudentCourses");
             ModelState.Remove("Course.CoverImageUrl");
+
 
             if (ModelState.IsValid)
             {
@@ -84,25 +91,35 @@ namespace Albayan.Areas.Admin.Controllers
             }
             viewModel.Teachers = new SelectList(_context.Teachers, "Id", "FullName", viewModel.Course.TeacherId);
             viewModel.Subjects = new SelectList(_context.Subjects, "Id", "Name", viewModel.Course.SubjectId);
+            viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Course.GradeId);
             return View(viewModel);
         }
 
         // GET: Admin/Courses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var course = await _context.Courses.FindAsync(id);
-            if (course == null) return NotFound();
+            if (course == null)
+            {
+                return NotFound();
+            }
 
             var viewModel = new CourseFormViewModel
             {
                 Course = course,
-                Teachers = new SelectList(_context.Teachers, "Id", "FullName", course.TeacherId),
-                Subjects = new SelectList(_context.Subjects, "Id", "Name", course.SubjectId)
+                Teachers = new SelectList(await _context.Teachers.ToListAsync(), "Id", "FullName", course.TeacherId),
+                Subjects = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name", course.SubjectId),
+                Grades = new SelectList(await _context.Grades.ToListAsync(), "Id", "Name", course.GradeId)
             };
+
             return View(viewModel);
         }
+
 
         // POST: Admin/Courses/Edit/5
         [HttpPost]
@@ -114,6 +131,8 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("CoverImage");
             ModelState.Remove("Subjects");
             ModelState.Remove("Teachers");
+            ModelState.Remove("Grades");
+            ModelState.Remove("Course.Grade");
             ModelState.Remove("Course.Exam");
             ModelState.Remove("Course.Lessons");
             ModelState.Remove("Course.Subject");
@@ -151,6 +170,7 @@ namespace Albayan.Areas.Admin.Controllers
             }
             viewModel.Teachers = new SelectList(_context.Teachers, "Id", "FullName", viewModel.Course.TeacherId);
             viewModel.Subjects = new SelectList(_context.Subjects, "Id", "Name", viewModel.Course.SubjectId);
+            viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Course.GradeId);
             return View(viewModel);
         }
 

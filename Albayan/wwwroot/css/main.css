@@ -384,7 +384,6 @@ z-index: 2;
   height: 100%;
   border-radius: 12px 12px 0 0;
   display: block;
-  object-fit: cover;
 }
 
 .inner .img .badge, .course .img .badge {
@@ -560,7 +559,23 @@ z-index: 2;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
-
+.see-btn {
+    background-color: transparent;
+    margin-top: 15px;
+    border: 1px solid #3f8bb4;
+    padding: 10px 15px;
+    font-family: "hayah";
+    border-radius: 30px;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+    .see-btn:hover {
+        background-color: #256588;
+        color:#fff;
+    }
 .vision .card,.profile .card{
   height: 100%;
   background-color: transparent;
@@ -712,7 +727,10 @@ z-index: 2;
       color: #17aeff;
       font-size: 1.2rem;
     }
-
+.icons i {
+    color: #17aeff;
+    font-size: 1.2rem;
+}
 
 .nav-tabs{
   border-bottom: none;
@@ -1049,7 +1067,6 @@ z-index: 2;
 }
 .profile .course-card .img img{
   height: 100%;
-    object-fit: cover;
 }
 .profile .course-card h3{
   color: #fff;
@@ -1300,7 +1317,6 @@ footer {
         .teacher-info .img img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
             border-radius: 50%;
         }
 
@@ -1348,4 +1364,98 @@ footer {
     .teacher-info .img {
         margin-right: 200px;
     }
+}
+/* Rating Stars */
+    .rating-card {
+        max-width: 450px;
+        border-radius: 20px 20px 0px 0px;
+        padding: 40px;
+        border: 1px solid #17aeff;
+        transition: all 0.5s ease-in-out;
+    }
+
+    .rating-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .rating-card h3 {
+        color: #05a8ff;
+        font-size: 2rem;
+    }
+
+    .rating-stars {
+        direction: rtl;
+        font-size: 1.4rem;
+        display: inline-flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .rating-stars input {
+        display: none;
+    }
+
+    .rating-stars label {
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+        .rating-stars input:checked ~ label,
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label {
+            color: gold;
+        }
+
+    .rating-card .btn-send {
+        background-color: #2082a0;
+        color: #fff;
+        font-size: 1.3rem;
+    }
+
+    .live-course img {
+        border-radius: 20px;
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .live-course .card {
+        border-radius: 0px 0px 20px 20px;
+    }
+
+/* modal */
+
+.modal-content {
+    border: 1px solid #05a8ff;
+    background-color: #040c11;
+}
+
+.modal-header h2 {
+    color: #05a8ff;
+    font-size: 2rem;
+}
+
+.fa-xmark {
+    color: #05a8ff !important;
+    cursor: pointer;
+}
+
+.modal-body h3 {
+    color: #05a8ff;
+}
+
+.modal-body ul li {
+    color: white;
+    font-size: 1.2rem;
+}
+
+    .modal-body ul li i {
+        color: #05a8ff;
+        font-size: 1.3rem;
+        margin-left: 5px;
+   
+        }
+.btn-close {
+    color: #05a8ff !important;
+    background-color: #05a8ff !important;
 }

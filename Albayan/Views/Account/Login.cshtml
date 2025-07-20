@@ -1,5 +1,7 @@
 ﻿@model Albayan.ViewModels.LoginViewModel
-@{ Layout = null; }
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -77,6 +79,33 @@
                         passwordInput.type = 'password';
                         this.classList.remove('fa-eye-slash');
                         this.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            // --- كود تحويل الأرقام إلى العربية ---
+            function toArabicNumerals(str) {
+                if (str === null || str === undefined) return '';
+                return str.toString()
+                    .replace(/0/g, '٠')
+                    .replace(/1/g, '١')
+                    .replace(/2/g, '٢')
+                    .replace(/3/g, '٣')
+                    .replace(/4/g, '٤')
+                    .replace(/5/g, '٥')
+                    .replace(/6/g, '٦')
+                    .replace(/7/g, '٧')
+                    .replace(/8/g, '٨')
+                    .replace(/9/g, '٩');
+            }
+
+            const elementsToConvert = document.querySelectorAll('h1, h2, h3, h4, h5, p, span, a, li, button');
+            elementsToConvert.forEach(el => {
+                Array.from(el.childNodes).forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        if (/\d/.test(node.textContent)) {
+                            node.textContent = toArabicNumerals(node.textContent);
+                        }
                     }
                 });
             });

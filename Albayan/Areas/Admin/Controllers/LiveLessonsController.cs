@@ -24,18 +24,18 @@ namespace Albayan.Areas.Admin.Controllers
         {
             _context = context;
             _fileService = fileService;
-            _localZone = TimeZoneInfo.Local;
-
+            try { _localZone = TimeZoneInfo.FindSystemTimeZoneById("Arab Standard Time"); }
+            catch { _localZone = TimeZoneInfo.Local; }
         }
 
         public async Task<IActionResult> Index()
         {
             var now = DateTime.UtcNow;
             var allLessons = await _context.LiveLessons
-                                    .Include(l => l.Teacher)
-                                    .Include(l => l.Subject)
-                                    .OrderByDescending(l => l.StartTime)
-                                    .ToListAsync();
+                                     .Include(l => l.Teacher)
+                                     .Include(l => l.Subject)
+                                     .OrderByDescending(l => l.StartTime)
+                                     .ToListAsync();
 
             var viewModel = new LiveLessonIndexViewModel
             {
@@ -56,32 +56,46 @@ namespace Albayan.Areas.Admin.Controllers
                 TeacherName = lesson.Teacher.FullName,
                 SubjectName = lesson.Subject.Name,
                 StartTime = lesson.StartTime,
-                DurationMinutes = lesson.DurationMinutes, 
+                DurationMinutes = lesson.DurationMinutes,
                 CoverImageUrl = lesson.CoverImageUrl,
                 MeetingUrl = lesson.MeetingUrl
             };
         }
 
-        #region Other Actions
-        public IActionResult Create()
+        // GET: Admin/LiveLessons/Create
+        public async Task<IActionResult> Create()
         {
             var viewModel = new LiveLessonFormViewModel
             {
                 LiveLesson = new LiveLesson { StartTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddDays(1), _localZone) },
-                Teachers = new SelectList(_context.Teachers, "Id", "FullName"),
-                Subjects = new SelectList(_context.Subjects, "Id", "Name")
+                Teachers = new SelectList(await _context.Teachers.ToListAsync(), "Id", "FullName"),
+                Subjects = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name"),
+                Grades = new SelectList(await _context.Grades.ToListAsync(), "Id", "Name")
             };
             return View(viewModel);
         }
+
+        // POST: Admin/LiveLessons/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LiveLessonFormViewModel viewModel)
         {
-            ModelState.Remove("Subjects");
-            ModelState.Remove("Teachers");
+            var lessonStartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(viewModel.LiveLesson.StartTime, _localZone);
+            if (lessonStartTimeUtc < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("LiveLesson.StartTime", "لا يمكن جدولة درس بتاريخ قديم.");
+            }
+
+
             ModelState.Remove("LiveLesson.Subject");
             ModelState.Remove("LiveLesson.Teacher");
+            ModelState.Remove("LiveLesson.Grade");
             ModelState.Remove("LiveLesson.CoverImageUrl");
+            ModelState.Remove("Grades");
+            ModelState.Remove("Subjects");
+            ModelState.Remove("Teachers");
+            ModelState.Remove("LiveLesson.LiveLessonReminders");
+
             if (ModelState.IsValid)
             {
                 var liveLesson = viewModel.LiveLesson;
@@ -89,44 +103,63 @@ namespace Albayan.Areas.Admin.Controllers
                 {
                     liveLesson.CoverImageUrl = await _fileService.SaveFileAsync(viewModel.CoverImage, "livelessons");
                 }
-                liveLesson.StartTime = TimeZoneInfo.ConvertTimeToUtc(liveLesson.StartTime, _localZone);
+                liveLesson.StartTime = lessonStartTimeUtc;
 
                 _context.Add(liveLesson);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.Teachers = new SelectList(_context.Teachers, "Id", "FullName", viewModel.LiveLesson.TeacherId);
-            viewModel.Subjects = new SelectList(_context.Subjects, "Id", "Name", viewModel.LiveLesson.SubjectId);
+
+            viewModel.Teachers = new SelectList(await _context.Teachers.ToListAsync(), "Id", "FullName", viewModel.LiveLesson.TeacherId);
+            viewModel.Subjects = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name", viewModel.LiveLesson.SubjectId);
+            viewModel.Grades = new SelectList(await _context.Grades.ToListAsync(), "Id", "Name", viewModel.LiveLesson.GradeId);
             return View(viewModel);
         }
+
+        // GET: Admin/LiveLessons/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
             var liveLesson = await _context.LiveLessons.FindAsync(id);
             if (liveLesson == null) return NotFound();
+
             liveLesson.StartTime = TimeZoneInfo.ConvertTimeFromUtc(liveLesson.StartTime, _localZone);
 
             var viewModel = new LiveLessonFormViewModel
             {
                 LiveLesson = liveLesson,
-                Teachers = new SelectList(_context.Teachers, "Id", "FullName", liveLesson.TeacherId),
-                Subjects = new SelectList(_context.Subjects, "Id", "Name", liveLesson.SubjectId)
+                Teachers = new SelectList(await _context.Teachers.ToListAsync(), "Id", "FullName", liveLesson.TeacherId),
+                Subjects = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name", liveLesson.SubjectId),
+                Grades = new SelectList(await _context.Grades.ToListAsync(), "Id", "Name", liveLesson.GradeId)
             };
             return View(viewModel);
         }
+
+        // POST: Admin/LiveLessons/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LiveLessonFormViewModel viewModel)
         {
             if (id != viewModel.LiveLesson.Id) return NotFound();
 
-            ModelState.Remove("CoverImage");
-            ModelState.Remove("Subjects");
-            ModelState.Remove("Teachers");
+            var lessonStartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(viewModel.LiveLesson.StartTime, _localZone);
+            if (lessonStartTimeUtc < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("LiveLesson.StartTime", "لا يمكن جدولة درس بتاريخ قديم.");
+            }
+
+
             ModelState.Remove("LiveLesson.Subject");
             ModelState.Remove("LiveLesson.Teacher");
+            ModelState.Remove("LiveLesson.Grade");
             ModelState.Remove("LiveLesson.CoverImageUrl");
+            ModelState.Remove("CoverImage");
+            ModelState.Remove("Grades");
+            ModelState.Remove("Subjects");
+            ModelState.Remove("Teachers");
+            ModelState.Remove("LiveLesson.LiveLessonReminders");
+
             if (ModelState.IsValid)
             {
                 var lessonToUpdate = await _context.LiveLessons.FindAsync(id);
@@ -138,44 +171,54 @@ namespace Albayan.Areas.Admin.Controllers
                     lessonToUpdate.CoverImageUrl = await _fileService.SaveFileAsync(viewModel.CoverImage, "livelessons");
                 }
 
-
                 lessonToUpdate.Title = viewModel.LiveLesson.Title;
                 lessonToUpdate.Description = viewModel.LiveLesson.Description;
-                lessonToUpdate.StartTime = viewModel.LiveLesson.StartTime;
+                lessonToUpdate.StartTime = lessonStartTimeUtc;
                 lessonToUpdate.DurationMinutes = viewModel.LiveLesson.DurationMinutes;
                 lessonToUpdate.MeetingUrl = viewModel.LiveLesson.MeetingUrl;
                 lessonToUpdate.TeacherId = viewModel.LiveLesson.TeacherId;
                 lessonToUpdate.SubjectId = viewModel.LiveLesson.SubjectId;
-                lessonToUpdate.StartTime = TimeZoneInfo.ConvertTimeToUtc(viewModel.LiveLesson.StartTime, _localZone);
+                lessonToUpdate.GradeId = viewModel.LiveLesson.GradeId;
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.LiveLessons.Any(e => e.Id == id)) return NotFound();
-                    else throw;
-                }
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.Teachers = new SelectList(_context.Teachers, "Id", "FullName", viewModel.LiveLesson.TeacherId);
-            viewModel.Subjects = new SelectList(_context.Subjects, "Id", "Name", viewModel.LiveLesson.SubjectId);
+
+            viewModel.Teachers = new SelectList(await _context.Teachers.ToListAsync(), "Id", "FullName", viewModel.LiveLesson.TeacherId);
+            viewModel.Subjects = new SelectList(await _context.Subjects.ToListAsync(), "Id", "Name", viewModel.LiveLesson.SubjectId);
+            viewModel.Grades = new SelectList(await _context.Grades.ToListAsync(), "Id", "Name", viewModel.LiveLesson.GradeId);
             return View(viewModel);
         }
+
+        // GET: Admin/LiveLessons/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+            var liveLesson = await _context.LiveLessons
+                .Include(l => l.Teacher)
+                .Include(l => l.Subject)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (liveLesson == null) return NotFound();
+            return View(liveLesson);
+        }
+
+        // POST: Admin/LiveLessons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var liveLesson = await _context.LiveLessons.FindAsync(id);
+            var liveLesson = await _context.LiveLessons
+                .Include(l => l.LiveLessonReminders)
+                .FirstOrDefaultAsync(l => l.Id == id);
+
             if (liveLesson != null)
             {
+                _context.LiveLessonReminders.RemoveRange(liveLesson.LiveLessonReminders);
                 _fileService.DeleteFile(liveLesson.CoverImageUrl);
                 _context.LiveLessons.Remove(liveLesson);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
         }
-        #endregion
     }
 }

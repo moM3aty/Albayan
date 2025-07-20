@@ -1,15 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using Albayan.Areas.Admin.Data;
+﻿using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Albayan.Controllers
 {
+    [Authorize(Roles = "Student")]
     public class ExamController : Controller
     {
         private readonly PlatformDbContext _context;
@@ -31,7 +33,7 @@ namespace Albayan.Controllers
 
             if (exam == null)
             {
-                return NotFound("لا يوجد اختبار لهذه الدورة.");
+                return View("NoExamAvailable", course);
             }
 
             var questions = await _context.Questions
@@ -53,10 +55,9 @@ namespace Albayan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(TakeExamViewModel viewModel)
         {
-            if (viewModel == null)
-            {
-                return BadRequest("البيانات المرسلة غير صالحة.");
-            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
+            if (student == null) return Unauthorized();
 
             var exam = await _context.Exams
                 .Include(e => e.Course)
@@ -65,8 +66,6 @@ namespace Albayan.Controllers
                 .FirstOrDefaultAsync(e => e.CourseId == viewModel.CourseId);
 
             if (exam == null) return NotFound("لم يتم العثور على الاختبار.");
-            if (exam.Course == null) return NotFound("لم يتم العثور على الدورة المرتبطة بهذا الاختبار.");
-            if (exam.Questions == null) return NotFound("لم يتم تحميل أسئلة هذا الاختبار.");
 
             int correctAnswers = 0;
             foreach (var question in exam.Questions)
@@ -81,42 +80,30 @@ namespace Albayan.Controllers
             int totalQuestions = exam.Questions.Count;
             int score = totalQuestions > 0 ? (int)Math.Round((double)correctAnswers / totalQuestions * 100) : 0;
             bool passed = score >= exam.PassPercentage;
-            int? newCertificateId = null;
             string newCertificateGuid = null;
 
             if (passed)
             {
-                try
+                var existingCert = await _context.Certificates
+                    .FirstOrDefaultAsync(c => c.StudentId == student.Id && c.CourseId == exam.CourseId);
+
+                if (existingCert == null)
                 {
-                    int currentStudentId = 1; 
-
-                    var existingCert = await _context.Certificates
-                        .FirstOrDefaultAsync(c => c.StudentId == currentStudentId && c.CourseId == exam.CourseId);
-
-                    if (existingCert == null)
+                    var certificate = new Certificate
                     {
-                        var certificate = new Certificate
-                        {
-                            StudentId = currentStudentId,
-                            CourseId = exam.CourseId,
-                            IssueDate = DateTime.UtcNow,
-                            GradePercentage = score,
-                            CertificateGuid = Guid.NewGuid().ToString()
-                        };
-                        _context.Certificates.Add(certificate);
-                        await _context.SaveChangesAsync();
-                        newCertificateId = certificate.Id;
-                        newCertificateGuid = certificate.CertificateGuid;
-                    }
-                    else
-                    {
-                        newCertificateId = existingCert.Id;
-                        newCertificateGuid = existingCert.CertificateGuid;
-                    }
+                        StudentId = student.Id,
+                        CourseId = exam.CourseId,
+                        IssueDate = DateTime.UtcNow,
+                        GradePercentage = score,
+                        CertificateGuid = Guid.NewGuid().ToString()
+                    };
+                    _context.Certificates.Add(certificate);
+                    await _context.SaveChangesAsync();
+                    newCertificateGuid = certificate.CertificateGuid;
                 }
-                catch (Exception ex)
+                else
                 {
-                    return StatusCode(500, "حدث خطأ أثناء إنشاء الشهادة. " + ex.Message);
+                    newCertificateGuid = existingCert.CertificateGuid;
                 }
             }
 
@@ -126,8 +113,7 @@ namespace Albayan.Controllers
                 Score = score,
                 PassPercentage = exam.PassPercentage,
                 CourseTitle = exam.Course.Title,
-                CertificateId = newCertificateId,
-                 CertificateGuid = newCertificateGuid
+                CertificateGuid = newCertificateGuid
             };
 
             return View("Result", resultViewModel);

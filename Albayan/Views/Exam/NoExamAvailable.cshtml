@@ -1,0 +1,56 @@
+﻿@model Albayan.Areas.Admin.Models.Entities.Course
+
+@{
+    ViewData["Title"] = "الاختبار غير متاح";
+    Layout = "_Layout";
+}
+
+<style>
+    .no-exam-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        text-align: center;
+    }
+
+    .no-exam-card {
+        background-color: #111827;
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 500px;
+        border: 1px solid #1f2937;
+    }
+
+    .no-exam-icon {
+        font-size: 4rem;
+        color: #1eaad4;
+        margin-bottom: 1.5rem;
+    }
+
+    .no-exam-title {
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .no-exam-text {
+        color: #9ca3af;
+    }
+</style>
+
+<div class="section-padding">
+    <div class="container">
+        <div class="no-exam-container">
+            <div class="no-exam-card">
+                <div class="no-exam-icon">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <h2 class="no-exam-title">الاختبار غير متاح حالياً</h2>
+                <p class="no-exam-text mt-3">
+                    لم يتم إضافة اختبار نهائي لدورة "@Model.Title" حتى الآن. يرجى المحاولة مرة أخرى في وقت لاحق.
+                </p>
+                <a asp-controller="Profile" asp-action="Index" class="btn btn-primary mt-4">العودة إلى الملف الشخصي</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -32,14 +32,7 @@
                         <select asp-for="Course.SubjectId" id="Course_SubjectId" class="input-style w-full p-2.5" asp-items="@Model.Subjects">
                             <option value="">-- اختر المادة --</option>
                         </select>
-                        <button type="button"
-                                class="quick-add-btn primary-btn p-2.5 rounded-lg flex-shrink-0"
-                                data-modal-title="إضافة مادة جديدة"
-                                data-create-url="@Url.Action("CreatePartial", "Subjects")"
-                                data-dropdown-id="Course_SubjectId"
-                                title="إضافة مادة جديدة">
-                            <i class="fas fa-plus"></i>
-                        </button>
+                       
                     </div>
                     <span asp-validation-for="Course.SubjectId" class="text-red-400 mt-2 text-xs"></span>
                 </div>
@@ -50,7 +43,13 @@
                 <textarea asp-for="Course.Description" class="input-style w-full p-2.5" rows="4"></textarea>
                 <span asp-validation-for="Course.Description" class="text-red-400 mt-2 text-xs"></span>
             </div>
-
+            <div>
+                <label asp-for="Course.GradeId" class="block mb-2 text-sm font-medium"></label>
+                <select asp-for="Course.GradeId" class="input-style w-full p-2.5" asp-items="@Model.Grades">
+                    <option value="">-- اختر الصف الدراسي --</option>
+                </select>
+                <span asp-validation-for="Course.GradeId" class="text-red-400 mt-2 text-xs"></span>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label asp-for="Course.TotalHours" class="block mb-2 text-sm font-medium">إجمالي الساعات</label>

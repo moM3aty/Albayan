@@ -56,20 +56,5 @@ namespace Albayan.ViewModels
         public bool RememberMe { get; set; }
     }
 
-    public class StudentProfileViewModel
-    {
-        public string? Password { get; set; }
-        public string FullName { get; set; }
-
-        public string City { get; set; }
-
-        public string Country { get; set; }
-        public List<StudentCourseProgressViewModel> CoursesProgress { get; set; }
-        public List<CertificateInfoViewModel> Certificates { get; set; }
-        public Student Student { get; set; }
-        public int CompletedCourses { get; set; }
-        public int CertificatesCount { get; set; }
-        public double TotalLearningHours { get; set; }
-        public double AverageGrade { get; set; }
-    }
+   
 }

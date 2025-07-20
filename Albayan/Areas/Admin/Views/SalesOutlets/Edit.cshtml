@@ -1,0 +1,31 @@
+﻿@model Albayan.Areas.Admin.Models.Entities.SalesOutlet
+
+@{
+    ViewData["Title"] = "تعديل منفذ البيع";
+}
+
+<div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">تعديل منفذ البيع</h2>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div class="card-bg p-6 rounded-lg space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+
+            <div>
+                <label asp-for="BookstoreName" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="BookstoreName" class="input-style w-full p-2.5" />
+                <span asp-validation-for="BookstoreName" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+            <div>
+                <label asp-for="Governorate" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Governorate" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Governorate" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
+            </div>
+        </div>
+    </form>
+</div>

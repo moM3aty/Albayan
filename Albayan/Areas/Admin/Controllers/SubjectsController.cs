@@ -118,10 +118,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Subject.EducationalMaterials");
             ModelState.Remove("Subject.LessonMaterials");
             ModelState.Remove("CoverImage");
-            if (await _context.Subjects.AnyAsync(s => s.Name == viewModel.Subject.Name))
-            {
-                ModelState.AddModelError("Subject.Name", "هذه المادة موجودة بالفعل.");
-            }
+
 
             if (ModelState.IsValid)
             {

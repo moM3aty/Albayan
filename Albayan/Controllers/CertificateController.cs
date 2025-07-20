@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Albayan.Areas.Admin.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using Albayan.Areas.Admin.Data;
 
 namespace Albayan.Controllers
 {
@@ -14,11 +15,10 @@ namespace Albayan.Controllers
             _context = context;
         }
 
-        // GET: /Certificate/View/{guid}
-        [Route("Certificate/View/{guid}")]
-        public async Task<IActionResult> View(string guid)
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(string id)
         {
-            if (string.IsNullOrEmpty(guid))
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound("الرقم المرجعي للشهادة غير صحيح.");
             }
@@ -27,14 +27,15 @@ namespace Albayan.Controllers
                 .Include(c => c.Student)
                 .Include(c => c.Course)
                 .ThenInclude(co => co.Teacher)
-                .FirstOrDefaultAsync(m => m.CertificateGuid == guid);
+                .FirstOrDefaultAsync(m => m.CertificateGuid == id);
 
             if (certificate == null)
             {
                 return NotFound("لم يتم العثور على الشهادة المطلوبة.");
             }
 
-            return View("~/Areas/Admin/Views/Certificates/Details.cshtml", certificate);
+            // --- هذا هو التعديل: تحديد مسار الـ View بشكل صريح ---
+            return View("~/Views/Certificate/Details.cshtml", certificate);
         }
     }
 }

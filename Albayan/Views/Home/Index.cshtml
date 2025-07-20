@@ -1,4 +1,5 @@
 ﻿@using Albayan.ViewModels
+@using Albayan.Helpers
 @model HomeViewModel
 @{
     ViewData["Title"] = "الصفحة الرئيسيه";
@@ -93,7 +94,7 @@
                         <div class="header d-flex justify-content-between align-items-center">
                             <div class="content">
                                 <h3 class="mb-0">@stage.Name</h3>
-                                <span>@stage.GradeRange</span>
+                                <span>@ArabicNumberHelper.ToArabicNumerals(stage.GradeRange)</span>
                             </div>
                             <div class="icon"></div>
                         </div>
@@ -118,9 +119,8 @@
                         <div class="footer d-flex justify-content-between align-items-center">
                             <div class="num">
                                 <i class="fas fa-users ms-1"></i>
-                                <span>@stage.StudentCount طالب</span>
+                                <span>@ArabicNumberHelper.ToArabicNumerals(stage.StudentCount) طالب</span>
                             </div>
-                           
                         </div>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
                     <div class="inner">
                         <div class="img">
                             <img src="@(string.IsNullOrEmpty(teacher.ProfileImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Teacher" : teacher.ProfileImageUrl)" alt="@teacher.FullName">
-                            <div class="badge">@teacher.AverageRating.ToString("0.0") <i class="fas fa-star text-warning me-2"></i></div>
+                            <div class="badge">@ArabicNumberHelper.ToArabicNumerals(teacher.AverageRating.ToString("0.0")) <i class="fas fa-star text-warning me-2"></i></div>
                         </div>
                         <div class="content">
                             <h3>@teacher.FullName</h3>
@@ -176,13 +176,13 @@
                                     <span>@teacher.SubjectsSummary</span>
                                 </div>
                                 <div class="year">
-                                    @teacher.ExperienceYears+ سنة
+                                    @ArabicNumberHelper.ToArabicNumerals(teacher.ExperienceYears)+ سنة
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-4">
                                 <div>
                                     <i class="fas fa-users ms-2"></i>
-                                    <span>@teacher.TotalStudents طالب</span>
+                                    <span>@ArabicNumberHelper.ToArabicNumerals(teacher.TotalStudents) طالب</span>
                                 </div>
                                 <div class="rating">
                                     <div class="icons">
@@ -191,7 +191,7 @@
                                 </div>
                             </div>
                             <div class="button">
-                                <a asp-controller="TeacherProfile" asp-action="Index" asp-route-id="@teacher.Id"  >عرض الملف الشخصي</a>
+                                <a asp-controller="TeacherProfile" asp-action="Index" asp-route-id="@teacher.Id">عرض الملف الشخصي</a>
                             </div>
                         </div>
                     </div>
@@ -200,7 +200,6 @@
         </div>
     </div>
 </section>
-
 <section class="section-padding statement" id="statements">
     <div class="container">
         <div class="heading text-center mb-5">
@@ -211,153 +210,71 @@
             </div>
         </div>
         <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/maths.jpeg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف التاسع</span>
-                        <span class="bdge2">
-                            4.8 <i class="fas fa-star text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في الرياضيات</h3>
-                        <p class="text-blue">الرياضيات</p>
-                        <p class="text-white">مرجع متكامل في الجبر والهندسة والإحصاء</p>
-                        <div class="d-flex justify-content-between text-muted small mt-3">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>950 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>150 صفحة</div>
+            @if (Model.EducationalMaterials.Any())
+            {
+                @foreach (var material in Model.EducationalMaterials)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-border-0 shadow rounded-4 overflow-hidden h-100">
+                            <div class="image-section">
+                                <img src="@(string.IsNullOrEmpty(material.CoverImageUrl) ? $"https://placehold.co/600x400/0d6efd/ffffff?text={material.Title}" : material.CoverImageUrl)" class="image" alt="@material.Title">
+                                <span class="bdge1">@material.GradeName</span>
+                            </div>
+                            <div class="card-body text-end d-flex flex-column">
+                                <h3 class="fw-medium">@material.Title</h3>
+                                <p class="text-blue">@material.SubjectName</p>
+                                <p class="text-white">@material.Description</p>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <div class="text-blue"><i class="fas fa-book-open ms-2"></i>@ArabicNumberHelper.ToArabicNumerals(material.PageCount) صفحة</div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    <button class="btn see-btn d-flex justify-content-center flex-fill align-items-center preview-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#infoModal"
+                                            data-id="@material.Id">
+                                        <i class="fas fa-eye ms-1"></i>معاينة
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-1"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
                     </div>
-                </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-white">لا توجد مواد تعليمية متاحة حالياً.</p>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content text-end">
+            <div class="modal-header">
+                <h2 class="modal-title" id="infoModalLabel">معلومات الكتاب</h2>
+                <button style="background:transparent;border: none;" type="button" class="fa-solid fa-xmark fs-4 ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/arabic.jpg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف التاسع</span>
-                        <span class="bdge2">
-                            4.9 <i class="fas fa-star text-warning"></i>
-                        </span>
+            <div class="modal-body">
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-5 text-center">
+                        <img id="modalCoverImage" src="" alt="Book Cover" class="img-fluid rounded shadow">
                     </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في اللغة العربية</h3>
-                        <p class="text-blue">اللغة العربية</p>
-                        <p class="text-white">كتاب شامل يغطي جميع قواعد اللغة العربية والأدب</p>
-                        <div class="d-flex justify-content-between  small mt-4">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>1200 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>120 صفحة</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-2"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/science.jpg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف العاشر</span>
-                        <span class="bdge2">
-                            4.9 <i class="fas fa-star text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في العلوم</h3>
-                        <p class="text-blue">العلوم</p>
-                        <p class="text-white">دليل شامل في الفيزياء والكيمياء والأحياء</p>
-                        <div class="d-flex justify-content-between  small mt-4">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>1100 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>180 صفحة</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-2"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/islamic.jpg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف الحادي عشر</span>
-                        <span class="bdge2">
-                            4.9 <i class="fas fa-star text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في التربية الإسلامية</h3>
-                        <p class="text-blue">التربية الإسلامية</p>
-                        <p class="text-white">منهج متكامل في العقيدة والفقه والأخلاق</p>
-                        <div class="d-flex justify-content-between  small mt-4">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>800 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>100 صفحة</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-2"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/social-studies.jpg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف الثاني عشر</span>
-                        <span class="bdge2">
-                            4.9 <i class="fas fa-star text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في الدراسات الاجتماعية</h3>
-                        <p class="text-blue">الدراسات الاجتماعية</p>
-                        <p class="text-white">مرجع في التاريخ والجغرافيا والمجتمع</p>
-                        <div class="d-flex justify-content-between  small mt-4">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>700 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>140 صفحة</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-2"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow rounded-4 overflow-hidden">
-                    <div class="image-section">
-                        <img src="~/images/english.jpg" class="image" alt="Book Cover">
-                        <span class="bdge1">الصف الثاني عشر</span>
-                        <span class="bdge2">
-                            4.9 <i class="fas fa-star text-warning"></i>
-                        </span>
-                    </div>
-                    <div class="card-body text-end">
-                        <h3 class="fw-medium">البيان في اللغة الإنجليزية </h3>
-                        <p class="text-blue">اللغة الإنجليزية</p>
-                        <p class="text-white">دليل شامل لتعلم اللغة الإنجليزية من الأساسيات إلى المتقدم</p>
-                        <div class="d-flex justify-content-between  small mt-4">
-                            <div class="text-blue"><i class="fas fa-download ms-2"></i>1300 تحميل</div>
-                            <div class="text-white"><i class="fas fa-book-open ms-2"></i>200 صفحة</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
-                            <a href="#" class="btn see-btn d-flex justify-content-center flex-fill align-items-center"><i class="fas fa-eye ms-2"></i>معاينة</a>
-                            <a href="#" class="btn  download-btn flex-fill">تحميل الإجابات</a>
-                        </div>
+                    <div class="col-lg-7">
+                        <h3 id="modalBookTitle" class="fw-bold mb-2"></h3>
+                        <p id="modalDescription" class="text-white"></p>
+                        <h3 class="fw-bold mt-4">المحافظات المتاحة:</h3>
+                        <ul id="modalGovernorates" class="list-unstyled mb-4"></ul>
+                        <h3 class="fw-bold">منافذ البيع:</h3>
+                        <ul id="modalOutlets" class="list-unstyled"></ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
+
 <section class="why-us section-padding">
     <div class="container">
         <div class="heading text-center mb-5">
@@ -396,7 +313,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="box">
                     <div class="icon icon5"><i class="fas fa-clock"></i></div>
-                    <h3>متاح 24/7</h3>
+                    <h3> متاح ٢٤ / ٧</h3>
                     <p>الوصول إلى المحتوى التعليمي في أي وقت ومن أي مكان</p>
                 </div>
             </div>
@@ -416,4 +333,56 @@
         <p class="text-white fs-5">جميع كتب سلسلة البيان التعليمية متوفرة للشراء في سلطنة عُمان</p>
         <button class="gradient-btn">اطلب نسختك الآن</button>
     </div>
-</section>  
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const detailsModal = new bootstrap.Modal(document.getElementById('infoModal'));
+            const previewButtons = document.querySelectorAll('.preview-btn');
+
+            const modalTitle = document.getElementById('modalBookTitle');
+            const modalDesc = document.getElementById('modalDescription');
+            const modalImg = document.getElementById('modalCoverImage');
+            const modalGovs = document.getElementById('modalGovernorates');
+            const modalOutlets = document.getElementById('modalOutlets');
+
+            previewButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const materialId = this.dataset.id;
+
+                    // Clear previous data
+                    modalTitle.textContent = 'جار التحميل...';
+                    modalDesc.textContent = '';
+                    modalImg.src = 'https://placehold.co/400x600/111827/e0e1dd?text=Loading...';
+                    modalGovs.innerHTML = '';
+                    modalOutlets.innerHTML = '';
+
+                    fetch(`/EducationalMaterials/GetMaterialDetails/${materialId}`)
+                        .then(response => {
+                            if (!response.ok) { throw new Error('Network response was not ok'); }
+                            return response.json();
+                        })
+                        .then(data => {
+                            modalTitle.textContent = data.title;
+                            modalDesc.textContent = data.description;
+                            modalImg.src = data.coverImageUrl;
+
+                            data.governorates.forEach(gov => {
+                                modalGovs.innerHTML += `<li><i class="fas fa-map-marker-alt me-2"></i>${gov}</li>`;
+                            });
+
+                            data.outlets.forEach(outlet => {
+                                modalOutlets.innerHTML += `<li><i class="fas fa-store me-2"></i>${outlet}</li>`;
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching material details:', error);
+                            modalTitle.textContent = 'خطأ';
+                            modalDesc.textContent = 'لا يمكن تحميل البيانات في الوقت الحالي.';
+                        });
+                });
+            });
+        });
+    </script>
+}

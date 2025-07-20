@@ -1,0 +1,97 @@
+﻿@model Albayan.ViewModels.UserLiveLessonViewModel
+@using Albayan.Areas.Admin.Models.Entities
+
+@if (Model.Status == LiveLessonStatus.Recorded)
+{
+    <div class="course h-100">
+        <div class="img">
+            <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? $"https://placehold.co/600x400/1b263b/e0e1dd?text={Model.SubjectName}" : Model.CoverImageUrl)" alt="@Model.Title">
+            <div class="badge">4.9 <i class="fas fa-star text-warning me-2"></i></div>
+        </div>
+        <div class="p-4 d-flex flex-column">
+            <h3>@Model.Title</h3>
+            <span class="teacher-name">@Model.TeacherName</span>
+            <div>
+                <span class="badge-subject">@Model.SubjectName</span>
+                <span class="small text-white me-2">@Model.GradeName</span>
+            </div>
+            <p>@Model.Description</p>
+            <div class="icons d-flex justify-content-between align-items-center mt-auto">
+                <div class="icon1 ">
+                    <i class="fas fa-clock"></i>
+                    <span class="d-inline-block me-1 text-white">@Model.DurationMinutes دقيقة</span>
+                </div>
+                <div class="icon2">
+                    <i class="fas fa-users ms-1"></i>
+                    <span class="d-inline-block text-white">156 مشاهدة</span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="see-btn d-flex align-items-center justify-content-center gap-2 w-100"> مشاهدة التسجيل</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card shadow position-relative h-100 live-course">
+        <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? $"https://placehold.co/600x400/1b263b/e0e1dd?text={Model.SubjectName}" : Model.CoverImageUrl)" class="card-img-top" alt="@Model.Title">
+
+        <span class="status-badge d-flex justify-content-center align-items-center gap-2">
+            <i class="fas fa-users"></i> @Model.RemindersCount/@Model.MaxStudents
+        </span>
+
+        @if (Model.Status == LiveLessonStatus.Live)
+        {
+            <span class="live-badge">مباشر الآن</span>
+        }
+        else if (Model.Status == LiveLessonStatus.Upcoming)
+        {
+            <span class="coming-badge">قادم</span>
+        }
+
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title fw-bold">@Model.Title</h5>
+            <p class="teacher-name fw-bold">@Model.TeacherName</p>
+            <div>
+                <span class="badge badge-lang">@Model.SubjectName</span>
+                <span class="text-white me-2 small">@Model.GradeName</span>
+            </div>
+            <p class="card-description mt-2">@Model.Description</p>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="day">
+                    <i class="fas fa-calendar-alt ms-1 text-blue fs-5"></i>
+                    <span>@Model.StartTime.ToLocalTime().ToString("dddd، d MMMM yyyy")</span>
+                </div>
+                <div class="hour">
+                    <i class="fas fa-clock ms-1 text-blue fs-5"></i>
+                    <span>@Model.StartTime.ToLocalTime().ToString("hh:mm tt") - @Model.DurationMinutes دقيقة</span>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-3">
+                @if (Model.Status == LiveLessonStatus.Live)
+                {
+                    <a href="@Model.MeetingUrl" target="_blank" class="btn join-btn w-100 d-flex align-items-center justify-content-center gap-2"><i class="fas fa-video"></i> انضم الآن</a>
+                }
+                else if (Model.Status == LiveLessonStatus.Upcoming)
+                {
+                    <form asp-controller="LiveLessons" asp-action="SetReminder" method="post" class="reminder-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="lessonId" value="@Model.Id" />
+                        <button type="submit" class="btn remind-me w-100" @(Model.IsReminderSet ? "disabled" : "")>
+                            <i class="fas fa-calendar-alt ms-1"></i> @(Model.IsReminderSet ? "تم ضبط التذكير" : "تذكيري")
+                        </button>
+                    </form>
+                    @if (Model.IsReminderSet)
+                    {
+                        <div class="alert alert-info small mt-2 text-center" data-countdown="@Model.StartTime.ToString("o")">
+                            يبدأ الدرس خلال...
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}

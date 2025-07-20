@@ -10,6 +10,7 @@ namespace Albayan.ViewModels
         public string CourseTitle { get; set; }
         public List<Question> Questions { get; set; }
         public Dictionary<int, string> StudentAnswers { get; set; } = new Dictionary<int, string>();
+
     }
 
     // ViewModel to display the result to the student

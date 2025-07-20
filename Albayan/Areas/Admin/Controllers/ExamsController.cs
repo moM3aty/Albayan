@@ -102,7 +102,10 @@ namespace Albayan.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CourseId,Title,PassPercentage")] Exam exam)
         {
-            if (id != exam.CourseId) return NotFound();
+            if (id != exam.CourseId)
+            {
+                return NotFound();
+            }
             ModelState.Remove("Course");
             ModelState.Remove("Questions");
             if (ModelState.IsValid)
@@ -135,14 +138,16 @@ namespace Albayan.Areas.Admin.Controllers
             return View(exam);
         }
 
-        // POST: Admin/Exams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var exam = await _context.Exams.FindAsync(id);
-            _context.Exams.Remove(exam);
-            await _context.SaveChangesAsync();
+            if (exam != null)
+            {
+                _context.Exams.Remove(exam);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction("Index", "Courses");
         }
     }

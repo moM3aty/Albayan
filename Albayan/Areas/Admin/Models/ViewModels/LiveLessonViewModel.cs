@@ -41,5 +41,9 @@ namespace Albayan.Areas.Admin.Models.ViewModels
 
         [Display(Name = "المادة الدراسية")]
         public IEnumerable<SelectListItem> Subjects { get; set; }
+
+       
+        [Display(Name = "الصف الدراسي")]
+        public IEnumerable<SelectListItem> Grades { get; set; }
     }
 }
