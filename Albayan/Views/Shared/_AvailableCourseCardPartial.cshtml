@@ -1,4 +1,5 @@
 ﻿@model Albayan.ViewModels.AvailableCourseViewModel
+@using Albayan.Helpers
 
 <div class="course-card h-100 shadow-sm">
     <div class="img">
@@ -11,11 +12,11 @@
         <div class="icons d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
             <div class="icon1">
                 <i class="fas fa-clock"></i>
-                <span class="d-inline-block me-1 text-white">@Model.TotalHours ساعة</span>
+                <span class="d-inline-block me-1 text-white">@ArabicNumberHelper.ToArabicNumerals(Model.TotalHours) ساعة</span>
             </div>
             <div class="icon2">
                 <i class="fas fa-book ms-1"></i>
-                <span class="d-inline-block text-white">@Model.LessonsCount درس</span>
+                <span class="d-inline-block text-white">@ArabicNumberHelper.ToArabicNumerals(Model.LessonsCount) درس</span>
             </div>
         </div>
 
@@ -35,4 +36,3 @@
         </div>
     </div>
 </div>
-

@@ -1,21 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Albayan.Areas.Admin.Data;
+using Albayan.Areas.Admin.Models.Entities;
+using Albayan.Models;
+using Albayan.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Albayan.Areas.Admin.Data;
-using Albayan.Areas.Admin.Models.Entities;
-using Albayan.ViewModels;
 
 namespace Albayan.Controllers
 {
     public class TeacherProfileController : Controller
     {
         private readonly PlatformDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TeacherProfileController(PlatformDbContext context)
+        public TeacherProfileController(PlatformDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: /TeacherProfile/Index/5
@@ -27,7 +33,8 @@ namespace Albayan.Controllers
                 .Include(t => t.Courses).ThenInclude(c => c.Subject)
                 .Include(t => t.Courses).ThenInclude(c => c.Lessons)
                 .Include(t => t.Courses).ThenInclude(c => c.StudentCourses)
-                .Include(t => t.Ratings).ThenInclude(r => r.Student) 
+                .Include(t => t.Ratings).ThenInclude(r => r.Student)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (teacher == null) return NotFound();
@@ -58,14 +65,18 @@ namespace Albayan.Controllers
         // POST: /TeacherProfile/SubmitRating
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")] // Ensure only students can submit
         public async Task<IActionResult> SubmitRating(SubmitRatingViewModel newRating)
         {
-            int currentStudentId = 1; 
-
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
+
+                if (student == null) return Unauthorized();
+
                 var existingRating = await _context.TeacherRatings
-                    .FirstOrDefaultAsync(r => r.TeacherId == newRating.TeacherId && r.StudentId == currentStudentId);
+                    .FirstOrDefaultAsync(r => r.TeacherId == newRating.TeacherId && r.StudentId == student.Id);
 
                 if (existingRating != null)
                 {
@@ -78,7 +89,7 @@ namespace Albayan.Controllers
                     var rating = new TeacherRating
                     {
                         TeacherId = newRating.TeacherId,
-                        StudentId = currentStudentId,
+                        StudentId = student.Id,
                         Rating = newRating.Rating,
                         Comment = newRating.Comment,
                         RatingDate = DateTime.UtcNow

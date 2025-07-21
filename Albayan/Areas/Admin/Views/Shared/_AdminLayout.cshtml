@@ -120,8 +120,10 @@
     <div class="flex h-screen">
         <aside class="sidebar-bg w-64 min-h-screen flex flex-col p-4">
             <div class="text-center mb-10">
-                <h1 class="text-2xl font-bold text-white">منصة البيان</h1>
-                <p class="text-sm text-gray-400">لوحة التحكم</p>
+                <a asp-area="" asp-controller="Home" asp-action="index">
+                    <img src="~/images/logo.png" style="background-color:#fff;border-radius:25px;width:150px;padding:5px;margin:5px auto;"  alt="Albayan" />
+                </a>
+                    <p class="text-gray-400">لوحة التحكم</p>
             </div>
             <nav class="flex-grow">
                 <ul class="space-y-2">

@@ -1,4 +1,5 @@
 ﻿@model Albayan.ViewModels.UserCourseViewModel
+@using Albayan.Helpers
 
 <div class="course-card h-100 shadow-sm">
     <div class="img">
@@ -10,7 +11,7 @@
 
         <div class="mt-auto">
             <div class="d-flex justify-content-between small mb-1">
-                <span class="text-white">@Model.ProgressPercentage%</span>
+                <span class="text-white">@ArabicNumberHelper.ToArabicNumerals(Model.ProgressPercentage)%</span>
                 <span class="text-white">التقدم</span>
             </div>
             <div class="progress mb-2" style="height: 10px;">

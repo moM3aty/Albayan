@@ -32,7 +32,7 @@
 
     <nav id="navbar-example" class="navbar navbar-expand-xl bg-white py-1 sticky-top shadow-lg">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="index">
                 <div class="logo-icon">
                     <img src="~/images/logo.png" height="100" alt="logo">
                 </div>
@@ -43,24 +43,25 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav d-flex justify-content-center text-center mx-auto align-items-center d-flex gap-3">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/#home">الرئيسية</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">الرئيسية</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/#about">من نحن</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="about">من نحن</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/#stages">المراحل الدراسية</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="stages">المراحل الدراسية</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/#teachers">المعلمون</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="teachers">المعلمون</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/#statements">سلسلة البيان</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="statements">سلسلة البيان</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Blog" asp-action="index">المدونة</a>
+                        <a class="nav-link" asp-controller="Blog" asp-action="Index">المدونة</a>
                     </li>
                 </ul>
+
 
                 <div class="d-flex justify-content-center align-items-center mt-2 mt-xl-0">
                 @if (SignInManager.IsSignedIn(User))

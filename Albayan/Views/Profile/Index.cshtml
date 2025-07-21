@@ -6,8 +6,8 @@
     var allCoursesCount = Model.InProgressCourses.Count + Model.CompletedCourses.Count;
 }
 <style>
-    .nav-tabs{
-        width:fit-content;
+    .nav-tabs {
+        width: fit-content;
         padding: 10px 20px !important
     }
 </style>
@@ -52,8 +52,8 @@
             <div class="tab-pane fade show active" id="overview" role="tabpanel">
                 <div id="view-mode">
                     <div class="row g-4 align-items-center">
-                        <div class="col-md-8"><div class="card p-3 mb-3 h-auto"><h4 class="mb-3">المعلومات الشخصية</h4><div class="row g-2"><div class="col-md-6"><div class="mb-3"><label>الاسم الكامل</label><input type="text" class="form-control" value="@Model.FullName" readonly></div></div><div class="col-md-6"><div class="mb-3"><label>رقم الهاتف</label><input type="text" class="form-control" value="@(Model.PhoneNumber ?? "غير متوفر")" readonly></div></div><div class="col-md-12"><div class="mb-2"><label>البريد الإلكتروني</label><input type="text" class="form-control" value="@Model.Email" readonly></div></div></div></div></div>
-                        <div class="col-md-4"><div class="card p-3 h-auto"><h4>ملخص التقدم</h4><div class="progress mt-3 mb-3" style="height: 15px;border:1px solid #17aeff;"><div class="progress-bar" role="progressbar" style="width: @Model.OverallProgressPercentage%;" aria-valuenow="@Model.OverallProgressPercentage" aria-valuemin="0" aria-valuemax="100">@ArabicNumberHelper.ToArabicNumerals(Model.OverallProgressPercentage)%</div></div><div class="d-flex justify-content-around text-center small"><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCoursesCount)</div><div class=" text-white">دورة مكتملة</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCoursesCount)</div><div class=" text-white">قيد التقدم</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CertificatesCount)</div><div class=" text-white">شهادات محصلة</div></div></div></div></div>
+                        <div class="col-md-8"><div class="card p-3 mb-3 h-auto"><h4 class="mb-3">المعلومات الشخصية</h4><div class="row g-2"><div class="col-md-6"><div class="mb-3"><label>الاسم الكامل</label><input type="text" class="form-control" value="@Model.FullName" readonly></div></div><div class="col-md-6"><div class="mb-3"><label>رقم الهاتف</label><input type="text" class="form-control" value="@(Model.PhoneNumber != null ? ArabicNumberHelper.ToArabicNumerals(Model.PhoneNumber) : "غير متوفر")" readonly></div></div><div class="col-md-12"><div class="mb-2"><label>البريد الإلكتروني</label><input type="text" class="form-control" value="@Model.Email" readonly></div></div></div></div></div>
+                        <div class="col-md-4"><div class="card p-3 h-auto"><h4 class="text-center">ملخص التقدم</h4><div class="progress mt-3 mb-3" style="height: 15px;border:1px solid #17aeff;"><div class="progress-bar" role="progressbar" style="width: @Model.OverallProgressPercentage%;" aria-valuenow="@Model.OverallProgressPercentage" aria-valuemin="0" aria-valuemax="100">@ArabicNumberHelper.ToArabicNumerals(Model.OverallProgressPercentage)%</div></div><div class="d-flex justify-content-around text-center small"><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CompletedCoursesCount)</div><div class=" text-white">دورة مكتملة</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.InProgressCoursesCount)</div><div class=" text-white">قيد التقدم</div></div><div><div class="fw-bold fs-5">@ArabicNumberHelper.ToArabicNumerals(Model.CertificatesCount)</div><div class=" text-white">شهادات محصلة</div></div></div></div></div>
                     </div>
                 </div>
                 <div id="edit-mode" style="display:none;">
@@ -175,7 +175,6 @@
                         <p class="text-center text-white">لا توجد دروس قادمة مجدولة.</p>
                     }
 </div></div>
-                  
                 </div>
             </div>
 
@@ -210,23 +209,28 @@
             const viewMode = document.getElementById('view-mode');
             const editMode = document.getElementById('edit-mode');
 
-            editBtn.addEventListener('click', () => {
-                viewMode.style.display = 'none';
-                editMode.style.display = 'block';
-            });
+            if(editBtn && cancelBtn && viewMode && editMode) {
+                editBtn.addEventListener('click', () => {
+                    viewMode.style.display = 'none';
+                    editMode.style.display = 'block';
+                    // --- This is the updated line to scroll down ---
+                    editMode.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                });
 
-            cancelBtn.addEventListener('click', () => {
-                viewMode.style.display = 'block';
-                editMode.style.display = 'none';
-            });
-             const showEditModeOnLoad = @((TempData["ShowEditMode"] as bool? == true || !ViewData.ModelState.IsValid).ToString().ToLower());
-                     console.log(`Server requested to show edit mode: ${showEditModeOnLoad}`);
-        if (showEditModeOnLoad) {
-                    if(viewMode && editMode) {
-                        viewMode.style.display = 'none';
-                        editMode.style.display = 'block';
-                    }
+                cancelBtn.addEventListener('click', () => {
+                    viewMode.style.display = 'block';
+                    editMode.style.display = 'none';
+                });
+            }
+
+            const showEditModeOnLoad = @((TempData["ShowEditMode"] as bool? == true || !ViewData.ModelState.IsValid).ToString().ToLower());
+            if (showEditModeOnLoad) {
+                if(viewMode && editMode) {
+                    viewMode.style.display = 'none';
+                    editMode.style.display = 'block';
                 }
+            }
+
             // Reminder Logic
             document.querySelectorAll('.remind-me').forEach(button => {
                 button.addEventListener('click', function(e) {
@@ -252,26 +256,40 @@
                     });
                 });
             });
-             document.querySelectorAll('[data-countdown]').forEach(timerElement => {
-            const countDownDate = new Date(timerElement.dataset.countdown).getTime();
 
-            const interval = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = countDownDate - now;
+            // --- Arabic Numerals Helper Function ---
+            function toArabicNumerals(str) {
+                if (str === null || str === undefined) return '';
+                return str.toString()
+                    .replace(/0/g, '٠').replace(/1/g, '١').replace(/2/g, '٢')
+                    .replace(/3/g, '٣').replace(/4/g, '٤').replace(/5/g, '٥')
+                    .replace(/6/g, '٦').replace(/7/g, '٧').replace(/8/g, '٨')
+                    .replace(/9/g, '٩');
+            }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Countdown Timer Logic
+            document.querySelectorAll('[data-countdown]').forEach(timerElement => {
+                const countDownDate = new Date(timerElement.dataset.countdown).getTime();
 
-                timerElement.innerHTML = `يبدأ خلال: ${days}ي ${hours}س ${minutes}د ${seconds}ث`;
+                const interval = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = countDownDate - now;
 
-                if (distance < 0) {
-                    clearInterval(interval);
-                    timerElement.innerHTML = "الدرس بدأ الآن!";
-                }
-            }, 1000);
-        });
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Use the helper function here
+                    timerElement.innerHTML = `يبدأ خلال: ${toArabicNumerals(days)}ي ${toArabicNumerals(hours)}س ${toArabicNumerals(minutes)}د ${toArabicNumerals(seconds)}ث`;
+
+                    if (distance < 0) {
+                        clearInterval(interval);
+                        timerElement.innerHTML = "الدرس بدأ الآن!";
+                    }
+                }, 1000);
+            });
         });
     </script>
 }
+    

@@ -84,13 +84,21 @@ namespace Albayan.ViewModels
         public int RemindersCount { get; set; }
         public LiveLessonStatus Status { get; set; }
     }
+
     public class EditProfileViewModel
     {
         [Required(ErrorMessage = "الاسم الكامل مطلوب")]
+        [Display(Name = "الاسم الكامل")]
         public string FullName { get; set; }
+
         [Phone(ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+        [Display(Name = "رقم الهاتف")]
         public string PhoneNumber { get; set; }
+
+        [Display(Name = "المدينة")]
         public string City { get; set; }
+
+        [Display(Name = "الدولة")]
         public string Country { get; set; }
     }
 }

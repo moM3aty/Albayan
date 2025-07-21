@@ -1,4 +1,5 @@
 ﻿@model Albayan.ViewModels.UserCertificateViewModel
+@using Albayan.Helpers
 
 <div class="certificate-card">
     <div class="d-flex flex-column flex-md-row justify-content-center justify-content-md-between align-items-center">
@@ -7,11 +8,11 @@
             <div class="content">
                 <h4>شهادة إتمام دورة @Model.CourseTitle</h4>
                 <p class="text-white mb-0">المعلم: @Model.TeacherName</p>
-                <span>تاريخ الإصدار: @Model.IssueDate.ToString("dd MMMM, yyyy")</span>
+                <span>تاريخ الإصدار: @ArabicNumberHelper.ToArabicNumerals(Model.IssueDate.ToString("dd MMMM, yyyy"))</span>
             </div>
         </div>
         <div class="right d-flex flex-column justify-content-center align-items-center mt-4 mt-md-0">
-            <p class="mb-0 fs-4 fw-bold">@Model.GradePercentage%</p>
+            <p class="mb-0 fs-4 fw-bold">@ArabicNumberHelper.ToArabicNumerals(Model.GradePercentage)%</p>
             <p class="text-white">الدرجة النهائية</p>
         </div>
     </div>
