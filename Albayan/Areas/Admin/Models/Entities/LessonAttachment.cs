@@ -6,8 +6,11 @@ namespace Albayan.Areas.Admin.Models.Entities
     public class LessonAttachment
     {
         public int Id { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "اسم الملف مطلوب")]
+        [Display(Name = "اسم الملف")]
         public string FileName { get; set; }
+
         [Required]
         public string FilePath { get; set; }
         public int LessonId { get; set; }

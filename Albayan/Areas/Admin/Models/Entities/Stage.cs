@@ -1,5 +1,4 @@
-﻿using Albayan.Areas.Admin.Models.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Albayan.Areas.Admin.Models.Entities
@@ -10,6 +9,7 @@ namespace Albayan.Areas.Admin.Models.Entities
 
         [Required(ErrorMessage = "اسم المرحلة مطلوب")]
         [StringLength(100)]
+        [Display(Name = "اسم المرحلة")]
         public string Name { get; set; }
 
         public virtual ICollection<Grade> Grades { get; set; }

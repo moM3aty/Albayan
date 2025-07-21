@@ -3,36 +3,6 @@
 @{
     ViewData["Title"] = Model.CourseTitle;
     Layout = "_Layout";
-
-    string GetEmbedUrl(string url)
-    {
-        if (string.IsNullOrEmpty(url)) return "";
-        if (url.Contains("embed")) return url; // Already in correct format
-
-        string videoId = string.Empty;
-        try
-        {
-            var uri = new Uri(url);
-            if (url.Contains("youtube.com"))
-            {
-                var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-                videoId = query["v"];
-            }
-            else if (url.Contains("youtu.be"))
-            {
-                videoId = uri.Segments.Last();
-            }
-        }
-        catch { /* Invalid URL format, fallback to original */ return url; }
-
-
-        if (!string.IsNullOrEmpty(videoId))
-        {
-            return $"https://www.youtube.com/embed/{videoId}";
-        }
-
-        return url;
-    }
 }
 
 <style>
@@ -54,7 +24,6 @@
 
     .course-player-container {
         display: flex;
-      
     }
 
     /* --- Sidebar --- */
@@ -154,7 +123,7 @@
     .video-wrapper {
         position: relative;
         width: 100%;
-        padding-top: 56.25%; 
+        padding-top: 56.25%;
     }
 
         .video-wrapper iframe {
@@ -268,9 +237,13 @@
     <!-- Main Content -->
     <div class="main-content-pro">
         <div class="video-wrapper">
-            <iframe id="lesson-frame" src="@Model.CurrentLesson.VideoUrl" title="Course Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="lesson-frame"
+                    src="https://iframe.mediadelivery.net/embed/@Model.CurrentLesson.BunnyVideoLibraryId/@Model.CurrentLesson.BunnyVideoId?autoplay=true"
+                    title="Course Video Player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
         </div>
-        <div class="controls d-flex justify-content-between">
+        <div class="controls d-flex my-2 justify-content-between">
             @if (Model.PreviousLessonId.HasValue)
             {
                 <a asp-action="Index" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.PreviousLessonId" class="btn btn-outline-light">الدرس السابق</a>
@@ -308,7 +281,6 @@
                     }
                     else
                     {
-
                         <p class="text-white text-center py-4">لا توجد مرفقات لهذا الدرس.</p>
                     }
                 </div>
@@ -336,7 +308,6 @@
                     }
                     else
                     {
-
                         <p class="text-white text-center py-4">لا يوجد واجب لهذا الدرس.</p>
                     }
                 </div>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -25,12 +26,14 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var courses = await _context.Courses
+            ViewData["CurrentFilter"] = searchString;
+
+            var coursesQuery = _context.Courses
                 .Include(c => c.Teacher)
                 .Include(c => c.Subject)
-                .Include(c => c.Grade) 
+                .Include(c => c.Grade)
                 .Include(c => c.Lessons)
                 .Select(c => new CourseIndexViewModel
                 {
@@ -38,14 +41,22 @@ namespace Albayan.Areas.Admin.Controllers
                     Title = c.Title,
                     TeacherName = c.Teacher.FullName,
                     SubjectName = c.Subject.Name,
-                    GradeName = c.Grade.Name, 
+                    GradeName = c.Grade.Name,
                     CoverImageUrl = c.CoverImageUrl,
                     LessonsCount = c.Lessons.Count()
-                })
-                .ToListAsync();
+                });
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                coursesQuery = coursesQuery.Where(c => c.Title.Contains(searchString)
+                                                   || c.TeacherName.Contains(searchString)
+                                                   || c.SubjectName.Contains(searchString)
+                                                   || c.GradeName.Contains(searchString));
+            }
+
+            var courses = await coursesQuery.ToListAsync();
             return View(courses);
         }
-
 
         // GET: Admin/Courses/Create
         public IActionResult Create()
@@ -76,7 +87,6 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Course.Teacher");
             ModelState.Remove("Course.StudentCourses");
             ModelState.Remove("Course.CoverImageUrl");
-
 
             if (ModelState.IsValid)
             {
@@ -120,7 +130,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-
         // POST: Admin/Courses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -156,6 +165,7 @@ namespace Albayan.Areas.Admin.Controllers
                 courseToUpdate.TotalHours = viewModel.Course.TotalHours;
                 courseToUpdate.TeacherId = viewModel.Course.TeacherId;
                 courseToUpdate.SubjectId = viewModel.Course.SubjectId;
+                courseToUpdate.GradeId = viewModel.Course.GradeId; // Make sure to update GradeId
 
                 try
                 {

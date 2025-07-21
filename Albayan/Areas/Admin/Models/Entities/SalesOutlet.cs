@@ -15,7 +15,6 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Display(Name = "اسم المكتبة")]
         public string BookstoreName { get; set; }
 
-        // Many-to-many relationship with EducationalMaterial
         public virtual ICollection<EducationalMaterial> AvailableMaterials { get; set; }
     }
 }

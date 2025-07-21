@@ -159,7 +159,6 @@
                 box-shadow: none !important;
                 border: none !important;
                 aspect-ratio: unset;
-                /* Force printing of background image */
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -206,7 +205,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // PDF Download Logic using jsPDF and html2canvas
             document.getElementById('downloadBtn').addEventListener('click', function () {
                 const element = document.getElementById('certificateToExport');
                 const studentName = "@Model.Student.FullName".replace(/\s/g, '_');
@@ -214,13 +212,12 @@
                 const filename = `شهادة-${studentName}-${courseName}.pdf`;
 
                 html2canvas(element, {
-                    scale: 2, // Higher scale for better quality
+                    scale: 2,
                     useCORS: true,
-                    backgroundColor: null // Use transparent background
+                    backgroundColor: null
                 }).then(canvas => {
                     const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-                    // Use the correct constructor from the global window object
                     const pdf = new window.jspdf.jsPDF({
                         orientation: 'landscape',
                         unit: 'in',
@@ -235,7 +232,6 @@
                 });
             });
 
-            // Arabic Numerals Logic
             const arabicNumbers = str => str.toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
             document.querySelectorAll('#certificate span, #certificate p').forEach(el => {
                 if (el.children.length === 0 && el.textContent.trim() !== '') {

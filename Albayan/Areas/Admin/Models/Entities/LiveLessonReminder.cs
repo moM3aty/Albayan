@@ -1,7 +1,4 @@
-﻿using Albayan.Areas.Admin.Models.Entities;
-using Albayan.Models;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Albayan.Areas.Admin.Models.Entities
 {

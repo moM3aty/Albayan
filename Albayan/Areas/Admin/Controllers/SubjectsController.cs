@@ -17,17 +17,25 @@ namespace Albayan.Areas.Admin.Controllers
         private readonly PlatformDbContext _context;
         public SubjectsController(PlatformDbContext context) { _context = context; }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var subjects = await _context.Subjects
+            ViewData["CurrentFilter"] = searchString;
+
+            var subjectsQuery = _context.Subjects
                 .Include(s => s.Grades)
                 .Select(s => new SubjectIndexViewModel
                 {
                     Id = s.Id,
                     Name = s.Name,
                     GradeNames = s.Grades.Select(g => g.Name).ToList()
-                })
-                .ToListAsync();
+                });
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                subjectsQuery = subjectsQuery.Where(s => s.Name.Contains(searchString));
+            }
+
+            var subjects = await subjectsQuery.ToListAsync();
             return View(subjects);
         }
 

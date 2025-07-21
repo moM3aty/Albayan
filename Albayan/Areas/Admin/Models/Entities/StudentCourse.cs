@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Albayan.Areas.Admin.Models.Entities
@@ -7,7 +8,11 @@ namespace Albayan.Areas.Admin.Models.Entities
     {
         public int StudentId { get; set; }
         public int CourseId { get; set; }
+
+        [Display(Name = "نسبة التقدم")]
         public int ProgressPercentage { get; set; }
+
+        [Display(Name = "آخر وصول")]
         public DateTime? LastAccessDate { get; set; }
 
         public virtual Student Student { get; set; }

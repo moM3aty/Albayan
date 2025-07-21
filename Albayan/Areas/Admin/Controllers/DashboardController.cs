@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -23,12 +24,10 @@ namespace Albayan.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Get stats
             var totalStudents = await _context.Students.CountAsync();
             var totalTeachers = await _context.Teachers.CountAsync();
             var totalCourses = await _context.Courses.CountAsync();
 
-            // Get chart data for new students in the last 6 months
             var studentData = await _context.Students
                 .Where(s => s.RegistrationDate >= DateTime.Now.AddMonths(-6))
                 .GroupBy(s => new { s.RegistrationDate.Year, s.RegistrationDate.Month })
@@ -50,14 +49,63 @@ namespace Albayan.Areas.Admin.Controllers
                 chartData.Add(monthData?.Count ?? 0);
             }
 
+            var latestStudents = await _context.Students
+                .OrderByDescending(s => s.RegistrationDate)
+                .Take(5)
+                .Select(s => new StudentIndexViewModel
+                {
+                    FullName = s.FullName,
+                    RegistrationDate = s.RegistrationDate
+                })
+                .ToListAsync();
+
+            var popularCourses = await _context.Courses
+                .OrderByDescending(c => c.StudentCourses.Count())
+                .Take(5)
+                .Select(c => new CourseIndexViewModel
+                {
+                    Title = c.Title,
+                    LessonsCount = c.StudentCourses.Count()
+                })
+                .ToListAsync();
+
+            var latestPosts = await _context.BlogPosts
+                .OrderByDescending(p => p.PublishDate)
+                .Take(5)
+                .Select(p => new BlogPostIndexViewModel
+                {
+                    Title = p.Title,
+                    PublishDate = p.PublishDate
+                })
+                .ToListAsync();
+
+            var recentSubmissions = await _context.HomeworkSubmissions
+                .Include(s => s.Student)
+                .Include(s => s.Lesson)
+                    .ThenInclude(l => l.Course)
+                .OrderByDescending(s => s.SubmissionDate)
+                .Take(5)
+                .Select(s => new HomeworkSubmissionViewModel
+                {
+                    StudentName = s.Student != null ? s.Student.FullName : "طالب غير معروف",
+                    LessonTitle = s.Lesson != null ? s.Lesson.Title : "درس غير معروف",
+                    CourseTitle = s.Lesson != null && s.Lesson.Course != null ? s.Lesson.Course.Title : "دورة غير معروفة",
+                    SubmissionDate = s.SubmissionDate
+                })
+                .ToListAsync();
+
             var viewModel = new DashboardViewModel
             {
                 TotalStudents = totalStudents,
                 TotalTeachers = totalTeachers,
                 TotalCourses = totalCourses,
-                MonthlyRevenue = 15780,
+                MonthlyRevenue = 15780, 
                 NewStudentsChartLabels = chartLabels,
-                NewStudentsChartData = chartData
+                NewStudentsChartData = chartData,
+                LatestStudents = latestStudents,
+                PopularCourses = popularCourses,
+                LatestBlogPosts = latestPosts,
+                RecentSubmissions = recentSubmissions
             };
 
             return View(viewModel);

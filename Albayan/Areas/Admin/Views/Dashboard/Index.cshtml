@@ -1,5 +1,5 @@
 ﻿@model Albayan.Areas.Admin.Models.ViewModels.DashboardViewModel
-@using System.Text.Json;
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "الرئيسية";
@@ -7,6 +7,8 @@
 
 <div id="dashboard">
     <h2 class="text-3xl font-bold mb-6">لوحة التحكم الرئيسية</h2>
+
+    <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <div class="card-bg p-6 rounded-lg">
             <div class="flex items-center">
@@ -36,13 +38,76 @@
             </div>
         </div>
     </div>
+
+    <!-- Quick Actions -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <h3 class="text-lg font-semibold mb-3 px-2">إجراءات سريعة</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a asp-controller="Students" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-gray-700 transition-colors">
+                <i class="fas fa-user-plus text-2xl mb-2 accent-color"></i>
+                <p>إضافة طالب</p>
+            </a>
+            <a asp-controller="Courses" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-gray-700 transition-colors">
+                <i class="fas fa-plus-circle text-2xl mb-2 accent-color"></i>
+                <p>إضافة دورة</p>
+            </a>
+            <a asp-controller="LiveLessons" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-gray-700 transition-colors">
+                <i class="fas fa-calendar-plus text-2xl mb-2 accent-color"></i>
+                <p>جدولة درس مباشر</p>
+            </a>
+            <a asp-controller="BlogPosts" asp-action="Create" class="secondary-btn p-4 rounded-lg text-center hover:bg-gray-700 transition-colors">
+                <i class="fas fa-pen-square text-2xl mb-2 accent-color"></i>
+                <p>كتابة مقال</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts and Recent Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card-bg p-6 rounded-lg">
-            <h3 class="text-xl font-semibold mb-4">الطلاب الجدد (آخر 6 أشهر)</h3>
+            <h3 class="text-xl font-semibold mb-4">الطلاب الجدد (آخر ٦ أشهر)</h3>
             <canvas id="newStudentsChart"></canvas>
         </div>
-        <div class="card-bg p-6 rounded-lg flex items-center justify-center">
-            <p class="text-gray-500">سيتم إضافة رسم بياني آخر هنا لاحقاً.</p>
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">آخر الأنشطة</h3>
+            <ul class="space-y-4">
+                @foreach (var submission in Model.RecentSubmissions)
+                {
+                    <li class="text-sm border-r-2 border-blue-500 pr-3">
+                        <p>تسليم واجب جديد من <strong class="text-white">@submission.StudentName</strong></p>
+                        <p class="text-xs text-gray-400">@submission.CourseTitle - @submission.LessonTitle</p>
+                        <p class="text-xs text-gray-500">@submission.SubmissionDate.ToString("yyyy/MM/dd hh:mm tt")</p>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- Other Lists -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">الدورات الأكثر تسجيلاً</h3>
+            <ul class="space-y-3">
+                @foreach (var course in Model.PopularCourses)
+                {
+                    <li class="flex justify-between items-center text-sm">
+                        <span>@course.Title</span>
+                        <span class="text-gray-400">@course.LessonsCount تسجيل</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">آخر مقالات المدونة</h3>
+            <ul class="space-y-3">
+                @foreach (var post in Model.LatestBlogPosts)
+                {
+                    <li class="flex justify-between items-center text-sm">
+                        <span>@post.Title</span>
+                        <span class="text-gray-400">@post.PublishDate.ToString("yyyy/MM/dd")</span>
+                    </li>
+                }
+            </ul>
         </div>
     </div>
 </div>

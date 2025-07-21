@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -25,9 +26,11 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/Teachers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var teachers = await _context.Teachers
+            ViewData["CurrentFilter"] = searchString;
+
+            var teachersQuery = _context.Teachers
                 .Select(t => new TeacherIndexViewModel
                 {
                     Id = t.Id,
@@ -35,8 +38,14 @@ namespace Albayan.Areas.Admin.Controllers
                     JobTitle = t.JobTitle,
                     ExperienceYears = t.ExperienceYears,
                     ProfileImageUrl = t.ProfileImageUrl
-                })
-                .ToListAsync();
+                });
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                teachersQuery = teachersQuery.Where(t => t.FullName.Contains(searchString) || t.JobTitle.Contains(searchString));
+            }
+
+            var teachers = await teachersQuery.OrderBy(t => t.FullName).ToListAsync();
             return View(teachers);
         }
 
@@ -52,17 +61,17 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/Teachers/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var viewModel = new TeacherFormViewModel
             {
                 Teacher = new Teacher(),
-                Subjects = _context.Subjects.Select(s => new AssignedSubjectViewModel
+                Subjects = await _context.Subjects.Select(s => new AssignedSubjectViewModel
                 {
                     SubjectId = s.Id,
                     Name = s.Name,
                     IsAssigned = false
-                }).ToList()
+                }).ToListAsync()
             };
             return View(viewModel);
         }

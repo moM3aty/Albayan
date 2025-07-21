@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -22,8 +24,7 @@ namespace Albayan.Areas.Admin.Controllers
             _fileService = fileService;
         }
 
-        // GET: Admin/Lessons/Index/5
-        public async Task<IActionResult> Index(int? courseId)
+        public async Task<IActionResult> Index(int? courseId, string searchString)
         {
             if (courseId == null)
             {
@@ -31,7 +32,6 @@ namespace Albayan.Areas.Admin.Controllers
             }
 
             var course = await _context.Courses
-                .Include(c => c.Lessons)
                 .FirstOrDefaultAsync(c => c.Id == courseId);
 
             if (course == null)
@@ -41,9 +41,20 @@ namespace Albayan.Areas.Admin.Controllers
 
             ViewBag.CourseTitle = course.Title;
             ViewBag.CourseId = course.Id;
+            ViewData["CurrentFilter"] = searchString;
 
-            return View(course.Lessons.ToList());
+            var lessonsQuery = _context.Lessons.Where(l => l.CourseId == courseId);
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                lessonsQuery = lessonsQuery.Where(l => l.Title.Contains(searchString));
+            }
+
+            var lessons = await lessonsQuery.OrderBy(l => l.Title).ToListAsync();
+
+            return View(lessons);
         }
+
         [HttpGet]
         public async Task<IActionResult> GradeSubmission(int submissionId)
         {
@@ -67,7 +78,6 @@ namespace Albayan.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> GradeSubmission(GradeSubmissionViewModel viewModel)
         {
             ModelState.Remove("StudentName");
@@ -84,7 +94,7 @@ namespace Albayan.Areas.Admin.Controllers
                     TempData["SuccessMessage"] = "تم تقييم الواجب بنجاح!";
                     return Json(new { success = true });
                 }
-                return Json(new { success = false, errors = "Submission not found." });
+                return Json(new { success = false, errors = "لم يتم العثور على التسليم." });
             }
 
             var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault());
@@ -158,7 +168,6 @@ namespace Albayan.Areas.Admin.Controllers
             }
             return RedirectToAction("Details", new { id = lessonId });
         }
-        // GET: Admin/Lessons/Create?courseId=5
         public async Task<IActionResult> Create(int? courseId)
         {
             if (courseId == null)
@@ -182,7 +191,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Lessons/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LessonViewModel viewModel)
@@ -202,7 +210,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/Lessons/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -222,7 +229,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Lessons/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LessonViewModel viewModel)
@@ -251,7 +257,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/Lessons/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -262,7 +267,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(lesson);
         }
 
-        // POST: Admin/Lessons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

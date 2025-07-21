@@ -7,14 +7,24 @@ namespace Albayan.Areas.Admin.Models.Entities
     public class Lesson
     {
         public int Id { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "عنوان الدرس مطلوب")]
         [StringLength(200)]
+        [Display(Name = "عنوان الدرس")]
         public string Title { get; set; }
-        [Display(Name = "رابط الفيديو (Embed URL)")]
-        public string VideoUrl { get; set; }
+
+        [Display(Name = "معرف مكتبة الفيديو (Bunny.net)")]
+        public string BunnyVideoLibraryId { get; set; }
+
+        [Display(Name = "معرف الفيديو (Bunny.net)")]
+        public string BunnyVideoId { get; set; }
+
         public int CourseId { get; set; }
 
+        [Display(Name = "عنوان الواجب")]
         public string? HomeworkTitle { get; set; }
+
+        [Display(Name = "وصف الواجب")]
         public string? HomeworkDescription { get; set; }
 
         [ForeignKey("CourseId")]

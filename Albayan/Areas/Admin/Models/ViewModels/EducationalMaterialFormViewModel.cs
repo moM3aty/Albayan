@@ -25,4 +25,13 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public string Name { get; set; }
         public bool IsAssigned { get; set; }
     }
+
+    public class EducationalMaterialIndexViewModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string CoverImageUrl { get; set; }
+        public string GradeName { get; set; }
+        public string SubjectName { get; set; }
+    }
 }

@@ -12,6 +12,15 @@
         </a>
     </div>
 
+    <!-- Filter Form -->
+    <div class="card-bg p-4 rounded-lg mb-6">
+        <form asp-action="Index" method="get" class="flex items-center gap-4">
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="ابحث بالعنوان، المعلم، أو المادة..." class="input-style w-full p-2.5" />
+            <button type="submit" class="primary-btn px-5 py-2.5 rounded-lg">بحث</button>
+            <a asp-action="Index" class="secondary-btn px-5 py-2.5 rounded-lg">مسح</a>
+        </form>
+    </div>
+
     <!-- Tabs -->
     <div class="mb-6">
         <div class="border-b border-gray-700">
@@ -51,8 +60,7 @@
                 }
             </div>
         </div>
-
-        
+        </div>
     </div>
 </div>
 
@@ -74,7 +82,9 @@
                     if(targetPane) targetPane.classList.remove('hidden');
                 });
             });
-            document.querySelector('.tab-link.active-tab').click();
+            if (tabs.length > 0) {
+                 tabs[0].click();
+            }
         });
     </script>
     <style>

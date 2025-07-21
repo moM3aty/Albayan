@@ -7,9 +7,13 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public int TotalStudents { get; set; }
         public int TotalTeachers { get; set; }
         public int TotalCourses { get; set; }
-        public decimal MonthlyRevenue { get; set; } 
+        public decimal MonthlyRevenue { get; set; }
 
         public List<string> NewStudentsChartLabels { get; set; }
         public List<int> NewStudentsChartData { get; set; }
+        public List<StudentIndexViewModel> LatestStudents { get; set; }
+        public List<CourseIndexViewModel> PopularCourses { get; set; }
+        public List<BlogPostIndexViewModel> LatestBlogPosts { get; set; }
+        public List<HomeworkSubmissionViewModel> RecentSubmissions { get; set; }
     }
 }

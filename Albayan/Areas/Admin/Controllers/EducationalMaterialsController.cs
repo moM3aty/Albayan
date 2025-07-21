@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -26,9 +27,31 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/EducationalMaterials
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.EducationalMaterials.Include(e => e.Grade).Include(e => e.Subject).ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var materialsQuery = _context.EducationalMaterials
+                .Include(e => e.Grade)
+                .Include(e => e.Subject)
+                .Select(e => new EducationalMaterialIndexViewModel
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    CoverImageUrl = e.CoverImageUrl,
+                    GradeName = e.Grade.Name,
+                    SubjectName = e.Subject.Name
+                });
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                materialsQuery = materialsQuery.Where(m => m.Title.Contains(searchString)
+                                                        || m.GradeName.Contains(searchString)
+                                                        || m.SubjectName.Contains(searchString));
+            }
+
+            var materials = await materialsQuery.ToListAsync();
+            return View(materials);
         }
 
         // GET: Admin/EducationalMaterials/Create

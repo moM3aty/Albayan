@@ -21,17 +21,17 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         {
             var options = new List<SelectListItem>
             {
-                new SelectListItem { Value = "A", Text = "الخيار أ" },
-                new SelectListItem { Value = "B", Text = "الخيار ب" }
+                new SelectListItem { Value = "أ", Text = "الخيار أ" },
+                new SelectListItem { Value = "ب", Text = "الخيار ب" }
             };
 
             if (NumberOfOptions >= 3)
             {
-                options.Add(new SelectListItem { Value = "C", Text = "الخيار ج" });
+                options.Add(new SelectListItem { Value = "ج", Text = "الخيار ج" });
             }
             if (NumberOfOptions >= 4)
             {
-                options.Add(new SelectListItem { Value = "D", Text = "الخيار د" });
+                options.Add(new SelectListItem { Value = "د", Text = "الخيار د" });
             }
             CorrectAnswerOptions = options;
         }

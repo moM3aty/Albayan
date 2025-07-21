@@ -1,6 +1,7 @@
 ﻿using Albayan.Areas.Admin.Models.Entities;
 using System.Collections.Generic;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace Albayan.ViewModels
 {
@@ -16,24 +17,11 @@ namespace Albayan.ViewModels
         public LessonDetailsForStudentViewModel LessonDetails { get; set; }
         public int? NextLessonId { get; set; }
         public int? PreviousLessonId { get; set; }
-        public string LessonsJson
-        {
-            get
-            {
-                var lessonsData = AllLessons.Select(l => new
-                {
-                    id = l.Id,
-                    title = l.Title,
-                    videoUrl = l.VideoUrl
-                });
-                return JsonSerializer.Serialize(lessonsData);
-            }
-        }
     }
     public class LessonDetailsForStudentViewModel
     {
         public List<LessonAttachment> Attachments { get; set; }
-        public HomeworkSubmission StudentSubmission { get; set; } 
+        public HomeworkSubmission StudentSubmission { get; set; }
 
         public IFormFile SubmittedFile { get; set; }
     }

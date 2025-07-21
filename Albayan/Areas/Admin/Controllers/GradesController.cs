@@ -52,7 +52,7 @@ namespace Albayan.Areas.Admin.Controllers
                 ModelState.AddModelError("Grade.Name", "هذا الصف موجود بالفعل في نفس المرحلة الدراسية.");
             }
 
-           
+
             ModelState.Remove("Stages");
             ModelState.Remove("Grade.EducationalMaterials");
             ModelState.Remove("Grade.Students");
@@ -123,10 +123,19 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var grade = await _context.Grades.FindAsync(id);
-            if(grade != null)
+            if (grade != null)
             {
-                _context.Grades.Remove(grade);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Grades.Remove(grade);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    TempData["ErrorMessage"] = "لا يمكن حذف هذا الصف لأنه مرتبط ببيانات أخرى (مثل المواد التعليمية أو الطلاب). يرجى إزالة الارتباطات أولاً.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return RedirectToAction(nameof(Index));
         }

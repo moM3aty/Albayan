@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace Albayan.Controllers
 {
     [Authorize(Roles = "Student")]
+    [Route("CoursePlayer")] 
     public class CoursePlayerController : Controller
     {
         private readonly PlatformDbContext _context;
@@ -26,11 +27,10 @@ namespace Albayan.Controllers
             _fileService = fileService;
         }
 
-        // GET: /CoursePlayer/Index/{courseId}/{lessonId?}
+        // GET: /CoursePlayer/Index/{courseId}
+        [Route("Index/{courseId}")] 
         public async Task<IActionResult> Index(int courseId, int? lessonId)
         {
-          
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.ApplicationUserId == userId);
             if (student == null) return Unauthorized();
@@ -43,7 +43,13 @@ namespace Albayan.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == courseId);
 
-            if (course == null || !course.Lessons.Any()) return NotFound();
+            if (course == null) return NotFound();
+
+            if (!course.Lessons.Any())
+            {
+                TempData["ErrorMessage"] = "هذه الدورة لا تحتوي على دروس بعد.";
+                return RedirectToAction("Index", "Profile");
+            }
 
             var lessons = course.Lessons.OrderBy(l => l.Id).ToList();
             var currentLesson = lessonId.HasValue ? lessons.FirstOrDefault(l => l.Id == lessonId.Value) : lessons.FirstOrDefault();
@@ -56,7 +62,6 @@ namespace Albayan.Controllers
             subscription.LastAccessDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            // Fetch homework and submission details
             var studentSubmission = await _context.HomeworkSubmissions
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.LessonId == currentLesson.Id && s.StudentId == student.Id);
@@ -83,7 +88,7 @@ namespace Albayan.Controllers
         }
 
         // POST: /CoursePlayer/SubmitHomework
-        [HttpPost]
+        [HttpPost("SubmitHomework")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitHomework(int courseId, int lessonId, IFormFile SubmittedFile)
         {

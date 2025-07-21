@@ -28,14 +28,24 @@ namespace Albayan.Areas.Admin.Controllers
             catch { _localZone = TimeZoneInfo.Local; }
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
+            ViewData["CurrentFilter"] = searchString;
             var now = DateTime.UtcNow;
-            var allLessons = await _context.LiveLessons
-                                     .Include(l => l.Teacher)
-                                     .Include(l => l.Subject)
-                                     .OrderByDescending(l => l.StartTime)
-                                     .ToListAsync();
+
+            var allLessonsQuery = _context.LiveLessons
+                .Include(l => l.Teacher)
+                .Include(l => l.Subject)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                allLessonsQuery = allLessonsQuery.Where(l => l.Title.Contains(searchString)
+                                                        || l.Teacher.FullName.Contains(searchString)
+                                                        || l.Subject.Name.Contains(searchString));
+            }
+
+            var allLessons = await allLessonsQuery.OrderByDescending(l => l.StartTime).ToListAsync();
 
             var viewModel = new LiveLessonIndexViewModel
             {
@@ -85,7 +95,6 @@ namespace Albayan.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("LiveLesson.StartTime", "لا يمكن جدولة درس بتاريخ قديم.");
             }
-
 
             ModelState.Remove("LiveLesson.Subject");
             ModelState.Remove("LiveLesson.Teacher");
@@ -148,7 +157,6 @@ namespace Albayan.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("LiveLesson.StartTime", "لا يمكن جدولة درس بتاريخ قديم.");
             }
-
 
             ModelState.Remove("LiveLesson.Subject");
             ModelState.Remove("LiveLesson.Teacher");

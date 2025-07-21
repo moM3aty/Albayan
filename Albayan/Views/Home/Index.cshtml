@@ -164,7 +164,7 @@
                     <div class="inner">
                         <div class="img">
                             <img src="@(string.IsNullOrEmpty(teacher.ProfileImageUrl) ? "https://placehold.co/600x400/1b263b/e0e1dd?text=Teacher" : teacher.ProfileImageUrl)" alt="@teacher.FullName">
-                            <div class="badge">@ArabicNumberHelper.ToArabicNumerals(teacher.AverageRating.ToString("0.0")) <i class="fas fa-star text-warning me-2"></i></div>
+                            <div class="badge">@ArabicNumberHelper.ToArabicNumerals(teacher.AverageRating.ToString("0")) , @ArabicNumberHelper.ToArabicNumerals(0) <i class="fas fa-star text-warning me-2"></i></div>
                         </div>
                         <div class="content">
                             <h3>@teacher.FullName</h3>

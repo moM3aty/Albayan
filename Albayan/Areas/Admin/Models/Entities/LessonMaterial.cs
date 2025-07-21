@@ -8,8 +8,8 @@ namespace Albayan.Areas.Admin.Models.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "عنوان الدرس مطلوب")]
-        [Display(Name = "عنوان الدرس")]
+        [Required(ErrorMessage = "عنوان المادة مطلوب")]
+        [Display(Name = "العنوان")]
         public string Title { get; set; }
 
         [Display(Name = "الوصف")]
@@ -27,12 +27,10 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Display(Name = "تاريخ الرفع")]
         public DateTime UploadDate { get; set; }
 
-        // Foreign Key to Subject
         [Required(ErrorMessage = "يجب اختيار المادة")]
         [Display(Name = "المادة")]
         public int SubjectId { get; set; }
 
-        // Navigation Property
         [ForeignKey("SubjectId")]
         public virtual Subject Subject { get; set; }
     }

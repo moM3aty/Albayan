@@ -23,7 +23,6 @@ namespace Albayan.Areas.Admin.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly PresenceTracker _presenceTracker;
 
-        // Constructor with all dependencies
         public StudentsController(PlatformDbContext context,
                                   UserManager<ApplicationUser> userManager,
                                   RoleManager<IdentityRole> roleManager,
@@ -35,12 +34,12 @@ namespace Albayan.Areas.Admin.Controllers
             _presenceTracker = presenceTracker;
         }
 
-        // GET: Admin/Students
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
+            ViewData["CurrentFilter"] = searchString;
             var onlineUsers = await _presenceTracker.GetOnlineUsers();
 
-            var students = await _context.Students
+            var studentsQuery = _context.Students
                 .Include(s => s.Grade)
                 .Select(s => new StudentIndexViewModel
                 {
@@ -51,13 +50,18 @@ namespace Albayan.Areas.Admin.Controllers
                     RegistrationDate = s.RegistrationDate,
                     IsActive = s.IsActive,
                     IsOnline = onlineUsers.Contains(s.ApplicationUserId)
-                })
-                .ToListAsync();
+                });
 
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                studentsQuery = studentsQuery.Where(s => s.FullName.Contains(searchString)
+                                       || s.Email.Contains(searchString));
+            }
+
+            var students = await studentsQuery.ToListAsync();
             return View(students);
         }
 
-        // GET: Admin/Students/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -135,7 +139,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/Students/Create
         public IActionResult Create()
         {
             var viewModel = new StudentFormViewModel
@@ -146,7 +149,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Students/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StudentFormViewModel viewModel)
@@ -160,6 +162,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Student.GivenRatings");
             ModelState.Remove("Student.ApplicationUserId");
             ModelState.Remove("Student.HomeworkSubmissions");
+            ModelState.Remove("Student.LiveLessonReminders");
 
             if (!ModelState.IsValid)
             {
@@ -214,13 +217,12 @@ namespace Albayan.Areas.Admin.Controllers
                 await transaction.RollbackAsync();
                 await _userManager.DeleteAsync(user);
 
-                ModelState.AddModelError("", "An unexpected error occurred while adding the student.");
+                ModelState.AddModelError("", "حدث خطأ غير متوقع أثناء إضافة الطالب.");
                 viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
                 return View(viewModel);
             }
         }
 
-        // GET: Admin/Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -236,7 +238,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, StudentFormViewModel viewModel)
@@ -253,7 +254,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Student.StudentCourses");
             ModelState.Remove("Student.GivenRatings");
             ModelState.Remove("Student.HomeworkSubmissions");
-
+            ModelState.Remove("Student.LiveLessonReminders");
             ModelState.Remove("Password");
 
             if (ModelState.IsValid)
@@ -269,7 +270,7 @@ namespace Albayan.Areas.Admin.Controllers
                         {
                             foreach (var error in result.Errors)
                             {
-                                ModelState.AddModelError("", "Password update failed: " + error.Description);
+                                ModelState.AddModelError("", "فشل تحديث كلمة المرور: " + error.Description);
                             }
                             viewModel.Grades = new SelectList(_context.Grades, "Id", "Name", viewModel.Student.GradeId);
                             return View(viewModel);
@@ -310,7 +311,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -323,7 +323,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(student);
         }
 
-        // POST: Admin/Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -344,7 +343,6 @@ namespace Albayan.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: To toggle the student's active status
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(int id)

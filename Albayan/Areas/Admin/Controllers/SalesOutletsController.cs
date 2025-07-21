@@ -1,8 +1,11 @@
 ﻿using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
+using Albayan.Areas.Admin.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,72 +22,125 @@ namespace Albayan.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Admin/SalesOutlets
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var outlets = await _context.SalesOutlets
-                .OrderBy(o => o.Governorate)
-                .ThenBy(o => o.BookstoreName)
+            ViewData["CurrentFilter"] = searchString;
+
+            var outletsQuery = _context.SalesOutlets.AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                outletsQuery = outletsQuery.Where(o => o.BookstoreName.Contains(searchString) || o.Governorate.Contains(searchString));
+            }
+
+            var groupedOutlets = await outletsQuery
+                .GroupBy(o => o.Governorate)
+                .Select(g => new SalesOutletGroupedViewModel
+                {
+                    Governorate = g.Key,
+                    Outlets = g.OrderBy(o => o.BookstoreName).ToList()
+                })
+                .OrderBy(g => g.Governorate)
                 .ToListAsync();
-            return View(outlets);
+
+            return View(groupedOutlets);
         }
 
-        // GET: Admin/SalesOutlets/Create
-        public IActionResult Create()
+        private async Task<SelectList> GetGovernoratesSelectList()
         {
-            return View();
+            var governorates = await _context.SalesOutlets
+                .Select(o => o.Governorate)
+                .Distinct()
+                .OrderBy(g => g)
+                .ToListAsync();
+            return new SelectList(governorates);
         }
 
-        // POST: Admin/SalesOutlets/Create
+        public async Task<IActionResult> Create()
+        {
+            var viewModel = new SalesOutletFormViewModel
+            {
+                SalesOutlet = new SalesOutlet(),
+                Governorates = await GetGovernoratesSelectList()
+            };
+            return View(viewModel);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Governorate,BookstoreName")] SalesOutlet salesOutlet)
+        public async Task<IActionResult> Create(SalesOutletFormViewModel viewModel)
         {
+            ModelState.Remove("SalesOutlet.AvailableMaterials");
+            ModelState.Remove("NewGovernorate");
             ModelState.Remove("AvailableMaterials");
+            ModelState.Remove("SalesOutlet.Governorate");
+            ModelState.Remove("Governorates");
+
+            if (!string.IsNullOrWhiteSpace(viewModel.NewGovernorate))
+            {
+                viewModel.SalesOutlet.Governorate = viewModel.NewGovernorate;
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(salesOutlet);
+                _context.Add(viewModel.SalesOutlet);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(salesOutlet);
+
+            viewModel.Governorates = await GetGovernoratesSelectList();
+            return View(viewModel);
         }
 
-        // GET: Admin/SalesOutlets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
             var salesOutlet = await _context.SalesOutlets.FindAsync(id);
             if (salesOutlet == null) return NotFound();
-            return View(salesOutlet);
+
+            var viewModel = new SalesOutletFormViewModel
+            {
+                SalesOutlet = salesOutlet,
+                Governorates = await GetGovernoratesSelectList()
+            };
+            return View(viewModel);
         }
 
-        // POST: Admin/SalesOutlets/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Governorate,BookstoreName")] SalesOutlet salesOutlet)
+        public async Task<IActionResult> Edit(int id, SalesOutletFormViewModel viewModel)
         {
-            if (id != salesOutlet.Id) return NotFound();
+            if (id != viewModel.SalesOutlet.Id) return NotFound();
+
+            ModelState.Remove("SalesOutlet.AvailableMaterials");
+            ModelState.Remove("NewGovernorate");
             ModelState.Remove("AvailableMaterials");
+            ModelState.Remove("Governorates");
+
+            if (!string.IsNullOrWhiteSpace(viewModel.NewGovernorate))
+            {
+                viewModel.SalesOutlet.Governorate = viewModel.NewGovernorate;
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(salesOutlet);
+                    _context.Update(viewModel.SalesOutlet);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.SalesOutlets.Any(e => e.Id == salesOutlet.Id)) return NotFound();
+                    if (!_context.SalesOutlets.Any(e => e.Id == viewModel.SalesOutlet.Id)) return NotFound();
                     else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(salesOutlet);
+
+            viewModel.Governorates = await GetGovernoratesSelectList();
+            return View(viewModel);
         }
 
-        // GET: Admin/SalesOutlets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -93,7 +149,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(salesOutlet);
         }
 
-        // POST: Admin/SalesOutlets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

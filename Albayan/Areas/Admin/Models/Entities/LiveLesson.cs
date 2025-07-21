@@ -11,9 +11,15 @@ namespace Albayan.Areas.Admin.Models.Entities
     public class LiveLesson
     {
         public int Id { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "عنوان الدرس مطلوب")]
+        [Display(Name = "عنوان الدرس")]
         public string Title { get; set; }
+
+        [Display(Name = "الوصف")]
         public string Description { get; set; }
+
+        [Display(Name = "صورة الغلاف")]
         public string CoverImageUrl { get; set; }
 
         [Display(Name = "موعد البدء")]
@@ -23,20 +29,32 @@ namespace Albayan.Areas.Admin.Models.Entities
 
         [Display(Name = "المدة (بالدقائق)")]
         public int DurationMinutes { get; set; }
+
+        [Display(Name = "أقصى عدد للطلاب")]
         public int MaxStudents { get; set; }
+
+        [Display(Name = "المنصة")]
         public LivePlatform Platform { get; set; }
+
+        [Display(Name = "رابط الاجتماع")]
+        [Url(ErrorMessage = "الرجاء إدخال رابط صحيح")]
         public string MeetingUrl { get; set; }
+
         public LiveLessonStatus Status { get; set; }
         public int RemindersCount { get; set; }
 
-        // Foreign Keys
+        [Required(ErrorMessage = "يجب اختيار المعلم")]
+        [Display(Name = "المعلم")]
         public int TeacherId { get; set; }
+
+        [Required(ErrorMessage = "يجب اختيار المادة")]
+        [Display(Name = "المادة")]
         public int SubjectId { get; set; }
+
         [Required(ErrorMessage = "يجب اختيار الصف الدراسي")]
         [Display(Name = "الصف الدراسي")]
         public int GradeId { get; set; }
 
-        // Navigation Properties
         [ForeignKey("TeacherId")]
         public virtual Teacher Teacher { get; set; }
         [ForeignKey("SubjectId")]

@@ -11,6 +11,7 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public string Title { get; set; }
         public DateTime PublishDate { get; set; }
         public string ImageUrl { get; set; }
+        public string Keywords { get; set; }
     }
 
     public class BlogPostFormViewModel

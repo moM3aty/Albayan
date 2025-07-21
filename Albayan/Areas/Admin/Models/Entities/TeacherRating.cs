@@ -8,15 +8,18 @@ namespace Albayan.Areas.Admin.Models.Entities
     {
         public int Id { get; set; }
 
-        [Range(1, 5, ErrorMessage = "التقييم يجب أن يكون بين 1 و 5 نجوم.")]
+        [Range(1, 5, ErrorMessage = "التقييم يجب أن يكون بين ١ و ٥ نجوم.")]
+        [Display(Name = "التقييم")]
         public int Rating { get; set; }
 
         [StringLength(500)]
+        [Display(Name = "التعليق")]
         public string Comment { get; set; }
 
+        [Display(Name = "تاريخ التقييم")]
         public DateTime RatingDate { get; set; }
         public int TeacherId { get; set; }
-        public int StudentId { get; set; } 
+        public int StudentId { get; set; }
 
         [ForeignKey("TeacherId")]
         public virtual Teacher Teacher { get; set; }

@@ -98,7 +98,25 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int? id) { if (id == null) return NotFound(); var stage = await _context.Stages.FirstOrDefaultAsync(m => m.Id == id); if (stage == null) return NotFound(); return View(stage); }
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id) { var stage = await _context.Stages.FindAsync(id); _context.Stages.Remove(stage); await _context.SaveChangesAsync(); return RedirectToAction(nameof(Index)); }
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var stage = await _context.Stages.FindAsync(id);
+            if (stage != null)
+            {
+                try
+                {
+                    _context.Stages.Remove(stage);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    TempData["ErrorMessage"] = "لا يمكن حذف هذه المرحلة لأنها (أو أحد صفوفها) مرتبطة ببيانات أخرى. يرجى إزالة الارتباطات أولاً.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
         #endregion
     }
 }

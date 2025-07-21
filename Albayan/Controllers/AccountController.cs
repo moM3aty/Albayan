@@ -48,18 +48,16 @@ namespace Albayan.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     FullName = model.FullName,
-                    EmailConfirmed = true // Confirm email automatically
+                    EmailConfirmed = true 
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Ensure "Student" role exists
                     if (!await _roleManager.RoleExistsAsync("Student"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole("Student"));
                     }
-                    // Assign the "Student" role to the new user
                     await _userManager.AddToRoleAsync(user, "Student");
 
                     var student = new Student
@@ -72,7 +70,7 @@ namespace Albayan.Controllers
                         ApplicationUserId = user.Id,
                         City = model.City,
                         Country = model.Country,
-                        IsActive = true // Set student as active by default
+                        IsActive = true 
                     };
                     _context.Students.Add(student);
                     await _context.SaveChangesAsync();

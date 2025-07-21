@@ -10,7 +10,12 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Required]
         public string SubmissionFilePath { get; set; }
         public DateTime SubmissionDate { get; set; }
+
+        [Range(0, 100, ErrorMessage = "الدرجة يجب أن تكون بين ٠ و ١٠٠.")]
+        [Display(Name = "الدرجة")]
         public int? Grade { get; set; }
+
+        [Display(Name = "ملاحظات المعلم")]
         public string? Feedback { get; set; }
 
         public int LessonId { get; set; }

@@ -25,18 +25,26 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/BlogPosts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var posts = await _context.BlogPosts
+            ViewData["CurrentFilter"] = searchString;
+
+            var postsQuery = _context.BlogPosts
                 .Select(p => new BlogPostIndexViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
                     PublishDate = p.PublishDate,
-                    ImageUrl = p.ImageUrl
-                })
-                .OrderByDescending(p => p.PublishDate)
-                .ToListAsync();
+                    ImageUrl = p.ImageUrl,
+                    Keywords = p.Keywords
+                });
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                postsQuery = postsQuery.Where(p => p.Title.Contains(searchString) || p.Keywords.Contains(searchString));
+            }
+
+            var posts = await postsQuery.OrderByDescending(p => p.PublishDate).ToListAsync();
             return View(posts);
         }
 
@@ -101,7 +109,6 @@ namespace Albayan.Areas.Admin.Controllers
 
             ModelState.Remove("PostImage");
             ModelState.Remove("BlogPost.ImageUrl");
-
 
             if (ModelState.IsValid)
             {

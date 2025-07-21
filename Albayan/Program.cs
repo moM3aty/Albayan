@@ -28,10 +28,10 @@ builder.Services.AddLocalization();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/admin/Account/LoginAdmin";
+    options.LoginPath = "/Account/Login";
 
 
-    options.AccessDeniedPath = "/admin/Account/LoginAdmin";
+    options.AccessDeniedPath = "/Account/Login";
 });
 
 

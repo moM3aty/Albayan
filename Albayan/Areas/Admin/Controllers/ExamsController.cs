@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -21,30 +22,38 @@ namespace Albayan.Areas.Admin.Controllers
         }
 
         // GET: Admin/Exams/Index/5 (courseId)
-        public async Task<IActionResult> Index(int? courseId)
+        public async Task<IActionResult> Index(int? courseId, string searchString)
         {
             if (courseId == null) return NotFound();
 
             var course = await _context.Courses.FindAsync(courseId);
             if (course == null) return NotFound();
 
-            var exam = await _context.Exams
-                .Include(e => e.Questions)
-                .FirstOrDefaultAsync(e => e.CourseId == courseId);
-
             ViewBag.CourseTitle = course.Title;
             ViewBag.CourseId = course.Id;
+            ViewData["CurrentFilter"] = searchString;
+
+            var exam = await _context.Exams.FirstOrDefaultAsync(e => e.CourseId == courseId);
 
             if (exam == null)
             {
                 return View("NoExam", course);
             }
 
+            var questionsQuery = _context.Questions.Where(q => q.ExamId == exam.CourseId);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                questionsQuery = questionsQuery.Where(q => q.QuestionText.Contains(searchString));
+            }
+
+            var questions = await questionsQuery.ToListAsync();
+
             var viewModel = new ExamViewModel
             {
                 Exam = exam,
                 CourseTitle = course.Title,
-                Questions = exam.Questions
+                Questions = questions
             };
 
             return View(viewModel);
