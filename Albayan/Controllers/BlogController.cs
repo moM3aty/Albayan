@@ -20,23 +20,38 @@ namespace Albayan.Controllers
         // GET: /Blog
         public async Task<IActionResult> Index()
         {
-            var blogPosts = await _context.BlogPosts
+            char[] separator = new[] { ',' };
+
+            var blogPostsRaw = await _context.BlogPosts
                 .OrderByDescending(p => p.PublishDate)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Title,
+                    p.PublishDate,
+                    p.ImageUrl,
+                    p.Content,
+                    p.Keywords
+                })
+                .ToListAsync(); 
+
+            var blogPosts = blogPostsRaw
                 .Select(p => new BlogPostViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
                     PublishDate = p.PublishDate,
                     ImageUrl = p.ImageUrl,
-
                     ShortDescription = p.Content.Length > 100 ? p.Content.Substring(0, 100) + "..." : p.Content,
-     
-                    Keywords = p.Keywords.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                    Keywords = string.IsNullOrEmpty(p.Keywords)
+                        ? new List<string>()
+                        : p.Keywords.Split(separator, StringSplitOptions.RemoveEmptyEntries).Select(k => k.Trim()).ToList()
                 })
-                .ToListAsync();
+                .ToList(); 
 
             return View(blogPosts);
         }
+
 
         // GET: /Blog/Details/5
         public async Task<IActionResult> Details(int? id)
