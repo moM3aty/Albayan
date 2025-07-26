@@ -54,6 +54,58 @@ namespace Albayan.Migrations
                     b.ToTable("BlogPosts");
                 });
 
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Book", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CoverImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GradeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PdfFilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeacherId1")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GradeId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TeacherId1");
+
+                    b.ToTable("Books");
+                });
+
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Certificate", b =>
                 {
                     b.Property<int>("Id")
@@ -189,6 +241,65 @@ namespace Albayan.Migrations
                     b.ToTable("Exams");
                 });
 
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.ExamAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AttemptDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("ExamAttempts");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.ExamAttemptAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamAttemptId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SelectedAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamAttemptId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("ExamAttemptAnswers");
+                });
+
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Grade", b =>
                 {
                     b.Property<int>("Id")
@@ -256,14 +367,6 @@ namespace Albayan.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BunnyVideoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BunnyVideoLibraryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
@@ -277,6 +380,10 @@ namespace Albayan.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("VideoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -311,7 +418,21 @@ namespace Albayan.Migrations
                     b.ToTable("LessonAttachments");
                 });
 
-            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonMaterial", b =>
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuiz", b =>
+                {
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LessonId");
+
+                    b.ToTable("LessonQuizzes");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizAttempt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -319,36 +440,106 @@ namespace Albayan.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CoverImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Downloads")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PdfFilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UploadDate")
+                    b.Property<DateTime>("AttemptDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LessonQuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubjectId");
+                    b.HasIndex("LessonQuizId");
 
-                    b.ToTable("LessonMaterials");
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("LessonQuizAttempts");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizAttemptAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LessonQuizAttemptId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SelectedAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonQuizAttemptId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("LessonQuizAttemptAnswers");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LessonQuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfOptions")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OptionA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionB")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionD")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuestionText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonQuizId");
+
+                    b.ToTable("LessonQuizQuestions");
                 });
 
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LiveLesson", b =>
@@ -451,6 +642,9 @@ namespace Albayan.Migrations
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NumberOfOptions")
                         .HasColumnType("int");
 
@@ -468,8 +662,10 @@ namespace Albayan.Migrations
                     b.Property<string>("OptionD")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
                     b.Property<string>("QuestionText")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -623,6 +819,9 @@ namespace Albayan.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ExperienceSummary")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -645,6 +844,10 @@ namespace Albayan.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique()
+                        .HasFilter("[ApplicationUserId] IS NOT NULL");
 
                     b.ToTable("Teachers");
                 });
@@ -934,6 +1137,37 @@ namespace Albayan.Migrations
                     b.ToTable("TeacherSubjects", (string)null);
                 });
 
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Book", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Grade", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Teacher", null)
+                        .WithMany("Books")
+                        .HasForeignKey("TeacherId1");
+
+                    b.Navigation("Grade");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
+                });
+
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Certificate", b =>
                 {
                     b.HasOne("Albayan.Areas.Admin.Models.Entities.Course", "Course")
@@ -1010,6 +1244,44 @@ namespace Albayan.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.ExamAttempt", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.ExamAttemptAnswer", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.ExamAttempt", "ExamAttempt")
+                        .WithMany("Answers")
+                        .HasForeignKey("ExamAttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamAttempt");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Grade", b =>
                 {
                     b.HasOne("Albayan.Areas.Admin.Models.Entities.Stage", "Stage")
@@ -1062,15 +1334,64 @@ namespace Albayan.Migrations
                     b.Navigation("Lesson");
                 });
 
-            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonMaterial", b =>
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuiz", b =>
                 {
-                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Subject", "Subject")
-                        .WithMany("LessonMaterials")
-                        .HasForeignKey("SubjectId")
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Lesson", "Lesson")
+                        .WithOne("LessonQuiz")
+                        .HasForeignKey("Albayan.Areas.Admin.Models.Entities.LessonQuiz", "LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Subject");
+                    b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizAttempt", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.LessonQuiz", "LessonQuiz")
+                        .WithMany()
+                        .HasForeignKey("LessonQuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Student", "Student")
+                        .WithMany("LessonQuizAttempts")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LessonQuiz");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizAttemptAnswer", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.LessonQuizAttempt", "LessonQuizAttempt")
+                        .WithMany("Answers")
+                        .HasForeignKey("LessonQuizAttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.LessonQuizQuestion", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LessonQuizAttempt");
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizQuestion", b =>
+                {
+                    b.HasOne("Albayan.Areas.Admin.Models.Entities.LessonQuiz", "LessonQuiz")
+                        .WithMany("Questions")
+                        .HasForeignKey("LessonQuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LessonQuiz");
                 });
 
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LiveLesson", b =>
@@ -1166,6 +1487,16 @@ namespace Albayan.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Teacher", b =>
+                {
+                    b.HasOne("Albayan.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne()
+                        .HasForeignKey("Albayan.Areas.Admin.Models.Entities.Teacher", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.TeacherRating", b =>
@@ -1300,6 +1631,11 @@ namespace Albayan.Migrations
                     b.Navigation("Questions");
                 });
 
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.ExamAttempt", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Grade", b =>
                 {
                     b.Navigation("EducationalMaterials");
@@ -1312,6 +1648,19 @@ namespace Albayan.Migrations
                     b.Navigation("Attachments");
 
                     b.Navigation("HomeworkSubmissions");
+
+                    b.Navigation("LessonQuiz")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuiz", b =>
+                {
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LessonQuizAttempt", b =>
+                {
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.LiveLesson", b =>
@@ -1332,6 +1681,8 @@ namespace Albayan.Migrations
 
                     b.Navigation("HomeworkSubmissions");
 
+                    b.Navigation("LessonQuizAttempts");
+
                     b.Navigation("LiveLessonReminders");
 
                     b.Navigation("StudentCourses");
@@ -1343,13 +1694,13 @@ namespace Albayan.Migrations
 
                     b.Navigation("EducationalMaterials");
 
-                    b.Navigation("LessonMaterials");
-
                     b.Navigation("LiveLessons");
                 });
 
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Teacher", b =>
                 {
+                    b.Navigation("Books");
+
                     b.Navigation("Courses");
 
                     b.Navigation("LiveLessons");

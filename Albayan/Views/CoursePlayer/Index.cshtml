@@ -1,4 +1,5 @@
 ﻿@model Albayan.ViewModels.CoursePlayerViewModel
+@using Albayan.Helpers
 
 @{
     ViewData["Title"] = Model.CourseTitle;
@@ -33,11 +34,11 @@
         overflow-y: auto;
     }
 
-    .sidebar h2 {
-        color: var(--text-primary);
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
+        .sidebar h2 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
 
     .lesson-item {
         background-color: transparent;
@@ -50,12 +51,12 @@
         transition: 0.2s;
     }
 
-    .lesson-item:hover,
-    .lesson-item.active {
-        background-color: var(--accent);
-        color: white;
-        font-weight: bold;
-    }
+        .lesson-item:hover,
+        .lesson-item.active {
+            background-color: var(--accent);
+            color: white;
+            font-weight: bold;
+        }
 
     .main-content {
         padding: 2rem;
@@ -73,13 +74,13 @@
         box-shadow: 0 0 10px #0004;
     }
 
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
 
     .nav-controls {
         display: flex;
@@ -87,12 +88,12 @@
         margin-bottom: 1.5rem;
     }
 
-    .nav-controls a,
-    .nav-controls button {
-        padding: 0.5rem 1.25rem;
-        border-radius: 6px;
-        font-weight: bold;
-    }
+        .nav-controls a,
+        .nav-controls button {
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-weight: bold;
+        }
 
     .section-box {
         background-color: var(--panel-bg);
@@ -111,9 +112,10 @@
         font-size: 1.1rem;
     }
 
-    .text-muted{
-        color:#fff !important;
+    .text-muted {
+        color: #fff !important;
     }
+
     .section-header i {
         color: var(--accent);
     }
@@ -128,18 +130,18 @@
         margin: 0;
     }
 
-    .attachments-list li {
-        margin-bottom: 0.75rem;
-    }
+        .attachments-list li {
+            margin-bottom: 0.75rem;
+        }
 
-    .attachments-list a {
-        color: var(--accent);
-        text-decoration: none;
-    }
+        .attachments-list a {
+            color: var(--accent);
+            text-decoration: none;
+        }
 
-    .attachments-list a:hover {
-        text-decoration: underline;
-    }
+            .attachments-list a:hover {
+                text-decoration: underline;
+            }
 
     .submission-summary {
         background-color: #1e2a35;
@@ -164,10 +166,10 @@
         transition: 0.2s;
     }
 
-    .btn-back:hover {
-        color: var(--text-primary);
-        border-color: var(--accent);
-    }
+        .btn-back:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
 
     @@media (max-width: 768px) {
         .course-layout {
@@ -185,6 +187,7 @@
         }
     }
 </style>
+
 
 <div class="course-layout">
     <div class="sidebar">
@@ -204,8 +207,9 @@
         </div>
 
         <div class="video-wrapper">
-            <iframe src="https://iframe.mediadelivery.net/embed/@Model.CurrentLesson.BunnyVideoLibraryId/@Model.CurrentLesson.BunnyVideoId?autoplay=true"
-                    allowfullscreen allow="autoplay; encrypted-media;"></iframe>
+            <iframe src="@YouTubeHelper.GetEmbedUrl(Model.CurrentLesson.VideoUrl)"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 
         <div class="nav-controls">
@@ -230,11 +234,11 @@
                 <p class="text-center text-white-50 small">لقد أكملت جميع دروس الدورة!</p>
             }
         </div>
-       
-       
+
+
         <div class="row g-4">
             <!-- Attachments Card -->
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="section-box h-100">
                     <div class="section-header">
                         <i class="fas fa-paperclip"></i>
@@ -248,7 +252,7 @@
                                 {
                                     <li>
                                         <i class="fas fa-file-alt me-2 text-info"></i>
-                                        <a href="@attachment.FilePath" download>@attachment.FileName</a>
+                                        <a href="@Url.Content(attachment.FilePath)" download>@attachment.FileName</a>
                                     </li>
                                 }
                             </ul>
@@ -261,66 +265,27 @@
                 </div>
             </div>
 
-            <!-- Homework Info Card -->
-            <div class="col-md-4">
-                <div class="section-box h-100">
+            <div class="col-md-6">
+                <div class="section-box h-100 d-flex flex-column">
                     <div class="section-header">
-                        <i class="fas fa-tasks"></i>
-                        <span>الواجب الدراسي</span>
+                        <i class="fas fa-question-circle"></i>
+                        <span>اختبار الدرس</span>
                     </div>
-                    <div class="section-body">
-                        @if (!string.IsNullOrEmpty(Model.CurrentLesson.HomeworkTitle))
+                    <div class="section-body flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                        @if (Model.CurrentLesson.LessonQuiz != null)
                         {
-                            <h5 class="text-info mb-2">@Model.CurrentLesson.HomeworkTitle</h5>
-                            <p class="text-white">@Model.CurrentLesson.HomeworkDescription</p>
-
-                            @if (Model.LessonDetails.StudentSubmission != null)
-                            {
-                                <div class="submission-summary">
-                                    <i class="fas fa-check-circle text-success me-2"></i>
-                                    <strong>تم التسليم:</strong> @Model.LessonDetails.StudentSubmission.SubmissionDate.ToString("g")<br />
-                                    <strong>الدرجة:</strong> @(Model.LessonDetails.StudentSubmission.Grade?.ToString() ?? "لم يتم التقييم بعد")<br />
-                                    <strong>ملاحظات:</strong> @(Model.LessonDetails.StudentSubmission.Feedback ?? "لا يوجد")
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="text-muted">لم تقم بتسليم الواجب بعد.</div>
-                            }
+                            <p class="text-center mb-3">اختبر فهمك للدرس من خلال هذا الاختبار القصير.</p>
+                            <a asp-controller="LessonQuizPlayer" asp-action="Take" asp-route-lessonId="@Model.CurrentLesson.Id" class="btn btn-info w-75 fw-bold">
+                                <i class="fas fa-pencil-alt me-2"></i> ابدأ الاختبار
+                            </a>
                         }
                         else
                         {
-                            <p class="text-muted">لا يوجد واجب لهذا الدرس.</p>
+                            <p class="text-muted text-center">لا يوجد اختبار لهذا الدرس.</p>
                         }
                     </div>
                 </div>
             </div>
-
-            <!-- Homework Submission Card -->
-            @if (!string.IsNullOrEmpty(Model.CurrentLesson.HomeworkTitle) && Model.LessonDetails.StudentSubmission == null)
-            {
-                <div class="col-md-4">
-                    <div class="section-box h-100">
-                        <div class="section-header">
-                            <i class="fas fa-upload"></i>
-                            <span>رفع الواجب</span>
-                        </div>
-                        <div class="section-body">
-                            <form asp-action="SubmitHomework" method="post" enctype="multipart/form-data">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="courseId" value="@Model.CourseId" />
-                                <input type="hidden" name="lessonId" value="@Model.CurrentLesson.Id" />
-                                <div class="mb-3">
-                                    <label class="form-label text-white">اختر ملف الواجب</label>
-                                    <input style="height:35px;" type="file" name="SubmittedFile" class="form-control" required />
-                                </div>
-                                <button type="submit" class="btn btn-info w-100 fw-bold">تسليم الواجب</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
-
     </div>
 </div>

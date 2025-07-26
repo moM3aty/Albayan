@@ -15,23 +15,39 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public string ProfileImageUrl { get; set; }
     }
 
-    // ViewModel for the Create/Edit form
-    public class TeacherFormViewModel
-    {
-        public Teacher Teacher { get; set; }
 
-        [Display(Name = "صورة الملف الشخصي")]
-        public IFormFile ProfileImage { get; set; }
 
-        [Display(Name = "المواد التي يدرسها")]
-        public List<AssignedSubjectViewModel> Subjects { get; set; }
+        public class TeacherFormViewModel
+        {
+            public Teacher Teacher { get; set; }
+
+            [Display(Name = "صورة الملف الشخصي")]
+            public IFormFile? ProfileImage { get; set; }
+
+            [Display(Name = "المواد التي يدرسها")]
+            public List<AssignedSubjectViewModel> Subjects { get; set; }
+
+            [Required(ErrorMessage = "البريد الإلكتروني مطلوب")]
+            [EmailAddress]
+            [Display(Name = "البريد الإلكتروني (للدخول)")]
+            public string Email { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "كلمة المرور")]
+        public string? Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "كلمة المرور الجديدة (اتركه فارغاً لعدم التغيير)")]
+        public string? NewPassword { get; set; }
     }
 
-    // ViewModel to represent a single subject with an assignment status
-    public class AssignedSubjectViewModel
-    {
-        public int SubjectId { get; set; }
-        public string Name { get; set; }
-        public bool IsAssigned { get; set; }
-    }
+        public class AssignedSubjectViewModel
+        {
+            public int SubjectId { get; set; }
+            public string Name { get; set; }
+            public bool IsAssigned { get; set; }
+        }
+    
 }
+
+

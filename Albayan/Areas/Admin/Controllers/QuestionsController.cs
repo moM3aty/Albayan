@@ -1,27 +1,29 @@
 ﻿using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
+using Albayan.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class QuestionsController : Controller
     {
         private readonly PlatformDbContext _context;
+        private readonly IFileService _fileService;
 
-        public QuestionsController(PlatformDbContext context)
+        public QuestionsController(PlatformDbContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
-        // GET: Admin/Questions/Create?examId=5
         public async Task<IActionResult> Create(int? examId)
         {
             if (examId == null) return NotFound();
@@ -30,38 +32,47 @@ namespace Albayan.Areas.Admin.Controllers
 
             var viewModel = new QuestionFormViewModel
             {
-                Question = new Question { ExamId = exam.CourseId, NumberOfOptions = 4 }, 
+                Question = new Question { ExamId = exam.CourseId, NumberOfOptions = 4 },
                 ExamId = exam.CourseId,
                 CourseTitle = exam.Course.Title,
             };
-
-            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
             viewModel.GenerateCorrectAnswerOptions();
-
             return View(viewModel);
         }
-    
-        // POST: Admin/Questions/Create
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuestionFormViewModel viewModel)
         {
-            if (viewModel.Question.NumberOfOptions < 4) ModelState.Remove("Question.OptionD");
-            if (viewModel.Question.NumberOfOptions < 3) ModelState.Remove("Question.OptionC");
-
             ModelState.Remove("CourseTitle");
             ModelState.Remove("Question.Exam");
+            ModelState.Remove("CorrectAnswerOptions");
+
 
             if (ModelState.IsValid)
             {
-                _context.Add(viewModel.Question);
+                var question = viewModel.Question;
+                string content = viewModel.QuestionContent;
+
+                if (content.StartsWith("data:image/"))
+                {
+                    question.ImageUrl = await _fileService.SaveBase64FileAsync(content, "exam_images");
+                    question.QuestionText = "[سؤال عبارة عن صورة]";
+                }
+                else
+                {
+                    question.QuestionText = content;
+                }
+
+                _context.Add(question);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Exams", new { courseId = viewModel.Question.ExamId });
+                return RedirectToAction("Index", "Exams", new { courseId = question.ExamId });
             }
 
             var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.Question.ExamId);
-            viewModel.CourseTitle = exam?.Course.Title;
-            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
+            if (exam == null) return NotFound();
+            viewModel.CourseTitle = exam.Course.Title;
+            viewModel.ExamId = exam.CourseId;
             viewModel.GenerateCorrectAnswerOptions();
             return View(viewModel);
         }
@@ -79,50 +90,72 @@ namespace Albayan.Areas.Admin.Controllers
                 Question = question,
                 ExamId = exam.CourseId,
                 CourseTitle = exam.Course.Title,
-                NumberOfOptions = question.NumberOfOptions
             };
-
             viewModel.GenerateCorrectAnswerOptions();
-
             return View(viewModel);
         }
 
-        // POST: Admin/Questions/Edit/5
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, QuestionFormViewModel viewModel)
         {
             if (id != viewModel.Question.Id) return NotFound();
 
-            if (viewModel.Question.NumberOfOptions < 4) ModelState.Remove("Question.OptionD");
-            if (viewModel.Question.NumberOfOptions < 3) ModelState.Remove("Question.OptionC");
-
             ModelState.Remove("CourseTitle");
             ModelState.Remove("Question.Exam");
+            ModelState.Remove("CorrectAnswerOptions");
+            ModelState.Remove("QuestionContent");
+
+            if (string.IsNullOrEmpty(viewModel.QuestionContent) && string.IsNullOrEmpty(viewModel.Question.ImageUrl))
+            {
+                ModelState.AddModelError("QuestionContent", "محتوى السؤال مطلوب.");
+            }
 
             if (ModelState.IsValid)
             {
-                try
+                var questionToUpdate = await _context.Questions.FindAsync(id);
+                if (questionToUpdate == null) return NotFound();
+
+                if (!string.IsNullOrEmpty(viewModel.QuestionContent))
                 {
-                    _context.Update(viewModel.Question);
-                    await _context.SaveChangesAsync();
+                    if (viewModel.QuestionContent.StartsWith("data:image/"))
+                    {
+                        _fileService.DeleteFile(questionToUpdate.ImageUrl);
+                        questionToUpdate.ImageUrl = await _fileService.SaveBase64FileAsync(viewModel.QuestionContent, "exam_images");
+                        questionToUpdate.QuestionText = "[سؤال عبارة عن صورة]";
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(questionToUpdate.ImageUrl))
+                        {
+                            _fileService.DeleteFile(questionToUpdate.ImageUrl);
+                            questionToUpdate.ImageUrl = null;
+                        }
+                        questionToUpdate.QuestionText = viewModel.QuestionContent;
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Questions.Any(e => e.Id == id)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction("Index", "Exams", new { courseId = viewModel.Question.ExamId });
+
+                questionToUpdate.NumberOfOptions = viewModel.Question.NumberOfOptions;
+                questionToUpdate.OptionA = viewModel.Question.OptionA;
+                questionToUpdate.OptionB = viewModel.Question.OptionB;
+                questionToUpdate.OptionC = viewModel.Question.NumberOfOptions >= 3 ? viewModel.Question.OptionC : null;
+                questionToUpdate.OptionD = viewModel.Question.NumberOfOptions == 4 ? viewModel.Question.OptionD : null;
+                questionToUpdate.CorrectAnswer = viewModel.Question.CorrectAnswer;
+                questionToUpdate.Points = viewModel.Question.Points; 
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Exams", new { courseId = questionToUpdate.ExamId });
             }
 
             var exam = await _context.Exams.Include(e => e.Course).FirstOrDefaultAsync(e => e.CourseId == viewModel.Question.ExamId);
-            viewModel.CourseTitle = exam?.Course.Title;
-            viewModel.NumberOfOptions = viewModel.Question.NumberOfOptions;
+            if (exam == null) return NotFound();
+            viewModel.CourseTitle = exam.Course.Title;
+            viewModel.ExamId = exam.CourseId;
             viewModel.GenerateCorrectAnswerOptions();
             return View(viewModel);
         }
 
-        // GET: Admin/Questions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -133,16 +166,20 @@ namespace Albayan.Areas.Admin.Controllers
             return View(question);
         }
 
-        // POST: Admin/Questions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var question = await _context.Questions.FindAsync(id);
-            var examId = question.ExamId;
-            _context.Questions.Remove(question);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Exams", new { courseId = examId });
+            if (question != null)
+            {
+                _fileService.DeleteFile(question.ImageUrl);
+                var examId = question.ExamId;
+                _context.Questions.Remove(question);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Exams", new { courseId = examId });
+            }
+            return NotFound();
         }
     }
 }

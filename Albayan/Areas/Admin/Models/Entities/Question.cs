@@ -7,9 +7,11 @@ namespace Albayan.Areas.Admin.Models.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "نص السؤال مطلوب")]
         [Display(Name = "نص السؤال")]
-        public string QuestionText { get; set; }
+        public string? QuestionText { get; set; }
+
+        [Display(Name = "رابط صورة السؤال (اختياري)")]
+        public string? ImageUrl { get; set; }
 
         [Required(ErrorMessage = "الخيار (أ) مطلوب")]
         [Display(Name = "الخيار أ")]
@@ -32,6 +34,11 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Display(Name = "عدد الاختيارات")]
         [Range(2, 4)]
         public int NumberOfOptions { get; set; } = 4;
+
+        [Required(ErrorMessage = "يجب تحديد درجة للسؤال")]
+        [Display(Name = "الدرجة")]
+        [Range(1, 100, ErrorMessage = "الدرجة يجب أن تكون بين ١ و ١٠٠.")]
+        public int Points { get; set; } = 1;
 
         public int ExamId { get; set; }
 

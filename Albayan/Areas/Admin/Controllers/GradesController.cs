@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class GradesController : Controller
     {
         private readonly PlatformDbContext _context;
@@ -33,6 +34,26 @@ namespace Albayan.Areas.Admin.Controllers
             return View(gradesByStage);
         }
 
+        // NEW ACTION: Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var grade = await _context.Grades.FindAsync(id);
+            if (grade == null) return NotFound();
+
+            var viewModel = new GradeDetailsViewModel
+            {
+                Grade = grade,
+                Courses = await _context.Courses.Where(c => c.GradeId == id).Include(c => c.Teacher).ToListAsync(),
+                Books = await _context.Books.Where(b => b.GradeId == id).Include(b => b.Subject).ToListAsync(),
+                EducationalMaterials = await _context.EducationalMaterials.Where(em => em.GradeId == id).Include(em => em.Subject).ToListAsync(),
+                LiveLessons = await _context.LiveLessons.Where(ll => ll.GradeId == id).Include(ll => ll.Teacher).ToListAsync()
+            };
+
+            return View(viewModel);
+        }
+
         #region Other Actions
         public async Task<IActionResult> Create()
         {
@@ -51,7 +72,6 @@ namespace Albayan.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("Grade.Name", "هذا الصف موجود بالفعل في نفس المرحلة الدراسية.");
             }
-
 
             ModelState.Remove("Stages");
             ModelState.Remove("Grade.EducationalMaterials");

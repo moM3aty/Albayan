@@ -9,32 +9,30 @@
     <form asp-action="Edit" enctype="multipart/form-data">
         <input type="hidden" asp-for="Teacher.Id" />
         <div class="card-bg p-6 rounded-lg space-y-4">
-            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+            <div asp-validation-summary="All" class="text-red-400 mb-4"></div>
 
+            <!-- Teacher Info -->
+            <h3 class="text-lg font-semibold">البيانات الشخصية</h3>
             <div>
-                <label asp-for="Teacher.FullName" class="block mb-2 text-sm font-medium">الاسم الكامل</label>
+                <label asp-for="Teacher.FullName" class="block mb-2 text-sm font-medium"></label>
                 <input asp-for="Teacher.FullName" class="input-style w-full p-2.5" />
                 <span asp-validation-for="Teacher.FullName" class="text-red-400 mt-2 text-xs"></span>
             </div>
-
             <div>
-                <label asp-for="Teacher.JobTitle" class="block mb-2 text-sm font-medium">المسمى الوظيفي</label>
+                <label asp-for="Teacher.JobTitle" class="block mb-2 text-sm font-medium"></label>
                 <input asp-for="Teacher.JobTitle" class="input-style w-full p-2.5" />
                 <span asp-validation-for="Teacher.JobTitle" class="text-red-400 mt-2 text-xs"></span>
             </div>
-
             <div>
-                <label asp-for="Teacher.ExperienceYears" class="block mb-2 text-sm font-medium">سنوات الخبرة</label>
+                <label asp-for="Teacher.ExperienceYears" class="block mb-2 text-sm font-medium"></label>
                 <input asp-for="Teacher.ExperienceYears" class="input-style w-full p-2.5" type="number" />
                 <span asp-validation-for="Teacher.ExperienceYears" class="text-red-400 mt-2 text-xs"></span>
             </div>
-
             <div>
-                <label asp-for="Teacher.ExperienceSummary" class="block mb-2 text-sm font-medium">ملخص الخبرة</label>
+                <label asp-for="Teacher.ExperienceSummary" class="block mb-2 text-sm font-medium"></label>
                 <textarea asp-for="Teacher.ExperienceSummary" class="input-style w-full p-2.5" rows="3"></textarea>
                 <span asp-validation-for="Teacher.ExperienceSummary" class="text-red-400 mt-2 text-xs"></span>
             </div>
-
             <div>
                 <label asp-for="ProfileImage" class="block mb-2 text-sm font-medium">تغيير صورة الملف الشخصي (اختياري)</label>
                 <input asp-for="ProfileImage" type="file" class="input-style w-full p-2.5" accept="image/*" />
@@ -43,9 +41,26 @@
                 {
                     <div class="mt-4">
                         <p class="text-sm text-gray-400">الصورة الحالية:</p>
-                        <img src="@Model.Teacher.ProfileImageUrl" class="w-40 h-auto rounded-lg mt-2" />
+                        <img src="@Url.Content(Model.Teacher.ProfileImageUrl)" class="w-40 h-auto rounded-lg mt-2" />
                     </div>
                 }
+            </div>
+
+            <!-- Login Info Section -->
+            <div class="border-t border-gray-700 pt-4">
+                <h3 class="text-lg font-semibold mb-3">بيانات تسجيل الدخول</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Email" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="Email" class="input-style w-full p-2.5" />
+                        <span asp-validation-for="Email" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                    <div>
+                        <label asp-for="NewPassword" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="NewPassword" type="password" class="input-style w-full p-2.5" placeholder="اتركه فارغاً لعدم التغيير" />
+                        <span asp-validation-for="NewPassword" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                </div>
             </div>
 
             <div class="border-t border-gray-700 pt-4">
@@ -70,3 +85,9 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

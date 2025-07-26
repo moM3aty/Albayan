@@ -76,8 +76,9 @@
         <table class="w-full text-right">
             <thead class="bg-[#2a3a50]">
                 <tr>
-                    <th class="p-4 font-semibold">نص السؤال</th>
+                    <th class="p-4 font-semibold">السؤال</th>
                     <th class="p-4 font-semibold">الإجابة الصحيحة</th>
+                    <th class="p-4 font-semibold">الدرجة</th>
                     <th class="p-4 font-semibold">إجراءات</th>
                 </tr>
             </thead>
@@ -87,8 +88,15 @@
                     @foreach (var item in Model.Questions)
                     {
                         <tr class="border-b border-gray-700 hover:bg-[#2a3a50]/50 transition-colors">
-                            <td class="p-4">@item.QuestionText</td>
-                            <td class="p-4">@ToArabicLetter(item.CorrectAnswer)</td>
+                            <td class="p-4">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@Url.Content(item.ImageUrl)" class="max-w-[150px] rounded-lg mb-2" />
+                                }
+                                @item.QuestionText
+                            </td>
+                            <td class="p-4 text-green-400 font-bold">@ToArabicLetter(item.CorrectAnswer)</td>
+                            <td class="p-4">@item.Points</td>
                             <td class="p-4 space-x-2 space-x-reverse">
                                 <a asp-controller="Questions" asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
                                 <a asp-controller="Questions" asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
@@ -99,7 +107,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="3" class="p-6 text-center text-gray-500">لا توجد أسئلة مضافة لهذا الاختبار بعد.</td>
+                        <td colspan="4" class="p-6 text-center text-gray-500">لا توجد أسئلة مضافة لهذا الاختبار بعد.</td>
                     </tr>
                 }
             </tbody>

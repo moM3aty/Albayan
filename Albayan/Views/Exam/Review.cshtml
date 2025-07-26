@@ -1,0 +1,133 @@
+﻿@model Albayan.ViewModels.ExamReviewViewModel
+@using Albayan.Helpers
+
+@{
+    ViewData["Title"] = "مراجعة الاختبار";
+}
+
+<style>
+    .result-container {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 2rem auto;
+        color: #e6edf3;
+    }
+
+    .question-block {
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .option-label {
+        background-color: #21262d;
+        border: 1px solid #30363d;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .option-label.correct {
+            border-color: #2ea043;
+            background-color: rgba(46, 160, 67, 0.15);
+        }
+
+        .option-label.incorrect {
+            border-color: #f85149;
+            background-color: rgba(248, 81, 73, 0.15);
+        }
+
+        .option-label .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+        }
+
+        .option-label.correct .icon {
+            background-color: #2ea043;
+        }
+
+        .option-label.incorrect .icon {
+            background-color: #f85149;
+        }
+</style>
+
+<div class="result-container">
+    <div class="text-center mb-5">
+        <h1>مراجعة الاختبار</h1>
+        <h2>دورة: @Model.Attempt.Exam.Course.Title</h2>
+        <p class="lead">النتيجة النهائية: <strong class="text-success" style="font-size: 1.5rem;">@ArabicNumberHelper.ToArabicNumerals(Model.Attempt.Score)%</strong></p>
+    </div>
+
+    @foreach (var (question, index) in Model.Questions.Select((q, i) => (q, i)))
+    {
+        var studentAnswer = Model.StudentAnswers[question.Id];
+        var isCorrect = studentAnswer.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
+
+        <div class="question-block">
+            <h5 class="mb-3 d-flex justify-content-between">
+                <span>السؤال @ArabicNumberHelper.ToArabicNumerals(index + 1):</span>
+                <span class="badge @(isCorrect ? "bg-success" : "bg-danger")">
+                    @ArabicNumberHelper.ToArabicNumerals(isCorrect ? question.Points : 0) / @ArabicNumberHelper.ToArabicNumerals(question.Points) درجة
+                </span>
+            </h5>
+            @if (!string.IsNullOrEmpty(question.ImageUrl))
+            {
+                <img src="@Url.Content(question.ImageUrl)" class="img-fluid rounded mb-3" style="max-width: 300px;" />
+            }
+            else
+            {
+                
+            <p class="mb-3">@question.QuestionText</p>
+            }
+
+
+            @{
+                var options = new Dictionary<string, string> { { "A", question.OptionA }, { "B", question.OptionB } };
+                if (question.NumberOfOptions >= 3) { options.Add("C", question.OptionC); }
+                if (question.NumberOfOptions >= 4) { options.Add("D", question.OptionD); }
+            }
+
+            @foreach (var option in options)
+            {
+                string cssClass = "";
+                string iconClass = "";
+
+                if (option.Key.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "correct";
+                    iconClass = "fas fa-check";
+                }
+                else if (option.Key.Equals(studentAnswer, StringComparison.OrdinalIgnoreCase))
+                {
+                    cssClass = "incorrect";
+                    iconClass = "fas fa-times";
+                }
+
+                <div class="option-label @cssClass">
+                    @if (!string.IsNullOrEmpty(iconClass))
+                    {
+                        <span class="icon"><i class="@iconClass"></i></span>
+                    }
+                    <span>@option.Value</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="text-center mt-5">
+        <a asp-area="" asp-controller="Profile" asp-action="Index" class="btn btn-primary">العودة إلى الملف الشخصي</a>
+    </div>
+</div>

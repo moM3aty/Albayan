@@ -1,6 +1,7 @@
-﻿using Albayan.Areas.Admin.Models.Entities;
+﻿using Albayan.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Albayan.Areas.Admin.Models.Entities
 {
@@ -26,10 +27,14 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Display(Name = "صورة الملف الشخصي")]
         public string ProfileImageUrl { get; set; }
 
-        public virtual ICollection<Subject> Subjects { get; set; } 
+        public string? ApplicationUserId { get; set; }
+        [ForeignKey("ApplicationUserId")]
+        public virtual ApplicationUser? ApplicationUser { get; set; }
+
+        public virtual ICollection<Subject> Subjects { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
         public virtual ICollection<LiveLesson> LiveLessons { get; set; }
         public virtual ICollection<TeacherRating> Ratings { get; set; }
-
+        public virtual ICollection<Book> Books { get; set; }
     }
 }

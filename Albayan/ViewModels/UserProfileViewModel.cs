@@ -1,4 +1,5 @@
 ﻿using Albayan.Areas.Admin.Models.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,7 @@ namespace Albayan.ViewModels
         public List<AvailableCourseViewModel> AvailableCourses { get; set; }
         public List<UserLiveLessonViewModel> LiveNowLessons { get; set; }
         public List<UserLiveLessonViewModel> UpcomingLessons { get; set; }
+        public List<Book> AvailableBooks { get; set; }
         public EditProfileViewModel EditProfileViewModel { get; set; }
 
     }
@@ -100,5 +102,11 @@ namespace Albayan.ViewModels
 
         [Display(Name = "الدولة")]
         public string Country { get; set; }
+
+        [Required(ErrorMessage = "الصف الدراسي مطلوب")]
+        [Display(Name = "الصف الدراسي")]
+        public int GradeId { get; set; }
+
+        public IEnumerable<SelectListItem> Grades { get; set; }
     }
 }

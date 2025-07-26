@@ -5,6 +5,7 @@ using Albayan.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -25,7 +26,6 @@ namespace Albayan.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Profile/Index or /Profile
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -38,7 +38,6 @@ namespace Albayan.Controllers
 
             if (student == null) return NotFound("Profile not found.");
 
-            // Fetch student's subscribed courses (ensuring related course exists)
             var studentCourses = await _context.StudentCourses
                 .Where(sc => sc.StudentId == student.Id && sc.Course != null)
                 .Include(sc => sc.Course).ThenInclude(c => c.Teacher)
@@ -46,14 +45,12 @@ namespace Albayan.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Fetch student's certificates (ensuring related course exists)
             var certificates = await _context.Certificates
                 .Where(c => c.StudentId == student.Id && c.Course != null)
                 .Include(c => c.Course).ThenInclude(c => c.Teacher)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Fetch all available courses for the student's grade
             var subscribedCourseIds = studentCourses.Select(sc => sc.CourseId).ToList();
             var availableCourses = await _context.Courses
                 .Where(c => c.GradeId == student.GradeId)
@@ -71,12 +68,12 @@ namespace Albayan.Controllers
                     IsSubscribed = subscribedCourseIds.Contains(c.Id)
                 }).ToListAsync();
 
-            // Fetch live lessons for the student's grade
             var now = DateTime.UtcNow;
             var subjectIdsForGrade = await _context.Subjects
                 .Where(s => s.Grades.Any(g => g.Id == student.GradeId))
                 .Select(s => s.Id)
                 .ToListAsync();
+            var allGrades = await _context.Grades.AsNoTracking().ToListAsync();
 
             var allLiveLessonsForGrade = await _context.LiveLessons
                 .Where(l => subjectIdsForGrade.Contains(l.SubjectId))
@@ -109,6 +106,13 @@ namespace Albayan.Controllers
                 RemindersCount = l.RemindersCount,
                 IsReminderSet = studentReminders.Contains(l.Id)
             }).ToList();
+
+            var availableBooks = await _context.Books
+                .Where(b => b.GradeId == student.GradeId)
+                .Include(b => b.Teacher)
+                .Include(b => b.Subject)
+                .AsNoTracking()
+                .ToListAsync();
 
             var viewModel = new UserProfileViewModel
             {
@@ -150,6 +154,7 @@ namespace Albayan.Controllers
                         Grade = GetGradeFromPercentage(certificates.FirstOrDefault(c => c.CourseId == sc.CourseId)?.GradePercentage)
                     }).ToList(),
 
+
                 Certificates = certificates
                     .Select(c => new UserCertificateViewModel
                     {
@@ -164,12 +169,15 @@ namespace Albayan.Controllers
                 AvailableCourses = availableCourses,
                 LiveNowLessons = liveLessonsViewModel.Where(l => l.Status == LiveLessonStatus.Live).ToList(),
                 UpcomingLessons = liveLessonsViewModel.Where(l => l.Status == LiveLessonStatus.Upcoming && l.StartTime > now).ToList(),
+                AvailableBooks = availableBooks,
                 EditProfileViewModel = new EditProfileViewModel
                 {
                     FullName = student.FullName,
                     PhoneNumber = student.PhoneNumber,
                     City = student.City,
-                    Country = student.Country
+                    Country = student.Country,
+                    GradeId = student.GradeId,
+                    Grades = new SelectList(allGrades, "Id", "Name", student.GradeId)
                 }
             };
 
@@ -192,6 +200,8 @@ namespace Albayan.Controllers
             ModelState.Remove("GradeName");
             ModelState.Remove("FullName");
             ModelState.Remove("AvailableCourses");
+            ModelState.Remove("AvailableBooks");
+            ModelState.Remove("EditProfileViewModel.Grades");
             if (ModelState.IsValid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -203,6 +213,7 @@ namespace Albayan.Controllers
                     student.FullName = model.EditProfileViewModel.FullName;
                     student.PhoneNumber = model.EditProfileViewModel.PhoneNumber;
                     student.City = model.EditProfileViewModel.City;
+                    student.GradeId = model.EditProfileViewModel.GradeId;
                     student.Country = model.EditProfileViewModel.Country;
                     user.FullName = model.EditProfileViewModel.FullName;
                     user.PhoneNumber = model.EditProfileViewModel.PhoneNumber;

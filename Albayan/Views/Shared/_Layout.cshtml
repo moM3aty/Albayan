@@ -76,7 +76,7 @@
                 }
                 else
                 {
-                        <a class="btn btn-login" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-user-graduate me-1"></i> دخول الطلاب</a>
+                        <a class="btn btn-login" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-user-graduate me-1"></i> تسجيل دخول </a>
                     }
                 </div>
                 
@@ -173,6 +173,10 @@
     </div>
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script>

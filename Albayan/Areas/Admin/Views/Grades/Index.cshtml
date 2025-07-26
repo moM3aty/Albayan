@@ -39,6 +39,7 @@
                                 <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-md">
                                     <span class="font-semibold">@grade.Name</span>
                                     <div class="space-x-2 space-x-reverse">
+                                        <a asp-action="Details" asp-route-id="@grade.Id" class="text-blue-400 hover:text-blue-300" title="تفاصيل الصف"><i class="fas fa-info-circle"></i></a>
                                         <a asp-action="Edit" asp-route-id="@grade.Id" class="text-yellow-400 hover:text-yellow-300" title="تعديل"><i class="fas fa-edit"></i></a>
                                         <a asp-action="Delete" asp-route-id="@grade.Id" class="text-red-400 hover:text-red-300" title="حذف"><i class="fas fa-trash"></i></a>
                                     </div>

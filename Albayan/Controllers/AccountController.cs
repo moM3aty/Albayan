@@ -99,30 +99,44 @@ namespace Albayan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-            if (!ModelState.IsValid) return View(model);
-
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user != null)
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
             {
-                var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.ApplicationUserId == user.Id);
-                if (student != null && !student.IsActive)
-                {
-                    ModelState.AddModelError(string.Empty, "تم تعطيل هذا الحساب من قبل الإدارة.");
-                    return View(model);
-                }
-
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    user.LastLoginDate = DateTime.UtcNow;
-                    await _userManager.UpdateAsync(user);
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user != null)
+                    {
+                        var roles = await _userManager.GetRolesAsync(user);
 
-                    return LocalRedirect(returnUrl);
+                        if (roles.Contains("Admin"))
+                        {
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+                        if (roles.Contains("Teacher"))
+                        {
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+                        if (roles.Contains("Student"))
+                        {
+                            return RedirectToAction("Index", "Profile");
+                        }
+                    }
+                    return RedirectToAction("Index", "Home");
+                }
+                if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "الحساب مقفل مؤقتاً.");
+                    return View(model);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "محاولة تسجيل دخول غير صالحة.");
+                    return View(model);
                 }
             }
 
-            ModelState.AddModelError(string.Empty, "بيانات الدخول غير صحيحة.");
             return View(model);
         }
 

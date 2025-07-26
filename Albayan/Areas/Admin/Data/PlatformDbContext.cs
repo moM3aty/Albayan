@@ -25,10 +25,17 @@ namespace Albayan.Areas.Admin.Data
         public DbSet<EducationalMaterial> EducationalMaterials { get; set; }
         public DbSet<SalesOutlet> SalesOutlets { get; set; }
         public DbSet<TeacherRating> TeacherRatings { get; set; }
-        public DbSet<LessonMaterial> LessonMaterials { get; set; }
         public DbSet<LessonAttachment> LessonAttachments { get; set; }
         public DbSet<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public DbSet<LiveLessonReminder> LiveLessonReminders { get; set; }
+        public DbSet<LessonQuiz> LessonQuizzes { get; set; }
+        public DbSet<LessonQuizQuestion> LessonQuizQuestions { get; set; }
+        public DbSet<LessonQuizAttempt> LessonQuizAttempts { get; set; }
+        public DbSet<LessonQuizAttemptAnswer> LessonQuizAttemptAnswers { get; set; }
+        public DbSet<ExamAttempt> ExamAttempts { get; set; }
+        public DbSet<ExamAttemptAnswer> ExamAttemptAnswers { get; set; }
+        public DbSet<Book> Books { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -85,15 +92,16 @@ namespace Albayan.Areas.Admin.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Student>()
-                 .HasOne(s => s.ApplicationUser)
-                 .WithOne()
-                 .HasForeignKey<Student>(s => s.ApplicationUserId);
+                .HasOne(s => s.ApplicationUser)
+                .WithOne()
+                .HasForeignKey<Student>(s => s.ApplicationUserId);
 
-            modelBuilder.Entity<LessonMaterial>()
-                .HasOne(lm => lm.Subject)
-                .WithMany(s => s.LessonMaterials)
-                .HasForeignKey(lm => lm.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Teacher>()
+                .HasOne(t => t.ApplicationUser)
+                .WithOne()
+                .HasForeignKey<Teacher>(t => t.ApplicationUserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Subject>()
                 .HasMany(s => s.Grades)
@@ -131,15 +139,56 @@ namespace Albayan.Areas.Admin.Data
 
             modelBuilder.Entity<LiveLessonReminder>()
                 .HasOne(r => r.Student)
-                .WithMany(s => s.LiveLessonReminders) 
+                .WithMany(s => s.LiveLessonReminders)
                 .HasForeignKey(r => r.StudentId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LiveLessonReminder>()
                 .HasOne(r => r.LiveLesson)
-                .WithMany(l => l.LiveLessonReminders) 
+                .WithMany(l => l.LiveLessonReminders)
                 .HasForeignKey(r => r.LiveLessonId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Lesson>()
+                .HasOne(l => l.LessonQuiz)
+                .WithOne(q => q.Lesson)
+                .HasForeignKey<LessonQuiz>(q => q.LessonId);
+
+            modelBuilder.Entity<LessonQuizAttempt>()
+                .HasOne(a => a.Student)
+                .WithMany(s => s.LessonQuizAttempts)
+                .HasForeignKey(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Book>()
+                  .HasOne(b => b.Grade)
+                  .WithMany()
+                  .HasForeignKey(b => b.GradeId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Book>()
+                .HasOne(b => b.Subject)
+                .WithMany()
+                .HasForeignKey(b => b.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Book>()
+                .HasOne(b => b.Teacher)
+                .WithMany()
+                .HasForeignKey(b => b.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ExamAttempt>()
+                .HasOne(a => a.Student)
+                .WithMany() 
+                .HasForeignKey(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ExamAttempt>()
+                .HasOne(a => a.Exam)
+                .WithMany() 
+                .HasForeignKey(a => a.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

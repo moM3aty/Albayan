@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -21,7 +22,6 @@ namespace Albayan.Controllers
             _context = context;
         }
 
-        // GET: /Exam/Take/5 (courseId)
         public async Task<IActionResult> Take(int id)
         {
             var course = await _context.Courses.FindAsync(id);
@@ -44,13 +44,13 @@ namespace Albayan.Controllers
             {
                 CourseId = exam.CourseId,
                 CourseTitle = course.Title,
-                Questions = questions
+                Questions = questions,
+                StudentAnswers = new Dictionary<int, string>()
             };
 
             return View(viewModel);
         }
 
-        // POST: /Exam/Submit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(TakeExamViewModel viewModel)
@@ -67,18 +67,42 @@ namespace Albayan.Controllers
 
             if (exam == null) return NotFound("لم يتم العثور على الاختبار.");
 
-            int correctAnswers = 0;
+            int correctAnswersCount = 0;
+            var attemptAnswers = new List<ExamAttemptAnswer>();
+
             foreach (var question in exam.Questions)
             {
-                if (viewModel.StudentAnswers != null && viewModel.StudentAnswers.ContainsKey(question.Id) &&
-                    viewModel.StudentAnswers[question.Id] == question.CorrectAnswer)
+                viewModel.StudentAnswers.TryGetValue(question.Id, out var selectedAnswer);
+                bool isCorrect = !string.IsNullOrEmpty(selectedAnswer) &&
+                                 selectedAnswer.Equals(question.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
+
+                if (isCorrect)
                 {
-                    correctAnswers++;
+                    correctAnswersCount++;
                 }
+
+                attemptAnswers.Add(new ExamAttemptAnswer
+                {
+                    QuestionId = question.Id,
+                    SelectedAnswer = selectedAnswer ?? "لم تتم الإجابة",
+                    IsCorrect = isCorrect
+                });
             }
 
             int totalQuestions = exam.Questions.Count;
-            int score = totalQuestions > 0 ? (int)Math.Round((double)correctAnswers / totalQuestions * 100) : 0;
+            int score = totalQuestions > 0 ? (int)Math.Round((double)correctAnswersCount / totalQuestions * 100) : 0;
+
+            var attempt = new ExamAttempt
+            {
+                StudentId = student.Id,
+                ExamId = exam.CourseId,
+                Score = score,
+                AttemptDate = DateTime.UtcNow,
+                Answers = attemptAnswers
+            };
+            _context.ExamAttempts.Add(attempt);
+            await _context.SaveChangesAsync();
+
             bool passed = score >= exam.PassPercentage;
             string newCertificateGuid = null;
 
@@ -109,6 +133,7 @@ namespace Albayan.Controllers
 
             var resultViewModel = new ExamResultViewModel
             {
+                AttemptId = attempt.Id,
                 Passed = passed,
                 Score = score,
                 PassPercentage = exam.PassPercentage,
@@ -117,6 +142,25 @@ namespace Albayan.Controllers
             };
 
             return View("Result", resultViewModel);
+        }
+        public async Task<IActionResult> Review(int attemptId)
+        {
+            var attempt = await _context.ExamAttempts
+                .Include(a => a.Exam.Course)
+                .Include(a => a.Answers).ThenInclude(ans => ans.Question)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
+
+            if (attempt == null) return NotFound();
+
+            var viewModel = new ExamReviewViewModel
+            {
+                Attempt = attempt,
+                Questions = attempt.Answers.Select(a => a.Question).ToList(),
+                StudentAnswers = attempt.Answers.ToDictionary(a => a.QuestionId, a => a.SelectedAnswer)
+            };
+
+            return View(viewModel);
         }
     }
 }

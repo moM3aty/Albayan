@@ -27,8 +27,7 @@ namespace Albayan.Controllers
             _fileService = fileService;
         }
 
-        // GET: /CoursePlayer/Index/{courseId}
-        [Route("Index/{courseId}")] 
+        [Route("Index/{courseId}")]
         public async Task<IActionResult> Index(int courseId, int? lessonId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -39,7 +38,11 @@ namespace Albayan.Controllers
             if (subscription == null) return RedirectToAction("Index", "Profile");
 
             var course = await _context.Courses
-                .Include(c => c.Lessons).ThenInclude(l => l.Attachments)
+                // --- FIX APPLIED HERE: Added includes for LessonQuiz ---
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.Attachments)
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonQuiz)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == courseId);
 
@@ -86,7 +89,6 @@ namespace Albayan.Controllers
 
             return View(viewModel);
         }
-
         // POST: /CoursePlayer/SubmitHomework
         [HttpPost("SubmitHomework")] 
         [ValidateAntiForgeryToken]

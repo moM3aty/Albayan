@@ -18,7 +18,7 @@
                             <hr />
                             <h4>درجتك النهائية: @Model.Score%</h4>
                             <p>درجة النجاح المطلوبة: @Model.PassPercentage%</p>
-                            <a asp-controller ="Certificate" asp-action="Details" asp-route-id="@Model.CertificateGuid" target="_blank" class="btn btn-success mt-3">
+                            <a asp-controller="Certificate" asp-action="Details" asp-route-id="@Model.CertificateGuid" target="_blank" class="btn btn-success mt-3">
                                 <i class="fas fa-certificate me-2"></i> عرض الشهادة
                             </a>
                         </div>
@@ -36,6 +36,7 @@
                         </div>
                     }
                     <div class="card-footer bg-transparent border-0 mt-3">
+                        <a asp-action="Review" asp-route-attemptId="@Model.AttemptId" class="btn btn-info">عرض الإجابات</a>
                         <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-secondary">العودة إلى الملف الشخصي</a>
                     </div>
                 </div>

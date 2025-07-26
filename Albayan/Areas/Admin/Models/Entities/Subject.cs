@@ -16,7 +16,6 @@ namespace Albayan.Areas.Admin.Models.Entities
         public virtual ICollection<Teacher> Teachers { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
         public virtual ICollection<LiveLesson> LiveLessons { get; set; }
-        public virtual ICollection<LessonMaterial> LessonMaterials { get; set; }
         public virtual ICollection<EducationalMaterial> EducationalMaterials { get; set; }
 
     }

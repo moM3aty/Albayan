@@ -10,6 +10,9 @@
         width: fit-content;
         padding: 10px 20px !important
     }
+    option{
+        color:#000;
+    }
 </style>
 
 <section class="section-padding profile">
@@ -41,6 +44,7 @@
         <ul class="nav nav-tabs justify-content-evenly mb-5" id="myTab" role="tablist">
             <li class="nav-item" role="presentation"><button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">نظرة عامة</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="my-courses-tab" data-bs-toggle="tab" data-bs-target="#my-courses" type="button">دوراتي (@ArabicNumberHelper.ToArabicNumerals(allCoursesCount))</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="books-tab" data-bs-toggle="tab" data-bs-target="#books" type="button">الكتب (@ArabicNumberHelper.ToArabicNumerals(Model.AvailableBooks.Count))</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="recorded-lessons-tab" data-bs-toggle="tab" data-bs-target="#recordedLessons" type="button">الدورات المسجلة</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="live-lessons-tab" data-bs-toggle="tab" data-bs-target="#liveLessons" type="button">الدروس المباشرة</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" id="certificates-tab" data-bs-toggle="tab" data-bs-target="#certificates" type="button">الشهادات (@ArabicNumberHelper.ToArabicNumerals(Model.Certificates.Count))</button></li>
@@ -85,6 +89,11 @@
                                             <input asp-for="EditProfileViewModel.Country" class="form-control" />
                                             <span asp-validation-for="EditProfileViewModel.Country" class="text-danger small"></span>
                                         </div>
+                                        <div class="col-md-12">
+                                            <label asp-for="EditProfileViewModel.GradeId" class="form-label"></label>
+                                            <select asp-for="EditProfileViewModel.GradeId" class="form-control" asp-items="@Model.EditProfileViewModel.Grades"></select>
+                                            <span asp-validation-for="EditProfileViewModel.GradeId" class="text-danger small"></span>
+                                        </div>
                                     </div>
                                     <div class="mt-4">
                                         <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
@@ -110,7 +119,6 @@
                     }
                     else
                     {
-
                         <p class="text-center text-white">ليس لديك دورات قيد التقدم حالياً.</p>
                     }
                 </div>
@@ -126,13 +134,32 @@
                     }
                     else
                     {
-
                         <p class="text-center text-white">لم تكمل أي دورات بعد.</p>
                     }
                 </div>
             </div>
 
-            <!-- Recorded Lessons Tab (Available Courses) -->
+            <!-- Books Tab -->
+            <div class="tab-pane fade" id="books" role="tabpanel">
+                <div class="heading text-center mb-4"><h2 class="title">الكتب المتاحة</h2><p class="description">تصفح الكتب المتاحة لصفك الدراسي.</p></div>
+                <div class="row g-4 mt-5">
+                    @if (Model.AvailableBooks.Any())
+                    {
+                        foreach (var book in Model.AvailableBooks)
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <partial name="_BookCardPartial" model="book" />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-white">لا توجد كتب متاحة لصفك الدراسي حالياً.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Recorded Lessons Tab -->
             <div class="tab-pane fade" id="recordedLessons" role="tabpanel">
                 <div class="heading text-center mb-4"><h2 class="title">الدورات المسجلة</h2><p class="description">تصفح واشترك في الدورات المتاحة لصفك الدراسي.</p></div>
                 <div class="row g-4 mt-5">
@@ -145,7 +172,6 @@
                     }
                     else
                     {
-
                         <p class="text-center text-white">لا توجد دورات مسجلة متاحة لصفك الدراسي حالياً.</p>
                     }
                 </div>
@@ -159,22 +185,36 @@
                     <li class="nav-item" role="presentation"><button class="nav-link" id="now-tab" data-bs-toggle="tab" data-bs-target="#now" type="button">مباشر الآن (@ArabicNumberHelper.ToArabicNumerals(Model.LiveNowLessons.Count))</button></li>
                 </ul>
                 <div class="tab-content" id="lessonTabsContent">
-                    <div class="tab-pane fade" id="now" role="tabpanel"><div class="row g-4">@if (Model.LiveNowLessons.Any()) { foreach (var lesson in Model.LiveNowLessons) {
-                    <div class="col-12"><partial name="_LiveNowLessonCardPartial" model="lesson" /></div>
-                                        } } else
-                    {
-
-                        <p class="text-center text-white">لا توجد دروس مباشرة الآن.</p>
-                    }
-</div></div>
-                    <div class="tab-pane fade show active" id="upcoming" role="tabpanel"><div class="row g-4">@if (Model.UpcomingLessons.Any()) { foreach (var lesson in Model.UpcomingLessons) {
-                    <div class="col-md-6 col-lg-4"><partial name="_UserProfileLiveLessonCardPartial" model="lesson" /></div>
-                                        } } else
-                    {
-
-                        <p class="text-center text-white">لا توجد دروس قادمة مجدولة.</p>
-                    }
-</div></div>
+                    <div class="tab-pane fade" id="now" role="tabpanel">
+                        <div class="row g-4">
+                            @if (Model.LiveNowLessons.Any())
+                            {
+                                foreach (var lesson in Model.LiveNowLessons)
+                                {
+                                    <div class="col-12"><partial name="_LiveNowLessonCardPartial" model="lesson" /></div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-center text-white">لا توجد دروس مباشرة الآن.</p>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+                        <div class="row g-4">
+                            @if (Model.UpcomingLessons.Any())
+                            {
+                                foreach (var lesson in Model.UpcomingLessons)
+                                {
+                                    <div class="col-md-6 col-lg-4"><partial name="_UserProfileLiveLessonCardPartial" model="lesson" /></div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-center text-white">لا توجد دروس قادمة مجدولة.</p>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -191,7 +231,6 @@
                     }
                     else
                     {
-
                         <p class="text-center text-white">ليس لديك أي شهادات حالياً.</p>
                     }
                 </div>
@@ -213,7 +252,6 @@
                 editBtn.addEventListener('click', () => {
                     viewMode.style.display = 'none';
                     editMode.style.display = 'block';
-                    // --- This is the updated line to scroll down ---
                     editMode.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 });
 
@@ -257,7 +295,6 @@
                 });
             });
 
-            // --- Arabic Numerals Helper Function ---
             function toArabicNumerals(str) {
                 if (str === null || str === undefined) return '';
                 return str.toString()
@@ -267,7 +304,6 @@
                     .replace(/9/g, '٩');
             }
 
-            // Countdown Timer Logic
             document.querySelectorAll('[data-countdown]').forEach(timerElement => {
                 const countDownDate = new Date(timerElement.dataset.countdown).getTime();
 
@@ -280,7 +316,6 @@
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    // Use the helper function here
                     timerElement.innerHTML = `يبدأ خلال: ${toArabicNumerals(days)}ي ${toArabicNumerals(hours)}س ${toArabicNumerals(minutes)}د ${toArabicNumerals(seconds)}ث`;
 
                     if (distance < 0) {
@@ -292,4 +327,3 @@
         });
     </script>
 }
-    

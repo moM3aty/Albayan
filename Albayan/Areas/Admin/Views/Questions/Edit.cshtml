@@ -1,110 +1,145 @@
 ﻿@model Albayan.Areas.Admin.Models.ViewModels.QuestionFormViewModel
 
 @{
-    // تحديد عنوان الصفحة بناءً على وجود ID للسؤال
-    ViewData["Title"] = Model.Question.Id == 0 ? "إضافة سؤال جديد" : "تعديل السؤال";
+    ViewData["Title"] = "تعديل السؤال";
 }
 
 <div class="max-w-4xl mx-auto">
-    <h2 class="text-3xl font-bold mb-6">@ViewData["Title"] لاختبار: @Model.CourseTitle</h2>
-
-    <form asp-action="@(Model.Question.Id == 0 ? "Create" : "Edit")">
+    <h2 class="text-3xl font-bold mb-6">تعديل سؤال لاختبار: @Model.CourseTitle</h2>
+    <form asp-action="Edit" asp-route-id="@Model.Question.Id" method="post" id="edit-question-form">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Question.Id" />
         <input type="hidden" asp-for="Question.ExamId" />
+        <input type="hidden" asp-for="QuestionContent" id="questionContentInput" />
+        <input type="hidden" asp-for="Question.ImageUrl" />
 
         <div class="card-bg p-6 rounded-lg space-y-4">
-            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+            <div asp-validation-summary="All" class="text-red-400 mb-4"></div>
 
             <div>
-                <label asp-for="Question.QuestionText" class="block mb-2 text-sm font-medium">نص السؤال</label>
-                <textarea asp-for="Question.QuestionText" class="input-style w-full p-2.5" rows="3"></textarea>
-                <span asp-validation-for="Question.QuestionText" class="text-red-400 mt-2 text-xs"></span>
+                <label asp-for="QuestionContent" class="block mb-2 text-sm font-medium"></label>
+                <div id="question-paste-area" contenteditable="true" class="input-style w-full p-4 min-h-[100px] text-gray-400 border-2 border-dashed border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-0">
+                    @if (!string.IsNullOrEmpty(Model.Question.ImageUrl))
+                    {
+                        <img src="@Url.Content(Model.Question.ImageUrl)" style="max-width: 100%; max-height: 200px; border-radius: 0.5rem;" />
+                    }
+                    else
+                    {
+                        @Model.Question.QuestionText
+                    }
+                </div>
+                <span asp-validation-for="QuestionContent" class="text-red-400 mt-2 text-xs"></span>
             </div>
 
             <div>
                 <label asp-for="Question.NumberOfOptions" class="block mb-2 text-sm font-medium"></label>
                 <select asp-for="Question.NumberOfOptions" id="numberOfOptionsSelector" class="input-style w-full p-2.5">
-                    <option value="2">2 (مثال: صح/خطأ)</option>
-                    <option value="3">3</option>
                     <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
                 </select>
+                <span asp-validation-for="Question.NumberOfOptions" class="text-red-400 mt-2 text-xs"></span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label asp-for="Question.OptionA" class="block mb-2 text-sm font-medium">الخيار أ</label>
+                    <label asp-for="Question.OptionA"></label>
                     <input asp-for="Question.OptionA" class="input-style w-full p-2.5" />
                     <span asp-validation-for="Question.OptionA" class="text-red-400 mt-2 text-xs"></span>
                 </div>
                 <div>
-                    <label asp-for="Question.OptionB" class="block mb-2 text-sm font-medium">الخيار ب</label>
+                    <label asp-for="Question.OptionB"></label>
                     <input asp-for="Question.OptionB" class="input-style w-full p-2.5" />
                     <span asp-validation-for="Question.OptionB" class="text-red-400 mt-2 text-xs"></span>
                 </div>
-
                 <div id="optionC_div">
-                    <label asp-for="Question.OptionC" class="block mb-2 text-sm font-medium">الخيار ج</label>
+                    <label asp-for="Question.OptionC"></label>
                     <input asp-for="Question.OptionC" class="input-style w-full p-2.5" />
                     <span asp-validation-for="Question.OptionC" class="text-red-400 mt-2 text-xs"></span>
                 </div>
-
                 <div id="optionD_div">
-                    <label asp-for="Question.OptionD" class="block mb-2 text-sm font-medium">الخيار د</label>
+                    <label asp-for="Question.OptionD"></label>
                     <input asp-for="Question.OptionD" class="input-style w-full p-2.5" />
                     <span asp-validation-for="Question.OptionD" class="text-red-400 mt-2 text-xs"></span>
                 </div>
             </div>
 
             <div>
-                <label asp-for="Question.CorrectAnswer" class="block mb-2 text-sm font-medium">الإجابة الصحيحة</label>
-                <select asp-for="Question.CorrectAnswer" id="correctAnswerSelector" class="input-style w-full p-2.5" asp-items="@Model.CorrectAnswerOptions">
-                </select>
+                <label asp-for="Question.CorrectAnswer" class="block mb-2 text-sm font-medium"></label>
+                <select asp-for="Question.CorrectAnswer" id="correctAnswerSelector" class="input-style w-full p-2.5" asp-items="@Model.CorrectAnswerOptions"></select>
                 <span asp-validation-for="Question.CorrectAnswer" class="text-red-400 mt-2 text-xs"></span>
             </div>
 
+            <div>
+                <label asp-for="Question.Points" class="block mb-2 text-sm font-medium"></label>
+                <input asp-for="Question.Points" type="number" class="input-style w-full p-2.5" />
+                <span asp-validation-for="Question.Points" class="text-red-400 mt-2 text-xs"></span>
+            </div>
+
             <div class="flex items-center justify-end space-x-4 space-x-reverse pt-4">
-                <input type="submit" value="@(Model.Question.Id == 0 ? "إضافة السؤال" : "حفظ التعديلات")" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
-                <a asp-controller="Exams" asp-action="Index" asp-route-courseId="@Model.ExamId" class="secondary-btn px-6 py-2 rounded-lg">العودة للاختبار</a>
+                <input type="submit" value="حفظ التعديلات" class="primary-btn px-6 py-2 rounded-lg cursor-pointer" />
+                <a asp-controller="Exams" asp-action="Index" asp-route-courseId="@Model.Question.ExamId" class="secondary-btn px-6 py-2 rounded-lg">إلغاء</a>
             </div>
         </div>
     </form>
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const optionsSelector = document.getElementById('numberOfOptionsSelector');
-            const optionCDiv = document.getElementById('optionC_div');
-            const optionDDiv = document.getElementById('optionD_div');
-            const optionCInput = document.querySelector('[name="Question.OptionC"]');
-            const optionDInput = document.querySelector('[name="Question.OptionD"]');
-            const correctAnswerSelector = document.getElementById('correctAnswerSelector');
+          document.addEventListener('DOMContentLoaded', function () {
+            const pasteArea = document.getElementById('question-paste-area');
+            const hiddenInput = document.getElementById('questionContentInput');
+            const form = document.getElementById('edit-question-form');
 
-            function updateForm() {
+            pasteArea.addEventListener('paste', function (event) {
+                const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+                for (const item of items) {
+                    if (item.type.indexOf('image') === 0) {
+                        event.preventDefault();
+                        const blob = item.getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            pasteArea.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '100%';
+                            img.style.maxHeight = '200px';
+                            img.style.borderRadius = '0.5rem';
+                            pasteArea.appendChild(img);
+                            hiddenInput.value = e.target.result;
+                        };
+                        reader.readAsDataURL(blob);
+                        break;
+                    }
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                const img = pasteArea.querySelector('img');
+                if (img && img.src.startsWith('data:image')) {
+                } else if (img) {
+                    hiddenInput.value = '';
+                }
+                else {
+                    hiddenInput.value = pasteArea.innerText.trim();
+                }
+            });
+            function updateOptionsVisibility() {
                 const selectedValue = parseInt(optionsSelector.value);
-                const currentCorrectAnswer = correctAnswerSelector.value;
-
                 optionCDiv.style.display = selectedValue >= 3 ? 'block' : 'none';
                 optionDDiv.style.display = selectedValue >= 4 ? 'block' : 'none';
 
-                if (selectedValue < 3) {
-                    optionCInput.value = '';
-                }
-                if (selectedValue < 4) {
-                    optionDInput.value = '';
-                }
-
+                const currentCorrect = correctAnswerSelector.value;
                 correctAnswerSelector.innerHTML = '';
                 let options = [
-                    { value: 'A', text: 'الخيار أ' },
-                    { value: 'B', text: 'الخيار ب' }
+                    { value: 'A', text: 'أ' },
+                    { value: 'B', text: 'ب' }
                 ];
-                if (selectedValue >= 3) {
-                    options.push({ value: 'C', text: 'الخيار ج' });
-                }
-                if (selectedValue >= 4) {
-                    options.push({ value: 'D', text: 'الخيار د' });
-                }
+                if (selectedValue >= 3) options.push({ value: 'C', text: 'ج' });
+                if (selectedValue >= 4) options.push({ value: 'D', text: 'د' });
 
                 options.forEach(opt => {
                     const optionElement = document.createElement('option');
@@ -112,15 +147,11 @@
                     optionElement.textContent = opt.text;
                     correctAnswerSelector.appendChild(optionElement);
                 });
-
-                if (options.some(o => o.value === currentCorrectAnswer)) {
-                    correctAnswerSelector.value = currentCorrectAnswer;
-                }
+                correctAnswerSelector.value = currentCorrect;
             }
 
-            updateForm();
-
-            optionsSelector.addEventListener('change', updateForm);
+            optionsSelector.addEventListener('change', updateOptionsVisibility);
+            updateOptionsVisibility();
         });
     </script>
 }

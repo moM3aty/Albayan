@@ -8,28 +8,45 @@
     <h2 class="text-3xl font-bold mb-6">إضافة معلم جديد</h2>
     <form asp-action="Create" enctype="multipart/form-data">
         <div class="card-bg p-6 rounded-lg space-y-4">
-            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-4"></div>
+            <div asp-validation-summary="All" class="text-red-400 mb-4"></div>
 
-            <div>
-                <label asp-for="Teacher.FullName" class="block mb-2 text-sm font-medium">الاسم الكامل</label>
-                <input asp-for="Teacher.FullName" class="input-style w-full p-2.5" />
-                <span asp-validation-for="Teacher.FullName" class="text-red-400 mt-2 text-xs"></span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Teacher.FullName" class="block mb-2 text-sm font-medium"></label>
+                    <input asp-for="Teacher.FullName" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Teacher.FullName" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Teacher.JobTitle" class="block mb-2 text-sm font-medium"></label>
+                    <input asp-for="Teacher.JobTitle" class="input-style w-full p-2.5" />
+                    <span asp-validation-for="Teacher.JobTitle" class="text-red-400 mt-2 text-xs"></span>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-4">
+                <h3 class="text-lg font-semibold mb-3">بيانات تسجيل الدخول</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Email" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="Email" class="input-style w-full p-2.5" />
+                        <span asp-validation-for="Email" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Password" class="block mb-2 text-sm font-medium"></label>
+                        <input asp-for="Password" type="password" class="input-style w-full p-2.5" />
+                        <span asp-validation-for="Password" class="text-red-400 mt-2 text-xs"></span>
+                    </div>
+                </div>
             </div>
 
             <div>
-                <label asp-for="Teacher.JobTitle" class="block mb-2 text-sm font-medium">المسمى الوظيفي</label>
-                <input asp-for="Teacher.JobTitle" class="input-style w-full p-2.5" />
-                <span asp-validation-for="Teacher.JobTitle" class="text-red-400 mt-2 text-xs"></span>
-            </div>
-
-            <div>
-                <label asp-for="Teacher.ExperienceYears" class="block mb-2 text-sm font-medium">سنوات الخبرة</label>
+                <label asp-for="Teacher.ExperienceYears" class="block mb-2 text-sm font-medium"></label>
                 <input asp-for="Teacher.ExperienceYears" class="input-style w-full p-2.5" type="number" />
                 <span asp-validation-for="Teacher.ExperienceYears" class="text-red-400 mt-2 text-xs"></span>
             </div>
 
             <div>
-                <label asp-for="Teacher.ExperienceSummary" class="block mb-2 text-sm font-medium">ملخص الخبرة</label>
+                <label asp-for="Teacher.ExperienceSummary" class="block mb-2 text-sm font-medium"></label>
                 <textarea asp-for="Teacher.ExperienceSummary" class="input-style w-full p-2.5" rows="3"></textarea>
                 <span asp-validation-for="Teacher.ExperienceSummary" class="text-red-400 mt-2 text-xs"></span>
             </div>
@@ -62,4 +79,9 @@
         </div>
     </form>
 </div>
-    
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

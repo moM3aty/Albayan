@@ -1,4 +1,9 @@
-﻿using Albayan.Areas.Admin.Data;
+﻿// ----------------------------------------------------------------
+// File: Areas/Admin/Controllers/LiveLessonsController.cs (MODIFIED)
+// ----------------------------------------------------------------
+// Note: Changed TimeZone from "Arab Standard Time" to "Jordan Standard Time".
+
+using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
 using Albayan.Services;
@@ -13,7 +18,7 @@ using System.Threading.Tasks;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class LiveLessonsController : Controller
     {
         private readonly PlatformDbContext _context;
@@ -24,8 +29,15 @@ namespace Albayan.Areas.Admin.Controllers
         {
             _context = context;
             _fileService = fileService;
-            try { _localZone = TimeZoneInfo.FindSystemTimeZoneById("Arab Standard Time"); }
-            catch { _localZone = TimeZoneInfo.Local; }
+            try
+            {
+                // --- TIMEZONE CHANGE ---
+                _localZone = TimeZoneInfo.FindSystemTimeZoneById("Jordan Standard Time");
+            }
+            catch
+            {
+                _localZone = TimeZoneInfo.Local;
+            }
         }
 
         public async Task<IActionResult> Index(string searchString)
@@ -72,7 +84,6 @@ namespace Albayan.Areas.Admin.Controllers
             };
         }
 
-        // GET: Admin/LiveLessons/Create
         public async Task<IActionResult> Create()
         {
             var viewModel = new LiveLessonFormViewModel
@@ -85,7 +96,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/LiveLessons/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LiveLessonFormViewModel viewModel)
@@ -125,7 +135,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/LiveLessons/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -145,7 +154,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/LiveLessons/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LiveLessonFormViewModel viewModel)
@@ -153,10 +161,6 @@ namespace Albayan.Areas.Admin.Controllers
             if (id != viewModel.LiveLesson.Id) return NotFound();
 
             var lessonStartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(viewModel.LiveLesson.StartTime, _localZone);
-            if (lessonStartTimeUtc < DateTime.UtcNow)
-            {
-                ModelState.AddModelError("LiveLesson.StartTime", "لا يمكن جدولة درس بتاريخ قديم.");
-            }
 
             ModelState.Remove("LiveLesson.Subject");
             ModelState.Remove("LiveLesson.Teacher");
@@ -198,7 +202,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // GET: Admin/LiveLessons/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -210,7 +213,6 @@ namespace Albayan.Areas.Admin.Controllers
             return View(liveLesson);
         }
 
-        // POST: Admin/LiveLessons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

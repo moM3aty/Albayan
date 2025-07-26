@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,11 +14,9 @@ namespace Albayan.Areas.Admin.Models.Entities
         [Display(Name = "عنوان الدرس")]
         public string Title { get; set; }
 
-        [Display(Name = "معرف مكتبة الفيديو (Bunny.net)")]
-        public string BunnyVideoLibraryId { get; set; }
-
-        [Display(Name = "معرف الفيديو (Bunny.net)")]
-        public string BunnyVideoId { get; set; }
+        [Display(Name = "رابط فيديو اليوتيوب")]
+        [Url(ErrorMessage = "الرجاء إدخال رابط صحيح")]
+        public string VideoUrl { get; set; }
 
         public int CourseId { get; set; }
 
@@ -32,5 +31,6 @@ namespace Albayan.Areas.Admin.Models.Entities
 
         public virtual ICollection<LessonAttachment> Attachments { get; set; }
         public virtual ICollection<HomeworkSubmission> HomeworkSubmissions { get; set; }
+        public virtual LessonQuiz LessonQuiz { get; set; }
     }
 }

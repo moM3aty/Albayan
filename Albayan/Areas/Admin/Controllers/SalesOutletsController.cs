@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class SalesOutletsController : Controller
     {
         private readonly PlatformDbContext _context;

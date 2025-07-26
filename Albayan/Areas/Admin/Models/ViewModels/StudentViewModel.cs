@@ -42,6 +42,8 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public Student Student { get; set; }
         public List<StudentCourseProgressViewModel> CoursesProgress { get; set; }
         public List<CertificateInfoViewModel> Certificates { get; set; }
+        public List<LessonQuizAttemptViewModel> QuizAttempts { get; set; }
+        public List<ExamAttemptViewModel> FinalExamAttempts { get; set; }
         public int CompletedCourses { get; set; }
         public int CertificatesCount { get; set; }
         public double TotalLearningHours { get; set; }
@@ -52,7 +54,22 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public double AverageRating { get; set; }
         public DateTime? LastAccessDate { get; set; }
     }
-
+    public class ExamAttemptViewModel
+    {
+        public int AttemptId { get; set; }
+        public string CourseTitle { get; set; }
+        public int Score { get; set; }
+        public DateTime AttemptDate { get; set; }
+    }
+    public class LessonQuizAttemptViewModel
+    {
+        public int AttemptId { get; set; }
+        public string LessonTitle { get; set; }
+        public string CourseTitle { get; set; }
+        public int Score { get; set; }
+        public int TotalPoints { get; set; }
+        public DateTime AttemptDate { get; set; }
+    }
     // ViewModel for displaying a single course progress
     public class StudentCourseProgressViewModel
     {

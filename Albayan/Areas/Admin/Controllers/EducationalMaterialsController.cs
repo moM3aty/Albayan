@@ -14,7 +14,7 @@ using System;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class EducationalMaterialsController : Controller
     {
         private readonly PlatformDbContext _context;

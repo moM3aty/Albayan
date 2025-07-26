@@ -3,6 +3,7 @@ using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
 using Albayan.Models;
 using Albayan.Trackers;
+using Albayan.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public class StudentsController : Controller
     {
         private readonly PlatformDbContext _context;
@@ -55,7 +56,7 @@ namespace Albayan.Areas.Admin.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 studentsQuery = studentsQuery.Where(s => s.FullName.Contains(searchString)
-                                       || s.Email.Contains(searchString));
+                                      || s.Email.Contains(searchString));
             }
 
             var students = await studentsQuery.ToListAsync();
@@ -84,6 +85,34 @@ namespace Albayan.Areas.Admin.Controllers
                 .Where(sc => sc.StudentId == id)
                 .ToListAsync();
 
+            var quizAttempts = await _context.LessonQuizAttempts
+                          .Where(a => a.StudentId == id)
+                          .Include(a => a.LessonQuiz.Lesson.Course)
+                          .OrderByDescending(a => a.AttemptDate)
+                          .Select(a => new LessonQuizAttemptViewModel
+                          {
+                              AttemptId = a.Id,
+                              CourseTitle = a.LessonQuiz.Lesson.Course.Title,
+                              LessonTitle = a.LessonQuiz.Lesson.Title,
+                              Score = a.Score,
+                              TotalPoints = a.TotalPoints,
+                              AttemptDate = a.AttemptDate
+                          })
+                          .ToListAsync();
+
+            var finalExamAttempts = await _context.ExamAttempts
+                           .Where(a => a.StudentId == id)
+                           .Include(a => a.Exam.Course)
+                           .OrderByDescending(a => a.AttemptDate)
+                           .Select(a => new ExamAttemptViewModel
+                           {
+                               AttemptId = a.Id,
+                               CourseTitle = a.Exam.Course.Title,
+                               Score = a.Score,
+                               AttemptDate = a.AttemptDate
+                           })
+                           .ToListAsync();
+
             var coursesProgress = studentCourses.Select(sc =>
             {
                 string status;
@@ -111,7 +140,7 @@ namespace Albayan.Areas.Admin.Controllers
             var totalHours = studentCourses.Sum(sc => (sc.ProgressPercentage / 100.0) * sc.Course.TotalHours);
             double averageGrade = certificates.Any() ? certificates.Average(c => c.GradePercentage) : 0;
 
-            var totalRatings = student.GivenRatings?.Count ?? 0;
+            var totalRatings = student.GivenRatings != null ? student.GivenRatings.Count : 0;
             var averageRating = totalRatings > 0
                 ? Math.Round(student.GivenRatings.Average(r => r.Rating), 2)
                 : 0;
@@ -119,6 +148,7 @@ namespace Albayan.Areas.Admin.Controllers
             var viewModel = new StudentProfileViewModel
             {
                 Student = student,
+                QuizAttempts = quizAttempts,
                 CoursesProgress = coursesProgress,
                 Certificates = certificates.Select(c => new CertificateInfoViewModel
                 {
@@ -133,12 +163,56 @@ namespace Albayan.Areas.Admin.Controllers
                 IsActive = student.IsActive,
                 LastAccessDate = student.LastAccessDate,
                 TotalRatings = totalRatings,
-                AverageRating = averageRating
+                AverageRating = averageRating,
+                FinalExamAttempts = finalExamAttempts
             };
 
             return View(viewModel);
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ViewExamAttempt(int attemptId)
+        {
+            var attempt = await _context.ExamAttempts
+                .Include(a => a.Exam.Course)
+                .Include(a => a.Student)
+                .Include(a => a.Answers).ThenInclude(ans => ans.Question)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
 
+            if (attempt == null) return NotFound();
+
+            var viewModel = new ExamReviewViewModel
+            {
+                Attempt = attempt,
+                Questions = attempt.Answers.Select(a => a.Question).ToList(),
+                StudentAnswers = attempt.Answers.ToDictionary(a => a.QuestionId, a => a.SelectedAnswer),
+                StudentName = attempt.Student.FullName
+            };
+
+            return View("~/Views/Exam/Review.cshtml", viewModel);
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ViewQuizAttempt(int attemptId)
+        {
+            var attempt = await _context.LessonQuizAttempts
+                .Include(a => a.LessonQuiz).ThenInclude(lq => lq.Lesson)
+                .Include(a => a.Student)
+                .Include(a => a.Answers).ThenInclude(ans => ans.Question)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
+
+            if (attempt == null) return NotFound();
+
+            var viewModel = new QuizResultViewModel
+            {
+                Attempt = attempt,
+                Questions = attempt.Answers.Select(a => a.Question).ToList(),
+                StudentAnswers = attempt.Answers.ToDictionary(a => a.QuestionId, a => a.SelectedAnswer),
+                StudentName = attempt.Student.FullName
+            };
+
+            return View(viewModel);
+        }
         public IActionResult Create()
         {
             var viewModel = new StudentFormViewModel
@@ -163,6 +237,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Student.ApplicationUserId");
             ModelState.Remove("Student.HomeworkSubmissions");
             ModelState.Remove("Student.LiveLessonReminders");
+            ModelState.Remove("Student.LessonQuizAttempts");
 
             if (!ModelState.IsValid)
             {
@@ -256,6 +331,7 @@ namespace Albayan.Areas.Admin.Controllers
             ModelState.Remove("Student.HomeworkSubmissions");
             ModelState.Remove("Student.LiveLessonReminders");
             ModelState.Remove("Password");
+            ModelState.Remove("Student.LessonQuizAttempts");
 
             if (ModelState.IsValid)
             {

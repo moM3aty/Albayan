@@ -99,7 +99,7 @@
 
         <!-- Certificates -->
         <div class="card-bg p-6 rounded-lg">
-            <h3 class="text-xl font-semibold mb-4">الشهادات المحصلة</h3>
+            <h3 class="text-xl font-semibold mb-4">الشهادات ونتائج الاختبارات</h3>
             <div class="space-y-3">
                 @if (Model.Certificates.Any())
                 {
@@ -110,7 +110,9 @@
                                 <p class="font-semibold text-white">@cert.CourseTitle</p>
                                 <p class="text-xs text-gray-400">تاريخ الإصدار: @cert.IssueDate.ToString("yyyy/MM/dd")</p>
                             </div>
-                            <a asp-controller="Certificates" asp-action="Details" asp-route-id="@cert.CertificateId" target="_blank" class="secondary-btn px-3 py-1 text-sm rounded-md">عرض الشهادة</a>
+                            <div>
+                                <a asp-controller="Certificates" asp-action="Details" asp-route-id="@cert.CertificateId" target="_blank" class="secondary-btn px-3 py-1 text-sm rounded-md">عرض الشهادة</a>
+                            </div>
                         </div>
                     }
                 }
@@ -122,8 +124,93 @@
         </div>
     </div>
 
+    <div class="card-bg p-6 rounded-lg lg:col-span-2 my-5">
+        <h3 class="text-xl font-semibold mb-4">نتائج اختبارات الدروس</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-right">
+                <thead class="bg-[#2a3a50]">
+                    <tr>
+                        <th class="p-4 font-semibold">الدورة</th>
+                        <th class="p-4 font-semibold">الدرس</th>
+                        <th class="p-4 font-semibold">النتيجة</th>
+                        <th class="p-4 font-semibold">تاريخ المحاولة</th>
+                        <th class="p-4 font-semibold">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.QuizAttempts.Any())
+                    {
+                        @foreach (var attempt in Model.QuizAttempts)
+                        {
+                            <tr class="border-b border-gray-700">
+                                <td class="p-4">@attempt.CourseTitle</td>
+                                <td class="p-4">@attempt.LessonTitle</td>
+                                <td class="p-4">@attempt.Score / @attempt.TotalPoints</td>
+                                <td class="p-4">@attempt.AttemptDate.ToLocalTime().ToString("g")</td>
+                                <td class="p-4">
+                                    <a asp-action="ViewQuizAttempt" asp-route-attemptId="@attempt.AttemptId" class="text-blue-400 hover:text-blue-300" title="عرض الإجابات">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center p-6 text-gray-500">
+                                لم يقم الطالب بأي اختبارات دروس بعد.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-bg p-6 rounded-lg lg:col-span-2 my-5">
+        <h3 class="text-xl font-semibold mb-4">نتائج الاختبارات النهائية</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-right">
+                <thead class="bg-[#2a3a50]">
+                    <tr>
+                        <th class="p-4 font-semibold">الدورة</th>
+                        <th class="p-4 font-semibold">النتيجة</th>
+                        <th class="p-4 font-semibold">تاريخ المحاولة</th>
+                        <th class="p-4 font-semibold">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.FinalExamAttempts.Any())
+                    {
+                        @foreach (var attempt in Model.FinalExamAttempts)
+                        {
+                            <tr class="border-b border-gray-700">
+                                <td class="p-4">@attempt.CourseTitle</td>
+                                <td class="p-4">@attempt.Score %</td>
+                                <td class="p-4">@attempt.AttemptDate.ToLocalTime().ToString("g")</td>
+                                <td class="p-4">
+                                    <a asp-action="ViewExamAttempt" asp-route-attemptId="@attempt.AttemptId" class="text-blue-400 hover:text-blue-300" title="عرض الإجابات">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center p-6 text-gray-500">
+                                لم يقم الطالب بأي اختبارات نهائية بعد.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6">
         <a asp-action="Edit" asp-route-id="@Model.Student.Id" class="primary-btn px-6 py-2 rounded-lg">تعديل بيانات الطالب</a>
         <a asp-action="Index" class="secondary-btn px-6 py-2 rounded-lg">العودة للقائمة</a>
     </div>
+
 </div>
