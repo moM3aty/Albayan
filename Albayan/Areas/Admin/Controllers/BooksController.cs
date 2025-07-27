@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
@@ -28,7 +29,23 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
-            var booksQuery = _context.Books
+            var booksQuery = _context.Books.AsQueryable();
+
+            if (User.IsInRole("Teacher"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var teacher = await _context.Teachers.AsNoTracking().FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+                if (teacher != null)
+                {
+                    booksQuery = booksQuery.Where(b => b.TeacherId == teacher.Id);
+                }
+                else
+                {
+                    booksQuery = booksQuery.Where(b => false); 
+                }
+            }
+
+            var projectedQuery = booksQuery
                 .Include(b => b.Grade)
                 .Include(b => b.Subject)
                 .Include(b => b.Teacher)
@@ -45,13 +62,13 @@ namespace Albayan.Areas.Admin.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                booksQuery = booksQuery.Where(b => b.Title.Contains(searchString)
+                projectedQuery = projectedQuery.Where(b => b.Title.Contains(searchString)
                                                 || b.GradeName.Contains(searchString)
                                                 || b.SubjectName.Contains(searchString)
                                                 || b.TeacherName.Contains(searchString));
             }
 
-            var books = await booksQuery.OrderBy(b => b.Title).ToListAsync();
+            var books = await projectedQuery.OrderBy(b => b.Title).ToListAsync();
             return View(books);
         }
 

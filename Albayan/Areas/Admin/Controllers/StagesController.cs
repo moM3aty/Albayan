@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin")]
     public class StagesController : Controller
     {
         private readonly PlatformDbContext _context;

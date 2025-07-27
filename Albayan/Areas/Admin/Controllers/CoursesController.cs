@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -29,8 +30,23 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
+            var coursesQuery = _context.Courses.AsQueryable();
 
-            var coursesQuery = _context.Courses
+            if (User.IsInRole("Teacher"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var teacher = await _context.Teachers.AsNoTracking().FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+                if (teacher != null)
+                {
+                    coursesQuery = coursesQuery.Where(c => c.TeacherId == teacher.Id);
+                }
+                else
+                {
+                    coursesQuery = coursesQuery.Where(c => false); 
+                }
+            }
+
+            var projectedQuery = coursesQuery
                 .Include(c => c.Teacher)
                 .Include(c => c.Subject)
                 .Include(c => c.Grade)
@@ -48,13 +64,13 @@ namespace Albayan.Areas.Admin.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                coursesQuery = coursesQuery.Where(c => c.Title.Contains(searchString)
-                                                   || c.TeacherName.Contains(searchString)
-                                                   || c.SubjectName.Contains(searchString)
-                                                   || c.GradeName.Contains(searchString));
+                projectedQuery = projectedQuery.Where(c => c.Title.Contains(searchString)
+                                              || c.TeacherName.Contains(searchString)
+                                              || c.SubjectName.Contains(searchString)
+                                              || c.GradeName.Contains(searchString));
             }
 
-            var courses = await coursesQuery.ToListAsync();
+            var courses = await projectedQuery.ToListAsync();
             return View(courses);
         }
 

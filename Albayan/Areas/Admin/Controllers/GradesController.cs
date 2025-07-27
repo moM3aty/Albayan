@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Albayan.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin")]
     public class GradesController : Controller
     {
         private readonly PlatformDbContext _context;

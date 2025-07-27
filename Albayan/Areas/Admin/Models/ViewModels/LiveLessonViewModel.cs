@@ -23,6 +23,7 @@ namespace Albayan.Areas.Admin.Models.ViewModels
         public string TeacherName { get; set; }
         public string SubjectName { get; set; }
         public DateTime StartTime { get; set; }
+        public string StartTimeFormatted { get; set; }
         public int DurationMinutes { get; set; } 
         public string CoverImageUrl { get; set; }
         public string MeetingUrl { get; set; }

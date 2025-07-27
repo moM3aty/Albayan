@@ -116,7 +116,7 @@ namespace Albayan.Controllers
                         }
                         if (roles.Contains("Teacher"))
                         {
-                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                            return RedirectToAction("Index", "Courses", new { area = "Admin" });
                         }
                         if (roles.Contains("Student"))
                         {

@@ -1,18 +1,16 @@
-﻿// ----------------------------------------------------------------
-// File: Areas/Admin/Controllers/LiveLessonsController.cs (MODIFIED)
-// ----------------------------------------------------------------
-// Note: Changed TimeZone from "Arab Standard Time" to "Jordan Standard Time".
-
-using Albayan.Areas.Admin.Data;
+﻿using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
+using Albayan.Helpers;
 using Albayan.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
@@ -31,7 +29,6 @@ namespace Albayan.Areas.Admin.Controllers
             _fileService = fileService;
             try
             {
-                // --- TIMEZONE CHANGE ---
                 _localZone = TimeZoneInfo.FindSystemTimeZoneById("Jordan Standard Time");
             }
             catch
@@ -43,27 +40,35 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
-            var now = DateTime.UtcNow;
+            var nowUtc = DateTime.UtcNow;
 
-            var allLessonsQuery = _context.LiveLessons
-                .Include(l => l.Teacher)
-                .Include(l => l.Subject)
-                .AsQueryable();
+            var allLessonsQuery = _context.LiveLessons.AsQueryable();
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (User.IsInRole("Teacher"))
             {
-                allLessonsQuery = allLessonsQuery.Where(l => l.Title.Contains(searchString)
-                                                        || l.Teacher.FullName.Contains(searchString)
-                                                        || l.Subject.Name.Contains(searchString));
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var teacher = await _context.Teachers.AsNoTracking().FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+                if (teacher != null)
+                {
+                    allLessonsQuery = allLessonsQuery.Where(l => l.TeacherId == teacher.Id);
+                }
+                else
+                {
+                    allLessonsQuery = allLessonsQuery.Where(l => false); 
+                }
             }
 
-            var allLessons = await allLessonsQuery.OrderByDescending(l => l.StartTime).ToListAsync();
+            var allLessons = await allLessonsQuery
+                .Include(l => l.Teacher)
+                .Include(l => l.Subject)
+                .OrderByDescending(l => l.StartTime)
+                .ToListAsync();
 
             var viewModel = new LiveLessonIndexViewModel
             {
-                UpcomingLessons = allLessons.Where(l => l.StartTime > now).Select(MapToListItemViewModel),
-                LiveNowLessons = allLessons.Where(l => l.StartTime <= now && l.StartTime.AddMinutes(l.DurationMinutes) > now).Select(MapToListItemViewModel),
-                RecordedLessons = allLessons.Where(l => l.StartTime.AddMinutes(l.DurationMinutes) <= now).Select(MapToListItemViewModel)
+                UpcomingLessons = allLessons.Where(l => l.StartTime > nowUtc).Select(MapToListItemViewModel),
+                LiveNowLessons = allLessons.Where(l => l.StartTime <= nowUtc && l.StartTime.AddMinutes(l.DurationMinutes) > nowUtc).Select(MapToListItemViewModel),
+                RecordedLessons = allLessons.Where(l => l.StartTime.AddMinutes(l.DurationMinutes) <= nowUtc).Select(MapToListItemViewModel)
             };
 
             return View(viewModel);
@@ -71,13 +76,15 @@ namespace Albayan.Areas.Admin.Controllers
 
         private LiveLessonListItemViewModel MapToListItemViewModel(LiveLesson lesson)
         {
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(lesson.StartTime, _localZone);
             return new LiveLessonListItemViewModel
             {
                 Id = lesson.Id,
                 Title = lesson.Title,
                 TeacherName = lesson.Teacher.FullName,
                 SubjectName = lesson.Subject.Name,
-                StartTime = lesson.StartTime,
+                StartTime = localTime,
+                StartTimeFormatted = ArabicNumberHelper.ToArabicNumerals(localTime.ToString("g", new CultureInfo("ar-EG"))),
                 DurationMinutes = lesson.DurationMinutes,
                 CoverImageUrl = lesson.CoverImageUrl,
                 MeetingUrl = lesson.MeetingUrl

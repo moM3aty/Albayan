@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
@@ -39,28 +40,53 @@ namespace Albayan.Areas.Admin.Controllers
         {
             ViewData["CurrentFilter"] = searchString;
             var onlineUsers = await _presenceTracker.GetOnlineUsers();
+            var studentsQuery = _context.Students.Include(s => s.Grade).AsQueryable();
 
-            var studentsQuery = _context.Students
-                .Include(s => s.Grade)
-                .Select(s => new StudentIndexViewModel
-                {
-                    Id = s.Id,
-                    FullName = s.FullName,
-                    Email = s.Email,
-                    GradeName = s.Grade.Name,
-                    RegistrationDate = s.RegistrationDate,
-                    IsActive = s.IsActive,
-                    IsOnline = onlineUsers.Contains(s.ApplicationUserId)
-                });
-
-            if (!String.IsNullOrEmpty(searchString))
+            if (User.IsInRole("Teacher"))
             {
-                studentsQuery = studentsQuery.Where(s => s.FullName.Contains(searchString)
-                                      || s.Email.Contains(searchString));
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var teacher = await _context.Teachers.AsNoTracking().FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+                if (teacher != null)
+                {
+                    var teacherCourseIds = await _context.Courses
+                        .Where(c => c.TeacherId == teacher.Id)
+                        .Select(c => c.Id)
+                        .ToListAsync();
+
+                    var studentIds = await _context.StudentCourses
+                        .Where(sc => teacherCourseIds.Contains(sc.CourseId))
+                        .Select(sc => sc.StudentId)
+                        .Distinct()
+                        .ToListAsync();
+
+                    studentsQuery = studentsQuery.Where(s => studentIds.Contains(s.Id));
+                }
+                else
+                {
+                    studentsQuery = studentsQuery.Where(s => false); 
+                }
             }
 
-            var students = await studentsQuery.ToListAsync();
+            var projectedQuery = studentsQuery.Select(s => new StudentIndexViewModel
+            {
+                Id = s.Id,
+                FullName = s.FullName,
+                Email = s.Email,
+                GradeName = s.Grade.Name,
+                RegistrationDate = s.RegistrationDate,
+                IsActive = s.IsActive,
+                IsOnline = onlineUsers.Contains(s.ApplicationUserId)
+            });
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                projectedQuery = projectedQuery.Where(s => s.FullName.Contains(searchString) || s.Email.Contains(searchString));
+            }
+
+            var students = await projectedQuery.ToListAsync();
             return View(students);
+
+            
         }
 
         public async Task<IActionResult> Details(int? id)

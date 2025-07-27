@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Albayan.Areas.Admin.Data;
+﻿using Albayan.Areas.Admin.Data;
 using Albayan.Areas.Admin.Models.Entities;
 using Albayan.Areas.Admin.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Albayan.Areas.Admin.Controllers
 {
@@ -20,22 +21,40 @@ namespace Albayan.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
+            var subjectsQuery = _context.Subjects.Include(s => s.Grades).AsQueryable();
 
-            var subjectsQuery = _context.Subjects
-                .Include(s => s.Grades)
-                .Select(s => new SubjectIndexViewModel
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    GradeNames = s.Grades.Select(g => g.Name).ToList()
-                });
-
-            if (!String.IsNullOrEmpty(searchString))
+            if (User.IsInRole("Teacher"))
             {
-                subjectsQuery = subjectsQuery.Where(s => s.Name.Contains(searchString));
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var teacher = await _context.Teachers
+                    .Include(t => t.Subjects)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.ApplicationUserId == userId);
+
+                if (teacher != null)
+                {
+                    var teacherSubjectIds = teacher.Subjects.Select(s => s.Id).ToList();
+                    subjectsQuery = subjectsQuery.Where(s => teacherSubjectIds.Contains(s.Id));
+                }
+                else
+                {
+                    subjectsQuery = subjectsQuery.Where(s => false); 
+                }
             }
 
-            var subjects = await subjectsQuery.ToListAsync();
+            var projectedQuery = subjectsQuery.Select(s => new SubjectIndexViewModel
+            {
+                Id = s.Id,
+                Name = s.Name,
+                GradeNames = s.Grades.Select(g => g.Name).ToList()
+            });
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                projectedQuery = projectedQuery.Where(s => s.Name.Contains(searchString));
+            }
+
+            var subjects = await projectedQuery.ToListAsync();
             return View(subjects);
         }
 

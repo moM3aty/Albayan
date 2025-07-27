@@ -1,9 +1,11 @@
 ﻿@model Albayan.Areas.Admin.Models.ViewModels.LiveLessonListItemViewModel
 
 @{
-    var now = DateTime.UtcNow;
-    bool isLive = now >= Model.StartTime && now < Model.StartTime.AddMinutes(Model.DurationMinutes);
-    bool isUpcoming = now < Model.StartTime;
+    var jordanTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Jordan Standard Time");
+    var nowInJordan = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, jordanTimeZone);
+    var localStartTime = Model.StartTime;
+    bool isLive = nowInJordan >= localStartTime && nowInJordan < localStartTime.AddMinutes(Model.DurationMinutes);
+    bool isUpcoming = nowInJordan < localStartTime;
 }
 
 <div class="card-bg rounded-lg overflow-hidden flex flex-col group">
@@ -29,9 +31,13 @@
         <div class="text-sm text-gray-400 mt-2 border-t border-gray-700 pt-3">
             <p><i class="fas fa-chalkboard-teacher ml-2"></i>@Model.TeacherName</p>
             <p class="mt-1"><i class="fas fa-book ml-2"></i>@Model.SubjectName</p>
-            @if (isUpcoming)
+            @if (isUpcoming || isLive)
             {
-                <p class="mt-1 text-yellow-400"><i class="fas fa-clock ml-2"></i>@Model.StartTime.ToLocalTime().ToString("g")</p>
+                <p class="mt-1 text-yellow-400"><i class="fas fa-clock ml-2"></i>@Model.StartTimeFormatted</p>
+            }
+            else
+            {
+                <p class="mt-1 text-gray-500"><i class="fas fa-clock ml-2"></i>@Model.StartTimeFormatted</p>
             }
         </div>
         <div class="flex justify-between items-center mt-4">
