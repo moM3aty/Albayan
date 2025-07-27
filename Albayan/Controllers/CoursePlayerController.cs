@@ -65,9 +65,7 @@ namespace Albayan.Controllers
             subscription.LastAccessDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            var studentSubmission = await _context.HomeworkSubmissions
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.LessonId == currentLesson.Id && s.StudentId == student.Id);
+           
 
             var viewModel = new CoursePlayerViewModel
             {
@@ -82,8 +80,7 @@ namespace Albayan.Controllers
 
                 LessonDetails = new LessonDetailsForStudentViewModel
                 {
-                    Attachments = currentLesson.Attachments.ToList(),
-                    StudentSubmission = studentSubmission
+                    Attachments = currentLesson.Attachments.ToList()
                 }
             };
 
@@ -105,16 +102,7 @@ namespace Albayan.Controllers
             if (student == null) return Unauthorized();
 
             var filePath = await _fileService.SaveFileAsync(SubmittedFile, "submissions");
-
-            var submission = new HomeworkSubmission
-            {
-                LessonId = lessonId,
-                StudentId = student.Id,
-                SubmissionFilePath = filePath,
-                SubmissionDate = DateTime.UtcNow
-            };
-
-            _context.HomeworkSubmissions.Add(submission);
+        
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "تم تسليم واجبك بنجاح!";

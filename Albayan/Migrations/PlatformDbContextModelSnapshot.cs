@@ -323,42 +323,6 @@ namespace Albayan.Migrations
                     b.ToTable("Grades");
                 });
 
-            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.HomeworkSubmission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Feedback")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Grade")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SubmissionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmissionFilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("HomeworkSubmissions");
-                });
-
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Lesson", b =>
                 {
                     b.Property<int>("Id")
@@ -369,12 +333,6 @@ namespace Albayan.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
-
-                    b.Property<string>("HomeworkDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HomeworkTitle")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1293,25 +1251,6 @@ namespace Albayan.Migrations
                     b.Navigation("Stage");
                 });
 
-            modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.HomeworkSubmission", b =>
-                {
-                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Lesson", "Lesson")
-                        .WithMany("HomeworkSubmissions")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Albayan.Areas.Admin.Models.Entities.Student", "Student")
-                        .WithMany("HomeworkSubmissions")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("Albayan.Areas.Admin.Models.Entities.Lesson", b =>
                 {
                     b.HasOne("Albayan.Areas.Admin.Models.Entities.Course", "Course")
@@ -1647,8 +1586,6 @@ namespace Albayan.Migrations
                 {
                     b.Navigation("Attachments");
 
-                    b.Navigation("HomeworkSubmissions");
-
                     b.Navigation("LessonQuiz")
                         .IsRequired();
                 });
@@ -1678,8 +1615,6 @@ namespace Albayan.Migrations
                     b.Navigation("Certificates");
 
                     b.Navigation("GivenRatings");
-
-                    b.Navigation("HomeworkSubmissions");
 
                     b.Navigation("LessonQuizAttempts");
 

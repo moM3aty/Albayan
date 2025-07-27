@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Albayan")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+826f316f3d024edf03b1fa9a584805bb4317a1e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+70642278c3bfe04bd43d220a6571cda48c054583")]
 [assembly: System.Reflection.AssemblyProductAttribute("Albayan")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Albayan")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

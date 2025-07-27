@@ -62,50 +62,86 @@
         </div>
     </div>
 
-    <!-- Charts and Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card-bg p-6 rounded-lg">
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+        <div class="card-bg p-6 rounded-lg lg:col-span-3">
             <h3 class="text-xl font-semibold mb-4">الطلاب الجدد (آخر ٦ أشهر)</h3>
             <canvas id="newStudentsChart"></canvas>
         </div>
-        <div class="card-bg p-6 rounded-lg">
-            <h3 class="text-xl font-semibold mb-4">آخر الأنشطة</h3>
-            <ul class="space-y-4">
-                @foreach (var submission in Model.RecentSubmissions)
-                {
-                    <li class="text-sm border-r-2 border-blue-500 pr-3">
-                        <p>تسليم واجب جديد من <strong class="text-white">@submission.StudentName</strong></p>
-                        <p class="text-xs text-gray-400">@submission.CourseTitle - @submission.LessonTitle</p>
-                        <p class="text-xs text-gray-500">@submission.SubmissionDate.ToString("yyyy/MM/dd hh:mm tt")</p>
-                    </li>
-                }
-            </ul>
+        <div class="card-bg p-6 rounded-lg lg:col-span-2">
+            <h3 class="text-xl font-semibold mb-4">توزيع الطلاب على الصفوف</h3>
+            <canvas id="studentsByGradeChart"></canvas>
         </div>
     </div>
 
-    <!-- Other Lists -->
+
+    <!-- Latest Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Latest Students -->
+        <div class="card-bg p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">أحدث الطلاب المسجلين</h3>
+            <div class="space-y-4">
+                @if (Model.LatestStudents != null && Model.LatestStudents.Any())
+                {
+                    @foreach (var student in Model.LatestStudents)
+                    {
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-semibold text-white">@student.FullName</p>
+                                <p class="text-sm text-gray-400">@student.RegistrationDate.ToString("yyyy/MM/dd")</p>
+                            </div>
+                            <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id" class="text-blue-400 hover:underline text-sm">عرض</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا يوجد طلاب مسجلون حديثاً.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Popular Courses -->
         <div class="card-bg p-6 rounded-lg">
             <h3 class="text-xl font-semibold mb-4">الدورات الأكثر تسجيلاً</h3>
-            <ul class="space-y-3">
-                @foreach (var course in Model.PopularCourses)
+            <div class="space-y-4">
+                @if (Model.PopularCourses != null && Model.PopularCourses.Any())
                 {
-                    <li class="flex justify-between items-center text-sm">
-                        <span>@course.Title</span>
-                        <span class="text-gray-400">@course.LessonsCount تسجيل</span>
-                    </li>
+                    @foreach (var course in Model.PopularCourses)
+                    {
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-semibold text-white">@course.Title</p>
+                                <p class="text-sm text-gray-400">@course.LessonsCount تسجيل</p>
+                            </div>
+                            <a asp-controller="Courses" asp-action="Edit" asp-route-id="@course.Id" class="text-blue-400 hover:underline text-sm">عرض</a>
+                        </div>
+                    }
                 }
-            </ul>
+                else
+                {
+                    <p class="text-gray-500">لا توجد بيانات عن الدورات الأكثر تسجيلاً.</p>
+                }
+            </div>
         </div>
-        <div class="card-bg p-6 rounded-lg">
+
+        <!-- Latest Blog Posts -->
+        <div class="card-bg p-6 rounded-lg lg:col-span-2">
             <h3 class="text-xl font-semibold mb-4">آخر مقالات المدونة</h3>
             <ul class="space-y-3">
-                @foreach (var post in Model.LatestBlogPosts)
+                @if (Model.LatestBlogPosts != null && Model.LatestBlogPosts.Any())
                 {
-                    <li class="flex justify-between items-center text-sm">
-                        <span>@post.Title</span>
-                        <span class="text-gray-400">@post.PublishDate.ToString("yyyy/MM/dd")</span>
-                    </li>
+                    @foreach (var post in Model.LatestBlogPosts)
+                    {
+                        <li class="flex justify-between items-center text-sm">
+                            <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@post.Id" class="hover:text-blue-400">@post.Title</a>
+                            <span class="text-gray-400">@post.PublishDate.ToString("yyyy/MM/dd")</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">لا توجد مقالات مضافة حديثاً.</p>
                 }
             </ul>
         </div>
@@ -115,6 +151,10 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const chartTextColor = '#e0e1dd';
+            const chartGridColor = 'rgba(255, 255, 255, 0.1)';
+
+            // New Students Line Chart
             const ctxStudents = document.getElementById('newStudentsChart')?.getContext('2d');
             if (ctxStudents) {
                 new Chart(ctxStudents, {
@@ -133,10 +173,46 @@
                     options: {
                         responsive: true,
                         scales: {
-                            y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#e0e1dd' } },
-                            x: { grid: { display: false }, ticks: { color: '#e0e1dd' } }
+                            y: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { color: chartTextColor } },
+                            x: { grid: { display: false }, ticks: { color: chartTextColor } }
                         },
                         plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Students by Grade Doughnut Chart
+            const ctxGrades = document.getElementById('studentsByGradeChart')?.getContext('2d');
+            if (ctxGrades) {
+                new Chart(ctxGrades, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @Html.Raw(JsonSerializer.Serialize(Model.StudentsByGradeChartLabels)),
+                        datasets: [{
+                            label: 'عدد الطلاب',
+                            data: @Html.Raw(JsonSerializer.Serialize(Model.StudentsByGradeChartData)),
+                            backgroundColor: [
+                                'rgba(58, 134, 255, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(40, 167, 69, 0.8)',
+                                'rgba(220, 53, 69, 0.8)',
+                                'rgba(111, 66, 193, 0.8)',
+                                'rgba(23, 162, 184, 0.8)'
+                            ],
+                            borderColor: '#1b263b',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: chartTextColor
+                                }
+                            }
+                        }
                     }
                 });
             }

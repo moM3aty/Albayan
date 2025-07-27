@@ -51,7 +51,6 @@ namespace Albayan.Areas.Admin.Models.Entities
         public virtual ICollection<Certificate> Certificates { get; set; }
         public virtual ICollection<StudentCourse> StudentCourses { get; set; }
         public virtual ICollection<TeacherRating> GivenRatings { get; set; }
-        public virtual ICollection<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public virtual ICollection<LiveLessonReminder> LiveLessonReminders { get; set; }
 
         public virtual ICollection<LessonQuizAttempt> LessonQuizAttempts { get; set; }

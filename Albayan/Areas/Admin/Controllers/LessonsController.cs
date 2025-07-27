@@ -62,8 +62,6 @@ namespace Albayan.Areas.Admin.Controllers
 
             var lesson = await _context.Lessons
                 .Include(l => l.Attachments)
-                .Include(l => l.HomeworkSubmissions)
-                    .ThenInclude(s => s.Student)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
             if (lesson == null) return NotFound();
@@ -71,7 +69,6 @@ namespace Albayan.Areas.Admin.Controllers
             var viewModel = new LessonDetailsViewModel
             {
                 Lesson = lesson,
-                Submissions = lesson.HomeworkSubmissions.ToList()
             };
 
             return View(viewModel);
@@ -186,6 +183,27 @@ namespace Albayan.Areas.Admin.Controllers
             _context.Lessons.Remove(lesson);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { courseId = courseId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAttachment(int lessonId, IFormFile NewAttachment)
+        {
+            if (NewAttachment != null && NewAttachment.Length > 0)
+            {
+                var filePath = await _fileService.SaveFileAsync(NewAttachment, "attachments");
+
+                var attachment = new LessonAttachment
+                {
+                    LessonId = lessonId,
+                    FileName = Path.GetFileName(NewAttachment.FileName),
+                    FilePath = filePath 
+                };
+
+                _context.LessonAttachments.Add(attachment);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details", new { id = lessonId });
         }
     }
 }

@@ -20,17 +20,10 @@ namespace Albayan.Areas.Admin.Models.Entities
 
         public int CourseId { get; set; }
 
-        [Display(Name = "عنوان الواجب")]
-        public string? HomeworkTitle { get; set; }
-
-        [Display(Name = "وصف الواجب")]
-        public string? HomeworkDescription { get; set; }
 
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }
-
         public virtual ICollection<LessonAttachment> Attachments { get; set; }
-        public virtual ICollection<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public virtual LessonQuiz LessonQuiz { get; set; }
     }
 }

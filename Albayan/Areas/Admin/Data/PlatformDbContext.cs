@@ -26,7 +26,6 @@ namespace Albayan.Areas.Admin.Data
         public DbSet<SalesOutlet> SalesOutlets { get; set; }
         public DbSet<TeacherRating> TeacherRatings { get; set; }
         public DbSet<LessonAttachment> LessonAttachments { get; set; }
-        public DbSet<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public DbSet<LiveLessonReminder> LiveLessonReminders { get; set; }
         public DbSet<LessonQuiz> LessonQuizzes { get; set; }
         public DbSet<LessonQuizQuestion> LessonQuizQuestions { get; set; }
@@ -125,17 +124,7 @@ namespace Albayan.Areas.Admin.Data
                 .WithMany(so => so.AvailableMaterials)
                 .UsingEntity(j => j.ToTable("MaterialSalesOutlets"));
 
-            modelBuilder.Entity<HomeworkSubmission>()
-                .HasOne(s => s.Student)
-                .WithMany(st => st.HomeworkSubmissions)
-                .HasForeignKey(s => s.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<HomeworkSubmission>()
-                .HasOne(s => s.Lesson)
-                .WithMany(l => l.HomeworkSubmissions)
-                .HasForeignKey(s => s.LessonId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<LiveLessonReminder>()
                 .HasOne(r => r.Student)

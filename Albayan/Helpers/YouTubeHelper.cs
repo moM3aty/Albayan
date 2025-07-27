@@ -11,11 +11,6 @@ namespace Albayan.Helpers
             if (string.IsNullOrEmpty(url))
                 return "";
 
-            if (url.Contains("/embed/"))
-            {
-                return url.Replace("youtube.com", "youtube-nocookie.com") + "?rel=0";
-            }
-
             string videoId = string.Empty;
             try
             {
@@ -37,7 +32,8 @@ namespace Albayan.Helpers
 
             if (!string.IsNullOrEmpty(videoId))
             {
-                return $"https://www.youtube-nocookie.com/embed/{videoId}?rel=0";
+
+                return $"https://www.youtube-nocookie.com/embed/{videoId}?rel=0&modestbranding=1&iv_load_policy=3&showinfo=0";
             }
 
             return "";

@@ -49,67 +49,7 @@
         </ul>
     </div>
 
-    <!-- Homework Section -->
-    <div class="card-bg p-6 rounded-lg">
-        <h3 class="text-xl font-semibold mb-4">الواجب الدراسي</h3>
-        <form asp-action="UpdateHomework" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="lessonId" value="@Model.Lesson.Id" />
-            <div class="space-y-4">
-                <div>
-                    <label class="block mb-2 text-sm font-medium">عنوان الواجب</label>
-                    <input name="homeworkTitle" class="input-style w-full p-2.5" value="@Model.Lesson.HomeworkTitle" />
-                </div>
-                <div>
-                    <label class="block mb-2 text-sm font-medium">وصف الواجب</label>
-                    <textarea name="homeworkDescription" class="input-style w-full p-2.5" rows="4">@Model.Lesson.HomeworkDescription</textarea>
-                </div>
-                <div class="text-right">
-                    <button type="submit" class="primary-btn px-6 py-2 rounded-lg">حفظ الواجب</button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Submissions Section -->
-    <div class="card-bg p-6 rounded-lg">
-        <h3 class="text-xl font-semibold mb-4">تسليمات الطلاب (@Model.Submissions.Count)</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-right">
-                <thead class="bg-[#2a3a50]">
-                    <tr>
-                        <th class="p-4 font-semibold">الطالب</th>
-                        <th class="p-4 font-semibold">تاريخ التسليم</th>
-                        <th class="p-4 font-semibold">الملف</th>
-                        <th class="p-4 font-semibold">الدرجة</th>
-                        <th class="p-4 font-semibold">ملاحظات</th>
-                        <th class="p-4 font-semibold">إجراء</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var sub in Model.Submissions)
-                    {
-                        <tr class="border-b border-gray-700">
-                            <td class="p-4">@sub.Student.FullName</td>
-                            <td class="p-4">@sub.SubmissionDate.ToLocalTime().ToString("g")</td>
-                            <td class="p-4"><a href="@sub.SubmissionFilePath" target="_blank" class="text-blue-400 hover:underline">عرض الملف</a></td>
-                            <td class="p-4">@(sub.Grade?.ToString() ?? "لم تقيم")</td>
-                            <td class="p-4">@sub.Feedback</td>
-                            <td class="p-4">
-                                <button type="button" class="secondary-btn px-3 py-1 rounded-lg text-sm quick-add-btn"
-                                        data-modal-title="تقييم واجب الطالب"
-                                        data-create-url="@Url.Action("GradeSubmission", "Lessons", new { submissionId = sub.Id })">
-                                    تقييم
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
+    
 <!-- Add script at the end of the file -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {

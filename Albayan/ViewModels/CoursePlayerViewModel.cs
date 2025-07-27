@@ -21,7 +21,6 @@ namespace Albayan.ViewModels
     public class LessonDetailsForStudentViewModel
     {
         public List<LessonAttachment> Attachments { get; set; }
-        public HomeworkSubmission StudentSubmission { get; set; }
 
         public IFormFile SubmittedFile { get; set; }
     }

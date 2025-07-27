@@ -30,7 +30,7 @@ namespace Albayan.Data
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true
                 };
-                var result = await userManager.CreateAsync(adminUser, "Admin@123");
+                var result = await userManager.CreateAsync(adminUser, "Ta@151079");
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");

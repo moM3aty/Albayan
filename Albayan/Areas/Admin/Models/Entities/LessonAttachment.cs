@@ -16,5 +16,6 @@ namespace Albayan.Areas.Admin.Models.Entities
         public int LessonId { get; set; }
         [ForeignKey("LessonId")]
         public virtual Lesson Lesson { get; set; }
+
     }
 }
